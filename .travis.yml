@@ -18,4 +18,4 @@ deploy:
 #    tags: true
     branch: master
     repo: jfinkhaeuser/prance
-    condition: `python --version | grep '^Python 3\.4'`
+    condition: $(python --version | grep '^Python 3\.4')
