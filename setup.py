@@ -34,18 +34,20 @@ if __name__ == '__main__':
       version = '0.1.0',
       description = 'Swagger/OpenAPI 2.0 Parser',
       long_description = """\
-FIXME""",
+Prances provices parsers for Swagger/OpenAPI 2.0 API specifications in Python.
+It uses `swagger_spec_validator` to validate specifications, but additionally
+resolves JSON references in accordance with the Swagger spec.""",
       # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-      # FIXME
       classifiers = [
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Plugins',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
-        'Topic :: Games/Entertainment :: Role-Playing',
+        'Topic :: Internet :: WWW/HTTP',
+        'Topic :: Software Development :: Libraries :: Python Modules',
       ],
       keywords = 'swagger openapi parsing',
       author = 'Jens Finkhaeuser',
