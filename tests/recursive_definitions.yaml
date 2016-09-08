@@ -1,0 +1,12 @@
+---
+Pets:
+  type: array
+  items:
+    $ref: 'recursive.yaml#/definitions/Pet'
+bar:
+  type: object
+  required:
+    - baz
+  properties:
+    baz:
+      $ref: 'recursive.yaml#/definitions/Recursive'
