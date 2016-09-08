@@ -5,8 +5,17 @@ python:
   - "3.4"
   - "3.5"
 install:
-  - pip install tox tox-travis coveralls
+  - pip install tox tox-travis
 script:
   - tox
-after_success:
-  - coveralls
+deploy:
+  provider: pypi
+  distributions: sdist bdist_wheel
+  user: jfinkhaeuser
+  password:
+    secure: f3CKGqBC9mDEYQUrlN9BCP0FtToJsx7I+Jf5VrB6rVhFWmrpKnZFc5dBgnlLtzJ245ctjj4AI5knbjC88VjgcfXdp5kM1PeOIHhsLHe/5yvajhuo5IBtH8hclOSuDnciVyIrhTzUM2TyZjTqpWfFHMJgZ5MNzJt27jC00yktLlHNtFTUPQoQTrjptu9hEwqLJO4bfgjKHdJEaxLEHAfJ0Kungti2AnS5HlhLKzc9bB/5nKvRCwFdPwPbr2IzIkw/EXy1ONObPpQAedyEk0ViV9LPxke0uvqPAkeyXnUrrrRJ1gYR7oRyETsmhWg25A/x+X4v9g0b35U0LUI5uooizHjii9Q0SWBzQ/sqmG12HC1tsmkRt7JcTSba2PgtGYxPzcPoYxkCHbxem0kboQH2Awz81qbAm6RNemkbKEWm90bvVqGfCnf5xv9C98yY6+PjxRe60R7doLz8K69y4QNMd+lCkvmtT5e537rDGBwQUfJsBOOMFECuzObjXg4RwCaRMZKG0k/EXaApPYwOJVZA56IjU0+dIUeoZN/ehPW+qMt2XwKRsVZSb9kEQP5i4Sq7VkNnGrHxmKj6VJX93TsbBK2k68IhBYwxncGOa+kaTP5+irXTWYnf3qs/fu/G8qTJSF+kTwBbw3JiNyIFGu2PQ40CLwz6Ebrz3eYGOb5JgFI=
+  on:
+    tags: true
+    branch: master
+    repo: jfinkhaeuser/prance
+    condition: $TOXENV == py34
