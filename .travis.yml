@@ -18,4 +18,4 @@ deploy:
     tags: true
     branch: master
     repo: jfinkhaeuser/prance
-    condition: $TOXENV == py34
+    condition: `python --version | grep '^Python 3\.4'`
