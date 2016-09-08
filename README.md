@@ -2,7 +2,7 @@
 Swagger/OpenAPI 2.0 Parser for Python
 
 [![Build Status](https://travis-ci.org/jfinkhaeuser/prance.svg?branch=master)](https://travis-ci.org/jfinkhaeuser/prance)
-[![PyPI](https://img.shields.io/pypi/v/nine.svg?maxAge=2592000)](https://pypi.python.org/pypi/prance/)
+[![PyPI](https://img.shields.io/pypi/v/prance.svg?maxAge=2592000)](https://pypi.python.org/pypi/prance/)
 
 Prances provices parsers for [Swagger/OpenAPI 2.0](http://swagger.io/specification/)
 API specifications in Python. It uses [swagger_spec_validator](https://github.com/Yelp/swagger_spec_validator)
