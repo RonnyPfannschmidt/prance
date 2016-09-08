@@ -1,0 +1,5 @@
+chardet~=2.3
+PyYAML~=3.11
+swagger-spec-validator~=2.0
+dpath~=1.4
+requests~=2.11

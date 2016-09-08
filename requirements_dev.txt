@@ -1,0 +1,8 @@
+tox>=2.3
+bumpversion>=0.5
+pytest>=3.0
+pytest-cov>=2.3
+flake8>=3.0
+pep8-naming>=0.4
+flake8-quotes>=0.8
+flake8_docstrings>=1.0
