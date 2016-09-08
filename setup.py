@@ -3,10 +3,8 @@
 """
 Dist utils for Prance.
 
-This should work within tox, and install all required dependencies for testing
-from `requirements_dev.txt`.
+This should work within tox, and install all required dependencies for testing.
 """
-
 
 if __name__ == '__main__':
   # Get setup function
