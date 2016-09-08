@@ -41,17 +41,13 @@ not find useful, too. Look at the full documentation for details.
 Use [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/) to
 create a virtual environment and change to it or not, as you see fit.
 
-Then install the requirements (`requirements.txt`) and optionally
-the development requirements (`requirements_dev.txt`).
+Then install the requirements:
 
 ```bash
 $ pip install -r requirements.txt
-$ pip install -r requirements_dev.txt  # optional
 ```
 
 ## Development
-
-You need to install `requirements_dev.txt`
 
 ### Test Execution
 

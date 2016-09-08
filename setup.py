@@ -8,25 +8,12 @@ from `requirements_dev.txt`.
 """
 
 
-def read_requirements(filename):
-  """Read the given file for requirements."""
-  from pip.req import parse_requirements
-
-  return [
-    str(item.req) for item in parse_requirements(filename, session = False)
-  ]
-
-
 if __name__ == '__main__':
   # Get setup function
   try:
     from setuptools import setup, find_packages
   except ImportError:
     from distutils.core import setup, find_packages
-
-  # Read requirements files
-  requirements = read_requirements('requirements.txt')
-  test_requirements = read_requirements('requirements_dev.txt')
 
   # Run setup
   setup(
@@ -56,9 +43,24 @@ resolves JSON references in accordance with the Swagger spec.""",
       license = 'MITNFA',
       packages = find_packages(exclude = ['ez_setup', 'examples', 'tests']),
       include_package_data = True,
-      install_requires = requirements,
+      install_requires = [
+        'chardet~=2.3',
+        'PyYAML~=3.11',
+        'swagger-spec-validator~=2.0',
+        'dpath~=1.4',
+        'requests~=2.11',
+      ],
       zip_safe = True,
       test_suite = 'tests',
       setup_requires = ['pytest-runner'],
-      tests_require = test_requirements,
+      tests_require = [
+        'tox>=2.3',
+        'bumpversion>=0.5',
+        'pytest>=3.0',
+        'pytest-cov>=2.3',
+        'flake8>=3.0',
+        'pep8-naming>=0.4',
+        'flake8-quotes>=0.8',
+        'flake8_docstrings>=1.0',
+      ],
   )
