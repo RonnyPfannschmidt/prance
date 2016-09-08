@@ -12,7 +12,7 @@ __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ('util')
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 
 # Just re-use the error, but hide the namespace

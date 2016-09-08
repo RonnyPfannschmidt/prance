@@ -18,7 +18,7 @@ if __name__ == '__main__':
   # Run setup
   setup(
       name = 'prance',
-      version = '0.1.0',
+      version = '0.1.1',
       description = 'Swagger/OpenAPI 2.0 Parser',
       long_description = """\
 Prances provices parsers for Swagger/OpenAPI 2.0 API specifications in Python.
