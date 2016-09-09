@@ -7,6 +7,15 @@ __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 
+def item_iterator(specs):
+  # Due to the differences in Python 2.7 and 3.0, we have to first find which
+  # basic iterator to use.
+  try:
+    yield getattr(specs, 'viewitems')  # 2.7
+  except AttributeError:
+    yield getattr(specs, 'items')      # 3.x
+
+
 def reference_iterator(specs, path = ()):
   """
   Iterate through the given specs, returning only references.
@@ -19,19 +28,12 @@ def reference_iterator(specs, path = ()):
       in sequence, so that you can reasonably easily find the containing
       item.
   """
-  # Due to the differences in Python 2.7 and 3.0, we have to first find which
-  # basic iterator to use.
-  try:
-    basic_iterator = getattr(specs, 'viewitems')  # 2.7
-  except AttributeError:
-    basic_iterator = getattr(specs, 'items')      # 3.x
-
   # We need to iterate through the nested specification dict, so let's
   # start with an appropriate iterator. We can immediately optimize it by
   # only returning '$ref' items.
   import collections
 
-  for key, value in basic_iterator():
+  for key, value in item_iterator(specs):
     if isinstance(value, collections.Mapping):
       for inner in reference_iterator(value, path + (key,)):
         yield inner
