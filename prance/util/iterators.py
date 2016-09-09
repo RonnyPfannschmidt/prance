@@ -11,9 +11,9 @@ def item_iterator(specs):
   # Due to the differences in Python 2.7 and 3.0, we have to first find which
   # basic iterator to use.
   try:
-    yield getattr(specs, 'viewitems')  # 2.7
+    return getattr(specs, 'viewitems')()  # 2.7
   except AttributeError:
-    yield getattr(specs, 'items')      # 3.x
+    return getattr(specs, 'items')()      # 3.x
 
 
 def reference_iterator(specs, path = ()):
