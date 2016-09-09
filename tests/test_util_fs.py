@@ -9,6 +9,8 @@ __all__ = ()
 
 import os
 
+import pytest
+
 from prance.util import fs
 
 
@@ -42,6 +44,11 @@ def test_abspath_relative_dir():
   assert res == expected
 
 
+def test_detect_encoding():
+  assert fs.detect_encoding('tests/petstore.yaml') == 'ascii'
+  assert fs.detect_encoding('tests/utf8bom.yaml') == 'utf-8-sig'
+
+
 def test_load_nobom():
   contents = fs.read_file('tests/petstore.yaml')
   assert contents.index(u'Swagger Petstore') >= 0, 'File reading failed!'
@@ -50,3 +57,8 @@ def test_load_nobom():
 def test_load_utf8bom():
   contents = fs.read_file('tests/utf8bom.yaml')
   assert contents.index(u'söme välüe') >= 0, 'UTF-8 BOM handling failed!'
+
+
+def test_load_utf8bom_override():
+  with pytest.raises(UnicodeDecodeError):
+    fs.read_file('tests/utf8bom.yaml', 'ascii')

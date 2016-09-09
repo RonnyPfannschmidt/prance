@@ -62,13 +62,13 @@ def canonical_filename(filename):
       return path
 
 
-def read_file(filename):
+def detect_encoding(filename):
   """
-  Read and decode a file, taking BOMs into account.
+  Detect the named file's character encoding.
 
-  :param str filename: The name of the file to read.
-  :return: The file contents.
-  :rtype: unicode string
+  :param str filename: The name of the file to detect the encoding of.
+  :return: The file encoding.
+  :rtype: str
   """
   # Read no more than 32 bytes or the file's size
   import os.path
@@ -86,6 +86,33 @@ def read_file(filename):
     import chardet
     res = chardet.detect(raw)
     encoding = res['encoding']
+
+  return encoding
+
+
+def read_file(filename, encoding = None):
+  """
+  Read and decode a file, taking BOMs into account.
+
+  If no encoding is given, `detect_encoding` is used to detect an encoding.
+  However, if `detect_encoding` returns ASCII, `read_file` instead switches to
+  UTF-8. That's a superset of ASCII, so should be a safer default in modern
+  times.
+
+  :param str filename: The name of the file to read.
+  :param str encoding: The encoding to use. If not given, detect_encoding is
+      used to determine the encoding.
+  :return: The file contents.
+  :rtype: unicode string
+  """
+
+  if not encoding:
+    # Detect encoding
+    encoding = detect_encoding(filename)
+
+    # Instead of ascii (if that was detected), default to utf-8
+    if encoding == 'ascii':
+      encoding = 'utf-8'
 
   # Finally, read the file in the detected encoding
   import io
