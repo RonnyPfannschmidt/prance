@@ -44,6 +44,7 @@ if __name__ == '__main__':
         'swagger-spec-validator~=2.0',
         'dpath~=1.4',
         'requests~=2.11',
+        'six~=1.10',
       ],
       zip_safe = True,
       test_suite = 'tests',

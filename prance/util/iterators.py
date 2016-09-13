@@ -8,12 +8,9 @@ __all__ = ()
 
 
 def item_iterator(specs):
-  # Due to the differences in Python 2.7 and 3.0, we have to first find which
-  # basic iterator to use.
-  try:
-    return getattr(specs, 'viewitems')()  # 2.7
-  except AttributeError:
-    return getattr(specs, 'items')()      # 3.x
+  """Return item iterator over the specs."""
+  import six
+  return six.viewitems(specs)
 
 
 def reference_iterator(specs, path = ()):
