@@ -105,7 +105,6 @@ def read_file(filename, encoding = None):
   :return: The file contents.
   :rtype: unicode string
   """
-
   if not encoding:
     # Detect encoding
     encoding = detect_encoding(filename)
