@@ -8,10 +8,11 @@ __all__ = ()
 
 
 # Re-define an error for Python 2.7
-try:
-  FileNotFoundError = FileNotFoundError
-except NameError:
+import six
+if six.PY2:
   FileNotFoundError = OSError
+else:
+  FileNotFoundError = FileNotFoundError
 
 
 def abspath(filename, relative_to = None):
