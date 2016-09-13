@@ -6,10 +6,8 @@ __copyright__ = 'Copyright (c) 2016 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
-try:
-  from urllib.parse import urlparse, ParseResult  # py3.x
-except ImportError:
-  from urlparse import urlparse, ParseResult      # py2.7
+
+from six.moves.urllib.parse import urlparse, ParseResult
 
 
 class ResolutionError(LookupError):
