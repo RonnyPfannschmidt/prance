@@ -18,8 +18,9 @@ def __write_to_file(filename, specs):  # noqa: N802
 
   This takes into account file name extensions as per `fs.write_file`.
   """
-  pass
-  # FIXME: fs.write_file(formats.serialize_spec))
+  from prance.util import fs, formats
+  contents = formats.serialize_spec(specs, filename)
+  fs.write_file(filename, contents)
 
 
 @click.group()
