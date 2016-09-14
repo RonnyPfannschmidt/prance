@@ -63,11 +63,17 @@ def canonical_filename(filename):
       return path
 
 
-def detect_encoding(filename):
+def detect_encoding(filename, ascii_to_utf8 = True):
   """
   Detect the named file's character encoding.
 
+  If the first parts of the file appear to be ASCII, this function returns
+  'UTF-8', as that's a safe superset of ASCII. This can be switched off by
+  changing the `ascii_to_utf8` parameter.
+
   :param str filename: The name of the file to detect the encoding of.
+  :param bool ascii_to_utf8: Defaults to True. Set to False to disable
+      treating ASCII files as UTF-8.
   :return: The file encoding.
   :rtype: str
   """
@@ -88,17 +94,16 @@ def detect_encoding(filename):
     res = chardet.detect(raw)
     encoding = res['encoding']
 
+  # Default to UTF-8 for ASCII
+  if ascii_to_utf8 and encoding == 'ascii':
+    encoding = 'utf-8'
+
   return encoding
 
 
 def read_file(filename, encoding = None):
   """
   Read and decode a file, taking BOMs into account.
-
-  If no encoding is given, `detect_encoding` is used to detect an encoding.
-  However, if `detect_encoding` returns ASCII, `read_file` instead switches to
-  UTF-8. That's a superset of ASCII, so should be a safer default in modern
-  times.
 
   :param str filename: The name of the file to read.
   :param str encoding: The encoding to use. If not given, detect_encoding is
@@ -109,10 +114,6 @@ def read_file(filename, encoding = None):
   if not encoding:
     # Detect encoding
     encoding = detect_encoding(filename)
-
-    # Instead of ascii (if that was detected), default to utf-8
-    if encoding == 'ascii':
-      encoding = 'utf-8'
 
   # Finally, read the file in the detected encoding
   import io

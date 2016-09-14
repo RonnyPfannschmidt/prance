@@ -45,7 +45,9 @@ def test_abspath_relative_dir():
 
 
 def test_detect_encoding():
-  assert fs.detect_encoding('tests/petstore.yaml') == 'ascii'
+  assert fs.detect_encoding('tests/petstore.yaml') == 'utf-8'
+  assert fs.detect_encoding('tests/petstore.yaml',
+                            ascii_to_utf8 = False) == 'ascii'
   assert fs.detect_encoding('tests/utf8bom.yaml') == 'utf-8-sig'
 
 
@@ -80,6 +82,7 @@ def test_write_file():
     # File contents must work
     contents = fs.read_file('test.out')
     assert test_text == contents
+
 
 def test_write_file_bom():
   # What we're doing here has really nothing to do with click's CliRunner,
