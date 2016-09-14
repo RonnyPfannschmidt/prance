@@ -45,9 +45,19 @@ def test_abspath_relative_dir():
 
 
 def test_detect_encoding():
+  # Quick detection should yield utf-8 for the petstore file.
   assert fs.detect_encoding('tests/petstore.yaml') == 'utf-8'
+
+  # Really, it should be detected as ISO-8859-1 as a superset of ASCII
   assert fs.detect_encoding('tests/petstore.yaml',
-                            ascii_to_utf8 = False) == 'ascii'
+                            default_to_utf8 = False) == 'iso-8859-1'
+
+  # Deep inspection should yield UTF-8 again.
+  assert fs.detect_encoding('tests/petstore.yaml',
+                            default_to_utf8 = False,
+                            read_all = True) == 'utf-8'
+
+  # The UTF-8 file with BOM should be detected properly
   assert fs.detect_encoding('tests/utf8bom.yaml') == 'utf-8-sig'
 
 

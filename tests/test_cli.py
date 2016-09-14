@@ -81,9 +81,12 @@ def test_validate_output(runner):
       files = [f for f in os.listdir('.') if os.path.isfile(f)]
       assert outname in files
 
-      # Ensure a UTF-8 file encoding
+      # Ensure a UTF-8 file encoding.
       from prance.util import fs
-      assert 'utf-8' in fs.detect_encoding(outname)
+      assert 'utf-8' in fs.detect_encoding(outname, default_to_utf8 = False,
+                                           read_all = True)
+
+      # Now do a full encoding detection, too
 
       # The 'foo' file must be a valid swagger spec.
       result = runner.invoke(cli.validate, [outname])

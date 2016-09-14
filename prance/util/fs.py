@@ -63,23 +63,30 @@ def canonical_filename(filename):
       return path
 
 
-def detect_encoding(filename, ascii_to_utf8 = True):
+def detect_encoding(filename, default_to_utf8 = True, **kwargs):
   """
   Detect the named file's character encoding.
 
   If the first parts of the file appear to be ASCII, this function returns
   'UTF-8', as that's a safe superset of ASCII. This can be switched off by
-  changing the `ascii_to_utf8` parameter.
+  changing the `default_to_utf8` parameter.
 
   :param str filename: The name of the file to detect the encoding of.
-  :param bool ascii_to_utf8: Defaults to True. Set to False to disable
+  :param bool default_to_utf8: Defaults to True. Set to False to disable
       treating ASCII files as UTF-8.
+  :param bool read_all: Keyword argument; if True, reads the entire file
+      for encoding detection.
   :return: The file encoding.
   :rtype: str
   """
   # Read no more than 32 bytes or the file's size
   import os.path
-  read_len = min(32, os.path.getsize(filename))
+  file_len = os.path.getsize(filename)
+  read_len = min(32, file_len)
+
+  # ... unless we're supposed to!
+  if kwargs.get('read_all', False):
+    read_len = file_len
 
   # Read the first read_len bytes raw, so we can detect the encoding
   with open(filename, 'rb') as raw_handle:
@@ -90,15 +97,15 @@ def detect_encoding(filename, ascii_to_utf8 = True):
   if raw.startswith(codecs.BOM_UTF8):
     encoding = 'utf-8-sig'
   else:
-    import chardet
-    res = chardet.detect(raw)
-    encoding = res['encoding']
+    # Detect encoding using the best detector available
+    import icu
+    encoding = icu.CharsetDetector(raw).detect().getName().lower()
 
-  # Default to UTF-8 for ASCII
-  if ascii_to_utf8 and encoding == 'ascii':
-    encoding = 'utf-8'
+    # Return UTF-8 if that is what we're supposed to default to
+    if default_to_utf8 and encoding in ('ascii', 'iso-8859-1'):
+      encoding = 'utf-8'
 
-  return encoding
+  return encoding.lower()
 
 
 def read_file(filename, encoding = None):

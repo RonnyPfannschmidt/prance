@@ -50,7 +50,7 @@ if __name__ == '__main__':
       packages = find_packages(exclude = ['ez_setup', 'examples', 'tests']),
       include_package_data = True,
       install_requires = [
-        'chardet~=2.3',
+        'PyICU~=1.9',
         'PyYAML~=3.11',
         'swagger-spec-validator~=2.0',
         'dpath~=1.4',
@@ -59,9 +59,6 @@ if __name__ == '__main__':
         'click~=6.6',
       ],
       extras_require = {
-        'icu': [
-          'PyICU~=1.9',
-        ],
         'test': tests_require,
       },
       scripts = [
