@@ -70,7 +70,7 @@ def test_write_file():
   from click.testing import CliRunner
   runner = CliRunner()
   with runner.isolated_filesystem():
-    test_text = 'söme täxt'
+    test_text = u'söme täxt'
     fs.write_file('test.out', test_text)
 
     # File must have been written
@@ -87,7 +87,7 @@ def test_write_file_bom():
   from click.testing import CliRunner
   runner = CliRunner()
   with runner.isolated_filesystem():
-    test_text = 'söme täxt'
+    test_text = u'söme täxt'
     fs.write_file('test.out', test_text, 'utf-8-sig')
 
     # File must have been written
