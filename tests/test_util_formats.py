@@ -58,3 +58,52 @@ def test_parse_unknown_ext():
 def test_parse_unknown_ctype():
   with pytest.raises(formats.ParseError):
     formats.parse_spec('{-', None, content_type = 'text/xml')
+
+
+def test_serialize_json():
+  specs = {
+    'foo': 'bar',
+    'baz': [1, 2, 3],
+  }
+
+  # With no further information given, the specs must be in JSON
+  serialized = formats.serialize_spec(specs)
+  assert serialized.startswith('{')
+
+  # The same must be the case if we provide a JSON file name
+  serialized = formats.serialize_spec(specs, 'foo.json')
+  assert serialized.startswith('{')
+
+
+def test_serialize_yaml():
+  specs = {
+    'foo': 'bar',
+    'baz': [1, 2, 3],
+  }
+
+  # Provide a YAML file name
+  serialized = formats.serialize_spec(specs, 'foo.yml')
+  assert 'foo: bar' in serialized
+
+
+def test_serialize_json_ctype():
+  specs = {
+    'foo': 'bar',
+    'baz': [1, 2, 3],
+  }
+
+  # Force JSON with content type
+  serialized = formats.serialize_spec(specs, None, content_type = 'application/json')
+  assert serialized.startswith('{')
+
+
+def test_serialize_yaml_ctype():
+  specs = {
+    'foo': 'bar',
+    'baz': [1, 2, 3],
+  }
+
+  # Force YAML with content type
+  serialized = formats.serialize_spec(specs, None, content_type = 'text/yaml')
+  assert 'foo: bar' in serialized
+
