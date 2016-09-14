@@ -93,7 +93,8 @@ def test_serialize_json_ctype():
   }
 
   # Force JSON with content type
-  serialized = formats.serialize_spec(specs, None, content_type = 'application/json')
+  serialized = formats.serialize_spec(specs, None,
+                                      content_type = 'application/json')
   assert serialized.startswith('{')
 
 
@@ -106,4 +107,3 @@ def test_serialize_yaml_ctype():
   # Force YAML with content type
   serialized = formats.serialize_spec(specs, None, content_type = 'text/yaml')
   assert 'foo: bar' in serialized
-

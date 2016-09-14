@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-CLI for prance
-"""
+"""CLI for prance."""
 
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016 Jens Finkhaeuser'
@@ -14,11 +12,14 @@ import click
 import prance
 
 
-def write_to_file(filename, specs):
-  """FIXME"""
+def __write_to_file(filename, specs):  # noqa: N802
+  """
+  Write specs to the given filename.
+
+  This takes into account file name extensions as per `fs.write_file`.
+  """
   pass
   # FIXME: fs.write_file(formats.serialize_spec))
-
 
 
 @click.group()
@@ -53,7 +54,8 @@ def validate(resolve, output_file, filenames):
   """
   Validate the given spec or specs.
 
-  If the --resolve option is set, references will be resolved before validation.
+  If the --resolve option is set, references will be resolved before
+  validation.
 
   Note that this can yield unexpected results. The swagger-spec-validator used
   as a basis for prance cannot deal with relative file path references, and
@@ -66,7 +68,8 @@ def validate(resolve, output_file, filenames):
   """
   # Ensure that when an output file is given, only one input file exists.
   if output_file and len(filenames) > 1:
-    raise click.UsageError('If --output-file is given, only one input file name is allowed!')
+    raise click.UsageError('If --output-file is given, only one input file '
+        'name is allowed!')
 
   # Process files
   for name in filenames:
@@ -87,7 +90,8 @@ def validate(resolve, output_file, filenames):
     try:
       parser.parse()
     except (ResolutionError, SwaggerValidationError) as err:
-      msg = 'ERROR in "%s" [%s]: %s' % (formatted, type(err).__name__, str(err))
+      msg = 'ERROR in "%s" [%s]: %s' % (formatted, type(err).__name__,
+          str(err))
       click.secho(msg, err = True, fg = 'red')
       import sys
       sys.exit(1)
@@ -97,7 +101,7 @@ def validate(resolve, output_file, filenames):
 
     # If an output file is given, write the specs to it.
     if output_file:
-      write_to_file(output_file, parser.specification)
+      __write_to_file(output_file, parser.specification)
 
 
 cli.add_command(validate)

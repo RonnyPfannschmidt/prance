@@ -11,7 +11,7 @@ class ParseError(ValueError):
   pass  # pragma: no cover
 
 
-def __format_preferences(filename, content_type):
+def __format_preferences(filename, content_type):  # noqa: N802
   """
   Detect the format based on file name and content type.
 
@@ -60,7 +60,6 @@ def __format_preferences(filename, content_type):
   return tuple(formats)
 
 
-
 # Basic parse functions
 def __parse_yaml(spec_str):  # noqa: N802
   import yaml, yaml.parser
@@ -79,12 +78,12 @@ def __parse_json(spec_str):  # noqa: N802
 
 
 # Basic serialization functions
-def __serialize_yaml(specs):
+def __serialize_yaml(specs):  # noqa: N802
   import yaml
   return yaml.dump(specs)
 
 
-def __serialize_json(specs):
+def __serialize_json(specs):  # noqa: N802
   import json
   return json.dumps(specs)
 
@@ -110,7 +109,6 @@ __FORMAT_TO_SERIALIZER = {
   'YAML': __serialize_yaml,
   'JSON': __serialize_json,
 }
-
 
 
 def parse_spec(spec_str, filename = None, **kwargs):

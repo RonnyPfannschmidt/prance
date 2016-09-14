@@ -9,15 +9,8 @@ __all__ = ()
 import pytest
 
 from click.testing import CliRunner
-from click._compat import PY2, WIN
 
 from prance import cli
-
-# Use the most reasonable io that users would use for the python version.
-if PY2:
-  from cStringIO import StringIO as ReasonableBytesIO
-else:
-  from io import BytesIO as ReasonableBytesIO
 
 
 @pytest.fixture()
@@ -42,7 +35,8 @@ Validates OK as Swagger/OpenAPI 2.0!
 
 
 def test_validate_multiple(runner):
-  result = runner.invoke(cli.validate, ['tests/petstore.yaml', 'tests/petstore.yaml'])
+  result = runner.invoke(cli.validate,
+      ['tests/petstore.yaml', 'tests/petstore.yaml'])
   assert result.exit_code == 0
   expected = """Processing "tests/petstore.yaml"...
  -> Resolving external references.
@@ -66,7 +60,8 @@ Validates OK as Swagger/OpenAPI 2.0!
 
 
 def test_validate_output_too_many_inputs(runner):
-  result = runner.invoke(cli.validate, ['-o', 'foo', 'tests/petstore.yaml', 'tests/petstore.yaml'])
+  result = runner.invoke(cli.validate,
+      ['-o', 'foo', 'tests/petstore.yaml', 'tests/petstore.yaml'])
   assert result.exit_code == 2
   assert 'If --output-file is given,' in result.output
 
@@ -76,7 +71,8 @@ def test_validate_output(runner):
   curdir = os.getcwd()
 
   with runner.isolated_filesystem():
-    result = runner.invoke(cli.validate, ['-o', 'foo', os.path.join(curdir, 'tests/petstore.yaml')])
+    result = runner.invoke(cli.validate,
+        ['-o', 'foo', os.path.join(curdir, 'tests/petstore.yaml')])
     assert result.exit_code == 0
 
     # There also must be a 'foo' file now.
