@@ -13,6 +13,17 @@ if __name__ == '__main__':
   except ImportError:
     from distutils.core import setup, find_packages
 
+  tests_require = [
+    'tox>=2.3',
+    'bumpversion>=0.5',
+    'pytest>=3.0',
+    'pytest-cov>=2.3',
+    'flake8>=3.0',
+    'pep8-naming>=0.4',
+    'flake8-quotes>=0.8',
+    'flake8_docstrings>=1.0',
+  ]
+
   # Run setup
   setup(
       name = 'prance',
@@ -47,20 +58,17 @@ if __name__ == '__main__':
         'six~=1.10',
         'click~=6.6',
       ],
+      extras_require = {
+        'icu': [
+          'PyICU~=1.9',
+        ],
+        'test': tests_require,
+      },
       scripts = [
         'scripts/prance',
       ],
       zip_safe = True,
       test_suite = 'tests',
       setup_requires = ['pytest-runner'],
-      tests_require = [
-        'tox>=2.3',
-        'bumpversion>=0.5',
-        'pytest>=3.0',
-        'pytest-cov>=2.3',
-        'flake8>=3.0',
-        'pep8-naming>=0.4',
-        'flake8-quotes>=0.8',
-        'flake8_docstrings>=1.0',
-      ],
+      tests_require = tests_require,
   )
