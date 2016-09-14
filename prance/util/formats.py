@@ -62,30 +62,44 @@ def __format_preferences(filename, content_type):  # noqa: N802
 
 # Basic parse functions
 def __parse_yaml(spec_str):  # noqa: N802
-  import yaml, yaml.parser
+  import yaml, yaml.parser, six
   try:
-    return yaml.load(spec_str)
+    return yaml.safe_load(six.text_type(spec_str))
   except yaml.parser.ParserError as err:
     raise ParseError(str(err))
 
 
 def __parse_json(spec_str):  # noqa: N802
-  import json
+  import json, six
   try:
-    return json.loads(spec_str)
+    return json.loads(six.text_type(spec_str))
   except ValueError as err:
     raise ParseError(str(err))
 
 
 # Basic serialization functions
 def __serialize_yaml(specs):  # noqa: N802
+  # I don't know what the PyYAML authors smoked, but in order for it to parse
+  # unicode specs and not mess encoding up, you need to allow_unicode and
+  # explicitly set the encoding to None.
   import yaml
-  return yaml.dump(specs)
+  utf = yaml.dump(specs,
+                  allow_unicode = True,
+                  encoding = None,
+                  default_flow_style = False)
+
+  import six
+  return six.text_type(utf)
 
 
 def __serialize_json(specs):  # noqa: N802
+  # The default encoding is utf-8, no need to specify it. But we need to switch
+  # off ensure_ascii, otherwise we do not get a unicode string back.
   import json
-  return json.dumps(specs)
+  utf = json.dumps(specs, ensure_ascii = False, indent = 2)
+
+  import six
+  return six.text_type(utf)
 
 
 # Map file name extensions to parse/serialize functions
