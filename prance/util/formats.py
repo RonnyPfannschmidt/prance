@@ -8,7 +8,7 @@ __all__ = ()
 
 
 class ParseError(ValueError):
-  pass
+  pass  # pragma: no cover
 
 
 def __format_preferences(filename, content_type):
