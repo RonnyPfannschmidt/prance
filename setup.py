@@ -45,6 +45,10 @@ if __name__ == '__main__':
         'dpath~=1.4',
         'requests~=2.11',
         'six~=1.10',
+        'click~=6.6',
+      ],
+      scripts = [
+        'scripts/prance',
       ],
       zip_safe = True,
       test_suite = 'tests',

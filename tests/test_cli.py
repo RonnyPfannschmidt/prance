@@ -1,0 +1,89 @@
+# -*- coding: utf-8 -*-
+"""Test suite for prance.cli ."""
+
+__author__ = 'Jens Finkhaeuser'
+__copyright__ = 'Copyright (c) 2016 Jens Finkhaeuser'
+__license__ = 'MIT +no-false-attribs'
+__all__ = ()
+
+import pytest
+
+from click.testing import CliRunner
+from click._compat import PY2, WIN
+
+from prance import cli
+
+# Use the most reasonable io that users would use for the python version.
+if PY2:
+  from cStringIO import StringIO as ReasonableBytesIO
+else:
+  from io import BytesIO as ReasonableBytesIO
+
+
+@pytest.fixture()
+def runner():
+  return CliRunner()
+
+
+def test_validate_defaults(runner):
+  # Good example
+  result = runner.invoke(cli.validate, ['tests/petstore.yaml'])
+  assert result.exit_code == 0
+  expected = """Processing "tests/petstore.yaml"...
+ -> Resolving external references.
+Validates OK as Swagger/OpenAPI 2.0!
+"""
+  assert result.output == expected
+
+  # Bad example
+  result = runner.invoke(cli.validate, ['tests/definitions.yaml'])
+  assert result.exit_code == 1
+  assert 'SwaggerValidationError' in result.output
+
+
+def test_validate_multiple(runner):
+  result = runner.invoke(cli.validate, ['tests/petstore.yaml', 'tests/petstore.yaml'])
+  assert result.exit_code == 0
+  expected = """Processing "tests/petstore.yaml"...
+ -> Resolving external references.
+Validates OK as Swagger/OpenAPI 2.0!
+Processing "tests/petstore.yaml"...
+ -> Resolving external references.
+Validates OK as Swagger/OpenAPI 2.0!
+"""
+  assert result.output == expected
+
+
+def test_validate_no_resolve(runner):
+  # Good example
+  result = runner.invoke(cli.validate, ['--no-resolve', 'tests/petstore.yaml'])
+  assert result.exit_code == 0
+  expected = """Processing "tests/petstore.yaml"...
+ -> Not resolving external references.
+Validates OK as Swagger/OpenAPI 2.0!
+"""
+  assert result.output == expected
+
+
+def test_validate_output_too_many_inputs(runner):
+  result = runner.invoke(cli.validate, ['-o', 'foo', 'tests/petstore.yaml', 'tests/petstore.yaml'])
+  assert result.exit_code == 2
+  assert 'If --output-file is given,' in result.output
+
+
+def test_validate_output(runner):
+  import os, os.path
+  curdir = os.getcwd()
+
+  with runner.isolated_filesystem():
+    result = runner.invoke(cli.validate, ['-o', 'foo', os.path.join(curdir, 'tests/petstore.yaml')])
+    assert result.exit_code == 0
+
+    # There also must be a 'foo' file now.
+    files = [f for f in os.listdir('.') if os.path.isfile(f)]
+    print(files)
+    assert 'foo' in files
+
+    # The 'foo' file must be a valid swagger spec.
+    result = runner.invoke(cli.validate, ['foo'])
+    assert result.exit_code == 0

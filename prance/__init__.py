@@ -11,7 +11,7 @@ ResolvingParser that additionally resolves any $ref references.
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
-__all__ = ('util')
+__all__ = ('util', 'cli')
 __version__ = '0.1.3'
 
 
