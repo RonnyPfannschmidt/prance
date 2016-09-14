@@ -10,9 +10,9 @@ __all__ = ()
 # Re-define an error for Python 2.7
 import six
 if six.PY2:
-  FileNotFoundError = OSError
+  FileNotFoundError = OSError  # pragma: no cover
 else:
-  FileNotFoundError = FileNotFoundError
+  FileNotFoundError = FileNotFoundError  # pragma: no cover
 
 
 def abspath(filename, relative_to = None):
