@@ -105,7 +105,7 @@ def detect_encoding(filename, default_to_utf8 = True, **kwargs):
     if default_to_utf8 and encoding in ('ascii', 'iso-8859-1'):
       encoding = 'utf-8'
 
-  return encoding.lower()
+  return encoding
 
 
 def read_file(filename, encoding = None):
