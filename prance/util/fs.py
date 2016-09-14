@@ -118,3 +118,22 @@ def read_file(filename, encoding = None):
   import io
   with io.open(filename, mode = 'r', encoding = encoding) as handle:
     return handle.read()
+
+
+def write_file(filename, contents, encoding = None):
+  """
+  Write a file with the given encoding.
+
+  The default encoding is 'utf-8'. It's recommended not to change that for
+  JSON or YAML output.
+
+  :param str filename: The name of the file to read.
+  :param str encoding: The encoding to use. If not given, detect_encoding is
+      used to determine the encoding.
+  """
+  if not encoding:
+    encoding = 'utf-8'
+
+  import io
+  with io.open(filename, mode = 'w', encoding = encoding) as handle:
+    handle.write(contents)

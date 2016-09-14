@@ -62,3 +62,42 @@ def test_load_utf8bom():
 def test_load_utf8bom_override():
   with pytest.raises(UnicodeDecodeError):
     fs.read_file('tests/utf8bom.yaml', 'ascii')
+
+
+def test_write_file():
+  # What we're doing here has really nothing to do with click's CliRunner,
+  # but since we have it, we might as well use its sandboxing feature.
+  from click.testing import CliRunner
+  runner = CliRunner()
+  with runner.isolated_filesystem():
+    test_text = 'söme täxt'
+    fs.write_file('test.out', test_text)
+
+    # File must have been written
+    files = [f for f in os.listdir('.') if os.path.isfile(f)]
+    assert 'test.out' in files
+
+    # File contents must work
+    contents = fs.read_file('test.out')
+    assert test_text == contents
+
+def test_write_file_bom():
+  # What we're doing here has really nothing to do with click's CliRunner,
+  # but since we have it, we might as well use its sandboxing feature.
+  from click.testing import CliRunner
+  runner = CliRunner()
+  with runner.isolated_filesystem():
+    test_text = 'söme täxt'
+    fs.write_file('test.out', test_text, 'utf-8-sig')
+
+    # File must have been written
+    files = [f for f in os.listdir('.') if os.path.isfile(f)]
+    assert 'test.out' in files
+
+    # Encoding must match the one we've given
+    encoding = fs.detect_encoding('test.out')
+    assert encoding == 'utf-8-sig'
+
+    # File contents must work
+    contents = fs.read_file('test.out')
+    assert test_text == contents
