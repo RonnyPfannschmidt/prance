@@ -70,16 +70,21 @@ def test_validate_output(runner):
   import os, os.path
   curdir = os.getcwd()
 
-  with runner.isolated_filesystem():
-    result = runner.invoke(cli.validate,
-        ['-o', 'foo', os.path.join(curdir, 'tests/petstore.yaml')])
-    assert result.exit_code == 0
+  outnames = ['foo.json', 'foo.yaml']
+  for outname in outnames:
+    with runner.isolated_filesystem():
+      result = runner.invoke(cli.validate,
+          ['-o', outname, os.path.join(curdir, 'tests/petstore.yaml')])
+      assert result.exit_code == 0
 
-    # There also must be a 'foo' file now.
-    files = [f for f in os.listdir('.') if os.path.isfile(f)]
-    print(files)
-    assert 'foo' in files
+      # There also must be a 'foo' file now.
+      files = [f for f in os.listdir('.') if os.path.isfile(f)]
+      assert outname in files
 
-    # The 'foo' file must be a valid swagger spec.
-    result = runner.invoke(cli.validate, ['foo'])
-    assert result.exit_code == 0
+      # Ensure a UTF-8 file encoding
+      from prance.util import fs
+      assert 'utf-8' in fs.detect_encoding(outname)
+
+      # The 'foo' file must be a valid swagger spec.
+      result = runner.invoke(cli.validate, [outname])
+      assert result.exit_code == 0
