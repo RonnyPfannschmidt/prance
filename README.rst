@@ -20,6 +20,23 @@ at this point in time.
 Usage
 =====
 
+Command Line Interface
+----------------------
+
+After installing prance, a CLI is available for validating (and resolving
+external references in) specs:
+
+```bash
+# Validates with resolving
+$ prance validate path/to/swagger.yml
+
+# Validates without resolving
+$ prance validate --no-resolve path/to/swagger.yml
+
+# Validates and resolves, and writes the results to output.yaml
+$ prance validate -o output.yaml path/to/swagger.yml
+```
+
 Code
 ----
 
