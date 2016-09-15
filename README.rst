@@ -27,6 +27,7 @@ After installing prance, a CLI is available for validating (and resolving
 external references in) specs:
 
 .. code:: bash
+
     # Validates with resolving
     $ prance validate path/to/swagger.yml
 
