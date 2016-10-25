@@ -24,6 +24,10 @@ if __name__ == '__main__':
     'flake8_docstrings>=1.0',
   ]
 
+  docs_require = [
+    'sphinx>=1.4',
+  ]
+
   # Run setup
   setup(
       name = 'prance',
@@ -61,6 +65,7 @@ if __name__ == '__main__':
       ],
       extras_require = {
         'test': tests_require,
+        'docs': docs_require,
       },
       scripts = [
         'scripts/prance',
