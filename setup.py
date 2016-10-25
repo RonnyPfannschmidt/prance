@@ -69,5 +69,5 @@ if __name__ == '__main__':
       zip_safe = True,
       test_suite = 'tests',
       setup_requires = ['pytest-runner'],
-      tests_require = tests_require,
+      tests_require = dev_require,
   )
