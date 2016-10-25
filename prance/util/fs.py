@@ -136,6 +136,7 @@ def write_file(filename, contents, encoding = None):
   JSON or YAML output.
 
   :param str filename: The name of the file to read.
+  :param str contents: The file contents to write.
   :param str encoding: The encoding to use. If not given, detect_encoding is
       used to determine the encoding.
   """

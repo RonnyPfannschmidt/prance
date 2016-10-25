@@ -53,7 +53,12 @@ class YAMLMixin(CacheSpecsMixin):
   __YAML = '__yaml'
 
   def yaml(self):
-    """Return a YAML representation of the specifications."""
+    """
+    Return a YAML representation of the specifications.
+
+    :return: YAML representation.
+    :rtype: dict
+    """
     # Query specs_updated first to start caching
     if self.specs_updated() or not getattr(self, self.__YAML, None):
       import yaml
@@ -71,7 +76,12 @@ class JSONMixin(CacheSpecsMixin):
   __JSON = '__json'
 
   def json(self):
-    """Return a JSON representation of the specifications."""
+    """
+    Return a JSON representation of the specifications.
+
+    :return: JSON representation.
+    :rtype: dict
+    """
     # Query specs_updated first to start caching
     if self.specs_updated() or not getattr(self, self.__JSON, None):
       import json

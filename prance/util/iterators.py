@@ -8,7 +8,13 @@ __all__ = ()
 
 
 def item_iterator(specs):
-  """Return item iterator over the specs."""
+  """
+  Return item iterator over the specs.
+
+  :param dict specs: The specifications to iterate over.
+  :return: An iterator over all items in the specs.
+  :rtype: iterator
+  """
   import six
   return six.viewitems(specs)
 
@@ -24,6 +30,10 @@ def reference_iterator(specs, path = ()):
     - The path to the item. This is a tuple of all the item's ancestors,
       in sequence, so that you can reasonably easily find the containing
       item.
+
+  :param dict specs: The specifications to iterate over.
+  :return: An iterator over all references in the specs.
+  :rtype: iterator
   """
   # We need to iterate through the nested specification dict, so let's
   # start with an appropriate iterator. We can immediately optimize it by

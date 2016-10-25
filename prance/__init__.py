@@ -11,21 +11,21 @@ ResolvingParser that additionally resolves any $ref references.
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
-__all__ = ('util', 'cli')
+__all__ = ('util', 'mixins', 'cli')
 __version__ = '0.2.1'
 
 
 # Just re-use the error, but hide the namespace
 from swagger_spec_validator.common import SwaggerValidationError  # noqa: F401
 
-from .mixins import YAMLMixin, JSONMixin
+from . import mixins
 
 
-class BaseParser(YAMLMixin, JSONMixin, object):
+class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
   """
   The BaseParser loads, parses and validates Swagger/OpenAPI 2.0 specs.
 
-  Uses :py:class:`YAMLMixin` and :py:class:`YAMLMixin` for additional
+  Uses :py:class:`YAMLMixin` and :py:class:`JSONMixin` for additional
   functionality.
   """
 

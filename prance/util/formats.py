@@ -164,7 +164,7 @@ def serialize_spec(specs, filename = None, **kwargs):
   its extension is used to determine whether YAML or JSON should be
   parsed.
 
-  :param str spec_str: The specifications as string.
+  :param str specs: The specifications as dict.
   :param str filename: [optional] Filename to determine the format from.
   :param str content_type: [optional] Content type to determine the format
       from.
