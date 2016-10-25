@@ -74,6 +74,15 @@ Then install the requirements:
 
     $ pip install -r requirements.txt
 
+Documentation
+-------------
+
+After setup, run the following to generate documentation:
+
+.. code:: bash
+
+    $ python setup.py build_sphinx
+
 Development
 -----------
 
