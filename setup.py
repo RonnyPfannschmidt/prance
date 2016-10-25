@@ -13,7 +13,7 @@ if __name__ == '__main__':
   except ImportError:
     from distutils.core import setup, find_packages
 
-  tests_require = [
+  dev_require = [
     'tox>=2.3',
     'bumpversion>=0.5',
     'pytest>=3.0',
@@ -22,9 +22,6 @@ if __name__ == '__main__':
     'pep8-naming>=0.4',
     'flake8-quotes>=0.8',
     'flake8_docstrings>=1.0',
-  ]
-
-  docs_require = [
     'sphinx>=1.4',
   ]
 
@@ -64,8 +61,7 @@ if __name__ == '__main__':
         'click~=6.6',
       ],
       extras_require = {
-        'test': tests_require,
-        'docs': docs_require,
+        'dev': dev_require,
       },
       scripts = [
         'scripts/prance',
