@@ -46,6 +46,7 @@ autosummary_generate = True
 
 # Autodoc
 autodoc_member_order = 'groupwise'
+autodoc_mock_imports = ['icu']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
