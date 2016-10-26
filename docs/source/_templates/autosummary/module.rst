@@ -2,10 +2,6 @@
 {{ underline }}
 
 .. toctree::
-   :maxdepth: 4
-
-.. autosummary::
-   :toctree: _autosummary
 
 .. automodule:: {{ fullname }}
    :members:
@@ -13,17 +9,11 @@
    :inherited-members:
    :show-inheritance:
 
+{% block exceptions %}
 {% if exceptions: %}
 
-Exception Summary
------------------
-
-{% for excname in exceptions: %}
-.. autosummary:: {{ excname }}
-{% endfor %}
-
-Exception Details
------------------
+Exceptions
+----------
 
 {% for excname in exceptions: %}
 .. autoexception:: {{ excname }}
@@ -33,18 +23,13 @@ Exception Details
 {% endfor %}
 
 {% endif %}
+{% endblock %}
 
+{% block classes %}
 {% if classes %}
 
-Class Summary
--------------
-
-{% for classname in classes: %}
-.. autosummary:: {{ classname }}
-{% endfor %}
-
-Class Details
--------------
+Classes
+-------
 
 {% for classname in classes: %}
 .. autoclass:: {{ classname }}
@@ -55,28 +40,17 @@ Class Details
 {% endfor %}
 
 {% endif %}
+{% endblock %}
 
+{% block functions %}
 {% if functions %}
 
-Function Summary
-----------------
-
-{% for func in functions: %}
-.. autosummary:: {{ func }}
-{% endfor %}
-
-Function Details
-----------------
+Functions
+---------
 
 {% for func in functions: %}
 .. autofunction:: {{ func }}
 {% endfor %}
 
 {% endif %}
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+{% endblock %}
