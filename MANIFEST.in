@@ -1,6 +1,14 @@
 include LICENSE.txt
 include README.rst
+include requirements.txt
+include tox.ini
 
 recursive-include tests *
-recursive-exclude * __pycache__
-recursive-exclude * *.py[co]
+recursive-include docs *
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude .token
+global-exclude .*.sw*
+
+prune docs/source/api
