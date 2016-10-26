@@ -6,16 +6,18 @@
 Documentation of prance |release|
 ============================================
 
+Swagger/OpenAPI 2.0 Parser for Python
+
 .. include:: ../../README.rst
 
 .. toctree::
-   :maxdepth: 4
+   :hidden:
 
 API/Modules
 ===========
 
 .. autosummary::
-   :toctree: _autosummary
+   :toctree: api
 
    prance
    prance.mixins
@@ -24,11 +26,3 @@ API/Modules
    prance.util.iterators
    prance.util.resolver
    prance.util.url
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
