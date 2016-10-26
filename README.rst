@@ -1,8 +1,3 @@
-Prance
-======
-
-Swagger/OpenAPI 2.0 Parser for Python
-
 |Build Status| |PyPI|
 
 Prances provices parsers for `Swagger/OpenAPI
@@ -120,7 +115,7 @@ License
 =======
 
 Licensed under MITNFA (MIT +no-false-attribs) License. See the
-`LICENSE.txt <./LICENSE.txt>`__ file for details.
+`LICENSE.txt <https://github.com/jfinkhaeuser/prance/blob/master/LICENSE.txt>`__ file for details.
 
 .. |Build Status| image:: https://travis-ci.org/jfinkhaeuser/prance.svg?branch=master
    :target: https://travis-ci.org/jfinkhaeuser/prance
