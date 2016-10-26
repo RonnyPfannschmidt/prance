@@ -15,4 +15,4 @@ touch .
 
 git add -A .
 git commit -m "Rebuild pages at ${rev}"
-git push --force --quiet "https://${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git" master:gh-pages
+git push --force --quiet "https://${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git" master:gh-pages
