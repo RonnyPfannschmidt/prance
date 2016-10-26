@@ -59,7 +59,8 @@ references, in case you prefer that.
     parser.specification  # contains specs as a dict still containing JSON references
 
 Largely, that's it. There is a whole slew of utility code that you may
-or may not find useful, too. Look at the full documentation for details.
+or may not find useful, too. Look at the `full documentation
+<https://jfinkhaeuser.github.io/prance/#api-modules>`__ for details.
 
 Setup
 -----
