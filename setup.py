@@ -56,7 +56,7 @@ if __name__ == '__main__':
         'PyYAML~=3.11',
         'swagger-spec-validator~=2.0',
         'dpath~=1.4',
-        'requests~=2.11',
+        'requests~=2.12',
         'six~=1.10',
         'click~=6.6',
       ],
