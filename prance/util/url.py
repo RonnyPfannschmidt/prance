@@ -7,7 +7,7 @@ __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 
-from six.moves.urllib.parse import urlparse, ParseResult
+import six.moves.urllib.parse as parse
 
 
 class ResolutionError(LookupError):
@@ -26,7 +26,7 @@ def urlresource(url):
   :rtype: str
   """
   res_list = list(url)[0:3] + [None, None, None]
-  return ParseResult(*res_list).geturl()
+  return parse.ParseResult(*res_list).geturl()
 
 
 def absurl(url, relative_to = None):
@@ -49,7 +49,7 @@ def absurl(url, relative_to = None):
   # Parse input URL, if necessary
   parsed = url
   if not isinstance(parsed, tuple):
-    parsed = urlparse(url)
+    parsed = parse.urlparse(url)
 
   # Any non-file scheme we just return immediately.
   if parsed.scheme not in (None, '', 'file'):
@@ -58,7 +58,7 @@ def absurl(url, relative_to = None):
   # Parse up the reference URL
   reference = relative_to
   if reference and not isinstance(reference, tuple):
-    reference = urlparse(reference)
+    reference = parse.urlparse(reference)
 
   # If the input URL has no path, we assume only its fragment matters.
   # That is, we'll have to set the fragment of the reference URL to that
@@ -90,7 +90,7 @@ def absurl(url, relative_to = None):
     result_list[2] = abspath(parsed.path, reference.path)
 
   # Reassemble the result and return it
-  result = ParseResult(*result_list)
+  result = parse.ParseResult(*result_list)
   return result
 
 

@@ -6,7 +6,7 @@ __copyright__ = 'Copyright (c) 2016 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
-from .url import absurl, fetch_url, urlresource, ResolutionError
+import prance.util.url as _url
 
 
 class RefResolver(object):
@@ -36,8 +36,8 @@ class RefResolver(object):
     self.url = url
 
     if self.url:
-      self.parsed_url = absurl(self.url)
-      self._url_key = urlresource(self.parsed_url)
+      self.parsed_url = _url.absurl(self.url)
+      self._url_key = _url.urlresource(self.parsed_url)
     else:
       self.parsed_url = self._url_key = None
 
@@ -63,8 +63,8 @@ class RefResolver(object):
       # we're recursing and shouldn't call _dereferencing_iterator.
       recursion_key = (parent_path, ref_path)
       if recursion_key in self.__recursion_protection:
-        raise ResolutionError('Recursion detected trying to resolve "%s"!' % (
-            refstring, ))
+        raise _url.ResolutionError('Recursion detected trying to resolve "%s"!'
+            % (refstring, ))
       self.__recursion_protection.add(recursion_key)
 
       # If the referenced object contains any reference, yield all the items
@@ -108,7 +108,7 @@ class RefResolver(object):
     dereferenced object.
     """
     # Parse URL
-    parsed_url = absurl(urlstring, self.parsed_url)
+    parsed_url = _url.absurl(urlstring, self.parsed_url)
 
     # In order to start dereferencing anything in the referenced URL, we have
     # to read and parse it, of course.
@@ -125,7 +125,8 @@ class RefResolver(object):
       try:
         value = dutil.get(referenced, obj_path)
       except KeyError:
-        raise ResolutionError('Cannot resolve reference "%s"!' % (urlstring, ))
+        raise _url.ResolutionError('Cannot resolve reference "%s"!'
+            % (urlstring, ))
     return parsed_url, obj_path, value
 
   def _fetch_url(self, url):
@@ -134,7 +135,7 @@ class RefResolver(object):
 
     Uses a caching mechanism so that each URL is only fetched once.
     """
-    url_key = urlresource(url)
+    url_key = _url.urlresource(url)
 
     # Same URL key means it's the current file
     if url_key == self._url_key:
@@ -145,7 +146,7 @@ class RefResolver(object):
 
     # If we don't have a parser for the url yet, create and cache one.
     if not resolver:
-      resolver = RefResolver(fetch_url(url), url)
+      resolver = RefResolver(_url.fetch_url(url), url)
       self.__reference_cache[url_key] = resolver
 
     # Resolve references *after* (potentially) adding the resolver to the
