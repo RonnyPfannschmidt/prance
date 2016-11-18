@@ -44,7 +44,7 @@ def canonical_filename(filename):
   """
   Return the canonical version of a file name.
 
-  The canonical version isdefined as the absolute path, and all file system
+  The canonical version is defined as the absolute path, and all file system
   links dereferenced.
 
   :param str filename: The filename to make canonical.
