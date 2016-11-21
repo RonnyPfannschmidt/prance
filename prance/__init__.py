@@ -29,26 +29,28 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
   functionality.
   """
 
-  def __init__(self, filename = None, spec_string = None, lazy = False):
+  def __init__(self, url = None, spec_string = None, lazy = False):
     """
     Load, parse and validate specs.
 
-    You can either provide a filename or a spec string, but not both.
+    You can either provide a URL or a spec string, but not both.
 
-    :param str filename: The name of the file to load.
+    :param str url: The URL of the file to load. URLs missing a scheme are
+      assumed to be file URLs.
     :param str spec_string: The specifications to parse.
     :param bool lazy: If true, do not load or parse anything. Instead wait for
       the parse function to be invoked.
     """
-    assert filename or spec_string and not (filename and spec_string), \
-        'You must provide either a file name to read, or a spec string to '\
+    assert url or spec_string and not (url and spec_string), \
+        'You must provide either a URL to read, or a spec string to '\
         'parse, but not both!'
 
     # Keep the parameters around for later use
-    self.filename = None
-    if filename:
-      from .util.fs import canonical_filename
-      self.filename = canonical_filename(filename)
+    self.url = None
+    if url:
+      from .util.url import absurl
+      import os
+      self.url = absurl(url, os.getcwd())
 
     self._spec_string = spec_string
 
@@ -64,18 +66,18 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     When the BaseParser was lazily created, load and parse now.
 
     You can use this function to re-use an existing parser for parsing
-    multiple files by setting its filename property and then invoking this
+    multiple files by setting its url property and then invoking this
     function.
     """
     # If we have a file name, we need to read that in.
-    if self.filename:
-      from .util.fs import read_file
-      self._spec_string = read_file(self.filename)
+    if self.url:
+      from .util.url import fetch_url
+      self.specification = fetch_url(self.url)
 
     # If we have a spec string, try to parse it.
     if self._spec_string:
       from .util.formats import parse_spec
-      self.specification = parse_spec(self._spec_string, self.filename)
+      self.specification = parse_spec(self._spec_string, self.url)
 
     # If we have a parsed spec, convert it to JSON. Then we can validate
     # the JSON. At this point, we *require* a parsed specification to exist,
@@ -93,7 +95,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 class ResolvingParser(BaseParser):
   """The ResolvingParser extends BaseParser with resolving references."""
 
-  def __init__(self, filename = None, spec_string = None, lazy = False):
+  def __init__(self, url = None, spec_string = None, lazy = False):
     """
     See :py:class:`BaseParser`.
 
@@ -103,7 +105,7 @@ class ResolvingParser(BaseParser):
     """
     BaseParser.__init__(
         self,
-        filename = filename,
+        url = url,
         spec_string = spec_string,
         lazy = lazy
     )
@@ -115,7 +117,7 @@ class ResolvingParser(BaseParser):
     # http://swagger.io/specification/#referenceObject
     # We therefore use our own resolver first, and validate later.
     from .util.resolver import RefResolver
-    resolver = RefResolver(self.specification, self.filename)
+    resolver = RefResolver(self.specification, self.url)
     resolver.resolve_references()
     self.specification = resolver.specs
 

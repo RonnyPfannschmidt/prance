@@ -47,11 +47,11 @@ def cli():
            'of the input file.'
 )
 @click.argument(
-    'filenames',
-    type = click.Path(exists = True),
+    'urls',
+    type = click.Path(exists = False),
     nargs = -1,
 )
-def validate(resolve, output_file, filenames):
+def validate(resolve, output_file, urls):
   """
   Validate the given spec or specs.
 
@@ -68,22 +68,22 @@ def validate(resolve, output_file, filenames):
   specified.
   """
   # Ensure that when an output file is given, only one input file exists.
-  if output_file and len(filenames) > 1:
-    raise click.UsageError('If --output-file is given, only one input file '
-        'name is allowed!')
+  if output_file and len(urls) > 1:
+    raise click.UsageError('If --output-file is given, only one input URL '
+        'is allowed!')
 
   # Process files
-  for name in filenames:
-    formatted = click.format_filename(name)
+  for url in urls:
+    formatted = click.format_filename(url)
     click.echo('Processing "%s"...' % (formatted, ))
 
     # Create parser to use
     if resolve:
       click.echo(' -> Resolving external references.')
-      parser = prance.ResolvingParser(name, lazy = True)
+      parser = prance.ResolvingParser(url, lazy = True)
     else:
       click.echo(' -> Not resolving external references.')
-      parser = prance.BaseParser(name, lazy = True)
+      parser = prance.BaseParser(url, lazy = True)
 
     # Try parsing
     from prance.util.url import ResolutionError
