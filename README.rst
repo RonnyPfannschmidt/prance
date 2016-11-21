@@ -32,6 +32,13 @@ external references in) specs:
     # Validates and resolves, and writes the results to output.yaml
     $ prance validate -o output.yaml path/to/swagger.yml
 
+    # Fetch URL, validate and resolve.
+    $ prance validate http://petstore.swagger.io/v2/swagger.json
+    Processing "http://petstore.swagger.io/v2/swagger.json"...
+     -> Resolving external references.
+    Validates OK as Swagger/OpenAPI 2.0!
+
+
 
 Code
 ----
@@ -62,21 +69,6 @@ URLs can also be parsed:
 Largely, that's it. There is a whole slew of utility code that you may
 or may not find useful, too. Look at the `full documentation
 <https://jfinkhaeuser.github.io/prance/#api-modules>`__ for details.
-
-Command Line
-------------
-
-Prance comes with a simple command line tool for manipulating specs; currently,
-only validation and writing of resolved specs is supported. The CLI tool
-accepts file names and URLs.
-
-.. code:: bash
-
-    $ prance validate http://petstore.swagger.io/v2/swagger.json
-    Processing "http://petstore.swagger.io/v2/swagger.json"...
-     -> Resolving external references.
-    Validates OK as Swagger/OpenAPI 2.0!
-    $
 
 Setup
 -----
