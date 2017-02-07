@@ -1,6 +1,6 @@
 |Build Status| |PyPI|
 
-Prances provices parsers for `Swagger/OpenAPI
+Prance provides parsers for `Swagger/OpenAPI
 2.0 <http://swagger.io/specification/>`__ API specifications in Python.
 It uses
 `swagger\_spec\_validator <https://github.com/Yelp/swagger_spec_validator>`__
