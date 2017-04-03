@@ -21,6 +21,15 @@ def with_externals_parser():
   return ResolvingParser('tests/with_externals.yaml')
 
 
+@pytest.fixture
+def petstore_parser_from_string():
+  yaml = None
+  with open('tests/petstore.yaml', 'rb') as f:
+    x = f.read()
+    yaml = x.decode('utf8')
+  return ResolvingParser(spec_string = yaml)
+
+
 def test_basics(petstore_parser):
   assert petstore_parser.specification, 'No specs loaded!'
 
@@ -56,3 +65,8 @@ def test_with_externals_resolve(with_externals_parser):
   res = with_externals_parser.specification['paths']['/pets']['get']
   res = res['responses']
   assert 'message' in res['default']['schema']['required']
+
+
+def test_relative_urls_from_string(petstore_parser_from_string):
+  # This must succeed
+  assert petstore_parser_from_string.yaml(), 'Did not get YAML representation of specs!'

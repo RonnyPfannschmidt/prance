@@ -20,6 +20,9 @@ from swagger_spec_validator.common import SwaggerValidationError  # noqa: F401
 
 from . import mixins
 
+# Placeholder for when no URL is specified for the main spec file
+_PLACEHOLDER_URL = 'file:///__placeholder_url__.yaml'
+
 
 class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
   """
@@ -51,6 +54,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       from .util.url import absurl
       import os
       self.url = absurl(url, os.getcwd())
+    else:
+      self.url = _PLACEHOLDER_URL
 
     self._spec_string = spec_string
 
@@ -70,7 +75,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     function.
     """
     # If we have a file name, we need to read that in.
-    if self.url:
+    if self.url and self.url != _PLACEHOLDER_URL:
       from .util.url import fetch_url
       self.specification = fetch_url(self.url)
 

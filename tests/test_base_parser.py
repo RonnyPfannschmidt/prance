@@ -18,6 +18,15 @@ def petstore_parser():
   return BaseParser('tests/petstore.yaml')
 
 
+@pytest.fixture
+def petstore_parser_from_string():
+  yaml = None
+  with open('tests/petstore.yaml', 'rb') as f:
+    x = f.read()
+    yaml = x.decode('utf8')
+  return BaseParser(spec_string = yaml)
+
+
 def test_load_fail():
   with pytest.raises(FileNotFoundError):
     BaseParser('tests/missing.yaml')
@@ -71,3 +80,8 @@ def test_cache_specs_mixin(petstore_parser):
   # However, when the specs change, then so must the YAML representation.
   petstore_parser.specification['foo'] = 'bar'
   assert yaml != petstore_parser.yaml(), 'YAML representation did not change!'
+
+
+def test_relative_urls_from_string(petstore_parser_from_string):
+  # This must succeed
+  assert petstore_parser_from_string.yaml(), 'Did not get YAML representation of specs!'
