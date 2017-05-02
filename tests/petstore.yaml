@@ -22,7 +22,7 @@ paths:
       parameters:
         - name: limit
           in: query
-          description: How mäny items to return at one time (max 100)
+          description: How mäny itemš to return at one time (max 100)
           required: false
           type: integer
           format: int32
