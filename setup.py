@@ -14,15 +14,19 @@ if __name__ == '__main__':
     from distutils.core import setup, find_packages
 
   dev_require = [
-    'tox>=2.6',
+    'tox>=2.7',
     'bumpversion>=0.5',
     'pytest>=3.0',
     'pytest-cov>=2.4',
     'flake8>=3.3',
     'pep8-naming>=0.4',
     'flake8-quotes>=0.9',
-    'flake8_docstrings>=1.0',
+    'flake8_docstrings>=1.1',
     'sphinx>=1.5',
+  ]
+
+  icu_require = [
+    'PyICU~=1.9',
   ]
 
   # Run setup
@@ -52,7 +56,7 @@ if __name__ == '__main__':
       packages = find_packages(exclude = ['ez_setup', 'examples', 'tests']),
       include_package_data = True,
       install_requires = [
-        'PyICU~=1.9',
+        'chardet~=3.0',
         'PyYAML~=3.12',
         'swagger-spec-validator~=2.1',
         'dpath~=1.4',
@@ -62,6 +66,7 @@ if __name__ == '__main__':
       ],
       extras_require = {
         'dev': dev_require,
+        'icu': icu_require,
       },
       scripts = [
         'scripts/prance',

@@ -98,8 +98,22 @@ def detect_encoding(filename, default_to_utf8 = True, **kwargs):
     encoding = 'utf-8-sig'
   else:
     # Detect encoding using the best detector available
-    import icu
-    encoding = icu.CharsetDetector(raw).detect().getName().lower()
+    try:
+      # First try ICU. ICU will report ASCII in the first 32 Bytes as
+      # ISO-8859-1, which isn't exactly wrong, but maybe optimistic.
+      import icu
+      encoding = icu.CharsetDetector(raw).detect().getName().lower()
+    except ImportError:
+      # If that doesn't work, try chardet - it's not got native components,
+      # which is a bonus in some environments, but it's not as precise.
+      import chardet
+      encoding = chardet.detect(raw)['encoding'].lower()
+
+      # Chardet is more brutal in that it reports ASCII if none of the first
+      # Bytes contain high bits. To emulate ICU, we just bump up the detected
+      # encoding.
+      if encoding == 'ascii':
+        encoding = 'iso-8859-1'
 
     # Return UTF-8 if that is what we're supposed to default to
     if default_to_utf8 and encoding in ('ascii', 'iso-8859-1'):
