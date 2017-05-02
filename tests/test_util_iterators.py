@@ -9,14 +9,45 @@ __all__ = ()
 
 from prance.util import iterators
 
+def test_item_iterator():
+  tester = {
+    'foo': 42,
+    'bar': {
+      'some': 'dict',
+    },
+    'baz': [
+      { 1: 2 },
+      { 3: 4 },
+    ]
+  }
 
-def test_empty_dict():
+  frozen = tuple(iterators.item_iterator(tester))
+  assert len(frozen) == 9, "Iterator did not yield the correct number of items!"
+
+  # Test for a few paths
+  assert ((), tester) in frozen
+  assert (('bar', 'some'), 'dict') in frozen
+  assert (('baz', 0, 1), 2) in frozen
+  assert (('baz', 1), { 3: 4 }) in frozen
+
+
+def test_item_iterator_empty():
+  frozen = tuple(iterators.item_iterator({}))
+  assert len(frozen) == 1, "Must return at least the item itself!"
+  assert ((), {}) in frozen
+
+  frozen = tuple(iterators.item_iterator([]))
+  assert len(frozen) == 1, "Must return at least the item itself!"
+  assert ((), []) in frozen
+
+
+def test_reference_iterator_empty_dict():
   tester = {}
   frozen = tuple(iterators.reference_iterator(tester))
   assert len(frozen) == 0, 'Found items when it should not have!'
 
 
-def test_dict_without_references():
+def test_reference_iterator_dict_without_references():
   tester = {
     'foo': 42,
     'bar': 'baz',
@@ -30,7 +61,7 @@ def test_dict_without_references():
   assert len(frozen) == 0, 'Found items when it should not have!'
 
 
-def test_dict_with_references():
+def test_reference_iterator_dict_with_references():
   tester = {
     'foo': 42,
     'bar': 'baz',
