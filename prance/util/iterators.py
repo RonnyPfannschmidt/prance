@@ -15,7 +15,8 @@ def item_iterator(value, path = ()):
   item as the first value - in that, it behaves much like viewitems(). For list
   like values, the path is made up of numeric indices.
 
-  Given a spec such as this:
+  Given a spec such as this::
+
     spec = {
       'foo': 42,
       'bar': {
@@ -29,11 +30,13 @@ def item_iterator(value, path = ()):
 
   Here, (parts of) the yielded values would be:
 
+    ======== =============
     item     path
+    ======== =============
     [...]    ('baz',)
     { 1: 2 } ('baz', 0)
     2        ('baz', 0, 1)
-
+    ======== =============
 
   :param dict/list value: The specifications to iterate over.
   :return: An iterator over all items in the value.
