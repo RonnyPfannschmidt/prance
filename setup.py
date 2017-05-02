@@ -25,7 +25,7 @@ if __name__ == '__main__':
     'sphinx>=1.5',
   ]
 
-  unicode_require = [
+  icu_require = [
     'PyICU~=1.9',
   ]
 
@@ -66,7 +66,7 @@ if __name__ == '__main__':
       ],
       extras_require = {
         'dev': dev_require,
-        'unicode': unicode_require,
+        'icu': icu_require,
       },
       scripts = [
         'scripts/prance',
