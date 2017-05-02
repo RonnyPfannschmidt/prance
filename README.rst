@@ -1,4 +1,4 @@
-|Build Status| |PyPI|
+|Build Status| |PyPI| |Docs|
 
 Prance provides parsers for `Swagger/OpenAPI
 2.0 <http://swagger.io/specification/>`__ API specifications in Python.
@@ -134,3 +134,5 @@ Licensed under MITNFA (MIT +no-false-attribs) License. See the
    :target: https://travis-ci.org/jfinkhaeuser/prance
 .. |PyPI| image:: https://img.shields.io/pypi/v/prance.svg?maxAge=2592000
    :target: https://pypi.python.org/pypi/prance/
+.. |Docs| image:: https://readthedocs.org/projects/prance/badge/?version=latest
+   :target: http://prance.readthedocs.io/en/latest/
