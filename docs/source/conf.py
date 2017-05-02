@@ -74,7 +74,7 @@ author = 'Jens Finkhaeuser'
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-release = '0.4.0'
+release = '0.5.0'
 
 # The short X.Y version.
 import re
@@ -158,7 +158,7 @@ html_theme_options = {
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = 'prance v0.4.0'
+# html_title = 'prance v0.5.0'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
