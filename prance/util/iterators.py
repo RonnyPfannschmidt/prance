@@ -42,14 +42,16 @@ def item_iterator(value, path = ()):
   # Yield the top-level object, always
   yield path, value
 
-  # For dict and list like objects, we also need to yield each item recursively.
+  # For dict and list like objects, we also need to yield each item
+  # recursively.
   import collections
   import six
   if isinstance(value, collections.Mapping):
     for key, item in six.viewitems(value):
       for inner_path, inner in item_iterator(item, path + (key,)):
         yield inner_path, inner
-  elif isinstance(value, collections.Sequence) and not isinstance(value, six.string_types):
+  elif isinstance(value, collections.Sequence) and not isinstance(value,
+         six.string_types):
     for idx, item in enumerate(value):
       for inner_path, inner in item_iterator(item, path + (idx,)):
         yield inner_path, inner
@@ -74,8 +76,6 @@ def reference_iterator(specs, path = ()):
   # We need to iterate through the nested specification dict, so let's
   # start with an appropriate iterator. We can immediately optimize it by
   # only returning '$ref' items.
-  import collections
-
   for item_path, item in item_iterator(specs, path):
     if len(item_path) <= 0:
       continue
