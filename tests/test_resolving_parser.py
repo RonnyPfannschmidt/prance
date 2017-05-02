@@ -78,4 +78,6 @@ def test_relative_urls_from_string(petstore_parser_from_string):
 
 
 def test_issue_1_relative_path_references(issue_1_parser):
-  print("specs", issue_1_parser.specification)
+  # Must resolve references correctly
+  params = issue_1_parser.specification["paths"]["/test"]["parameters"]
+  assert 'id' in params[0]['schema']['required']
