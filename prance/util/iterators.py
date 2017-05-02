@@ -7,16 +7,52 @@ __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 
-def item_iterator(specs):
+def item_iterator(value, path = ()):
   """
-  Return item iterator over the specs.
+  Return item iterator over the a nested dict- or list-like object.
 
-  :param dict specs: The specifications to iterate over.
-  :return: An iterator over all items in the specs.
+  Returns each item value as the second item to unpack, and a tuple path to the
+  item as the first value - in that, it behaves much like viewitems(). For list
+  like values, the path is made up of numeric indices.
+
+  Given a spec such as this:
+    spec = {
+      'foo': 42,
+      'bar': {
+        'some': 'dict',
+      },
+      'baz': [
+        { 1: 2 },
+        { 3: 4 },
+      ]
+    }
+
+  Here, (parts of) the yielded values would be:
+
+    item     path
+    [...]    ('baz',)
+    { 1: 2 } ('baz', 0)
+    2        ('baz', 0, 1)
+
+
+  :param dict/list value: The specifications to iterate over.
+  :return: An iterator over all items in the value.
   :rtype: iterator
   """
+  # Yield the top-level object, always
+  yield path, value
+
+  # For dict and list like objects, we also need to yield each item recursively.
+  import collections
   import six
-  return six.viewitems(specs)
+  if isinstance(value, collections.Mapping):
+    for key, item in six.viewitems(value):
+      for inner_path, inner in item_iterator(item, path + (key,)):
+        yield inner_path, inner
+  elif isinstance(value, collections.Sequence) and not isinstance(value, six.string_types):
+    for idx, item in enumerate(value):
+      for inner_path, inner in item_iterator(item, path + (idx,)):
+        yield inner_path, inner
 
 
 def reference_iterator(specs, path = ()):
@@ -29,7 +65,7 @@ def reference_iterator(specs, path = ()):
     - The value
     - The path to the item. This is a tuple of all the item's ancestors,
       in sequence, so that you can reasonably easily find the containing
-      item.
+      item. It does not include the final '$ref' key.
 
   :param dict specs: The specifications to iterate over.
   :return: An iterator over all references in the specs.
@@ -40,9 +76,9 @@ def reference_iterator(specs, path = ()):
   # only returning '$ref' items.
   import collections
 
-  for key, value in item_iterator(specs):
-    if isinstance(value, collections.Mapping):
-      for inner in reference_iterator(value, path + (key,)):
-        yield inner
-    elif key == '$ref':
-      yield key, value, path
+  for item_path, item in item_iterator(specs, path):
+    if len(item_path) <= 0:
+      continue
+    key = item_path[-1]
+    if key == '$ref':
+      yield key, item, item_path[:-1]
