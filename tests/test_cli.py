@@ -13,7 +13,7 @@ from click.testing import CliRunner
 from prance import cli
 
 
-@pytest.fixture()
+@pytest.fixture
 def runner():
   return CliRunner()
 
