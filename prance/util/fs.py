@@ -61,7 +61,7 @@ def canonical_filename(filename):
       # os.readlink doesn't exist in windows python2.7
       try:
         deref_path = os.readlink(path)
-      except AttributeError:
+      except AttributeError:  # pragma: no cover
         return path
       path = os.path.join(p, deref_path)
     except OSError:
