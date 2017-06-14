@@ -1,1 +1,1 @@
--e .[dev,unicode]
+-e .[dev,icu]

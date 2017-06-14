@@ -16,13 +16,13 @@ if __name__ == '__main__':
   dev_require = [
     'tox>=2.7',
     'bumpversion>=0.5',
-    'pytest>=3.0',
+    'pytest>=3.1',
     'pytest-cov>=2.4',
     'flake8>=3.3',
     'pep8-naming>=0.4',
     'flake8-quotes>=0.9',
     'flake8_docstrings>=1.1',
-    'sphinx>=1.5',
+    'sphinx>=1.6',
   ]
 
   icu_require = [
@@ -60,7 +60,7 @@ if __name__ == '__main__':
         'PyYAML~=3.12',
         'swagger-spec-validator~=2.1',
         'dpath~=1.4',
-        'requests~=2.13',
+        'requests~=2.17',
         'six~=1.10',
         'click~=6.7',
       ],
