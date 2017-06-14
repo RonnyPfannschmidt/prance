@@ -2,7 +2,7 @@
 """This submodule contains file system utilities for Prance."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016 Jens Finkhaeuser'
+__copyright__ = 'Copyright (c) 2016-2017 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
