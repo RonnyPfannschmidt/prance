@@ -9,7 +9,7 @@ __all__ = ()
 import pytest
 
 from prance import ResolvingParser
-
+from prance import SwaggerValidationError
 
 @pytest.fixture
 def petstore_parser():
@@ -81,3 +81,17 @@ def test_issue_1_relative_path_references(issue_1_parser):
   # Must resolve references correctly
   params = issue_1_parser.specification["paths"]["/test"]["parameters"]
   assert 'id' in params[0]['schema']['required']
+
+
+def test_issue_5_integer_keys():
+  # Must fail in implicit strict mode.
+  with pytest.raises(SwaggerValidationError):
+    ResolvingParser('tests/issue_5.yaml')
+
+  # Must fail in explicit strict mode.
+  with pytest.raises(SwaggerValidationError):
+    ResolvingParser('tests/issue_5.yaml', strict = True)
+
+  # Must succeed in non-strict/lenient mode
+  parser = ResolvingParser('tests/issue_5.yaml', strict = False)
+  assert '200' in parser.specification['paths']['/test']['post']['responses']

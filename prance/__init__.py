@@ -32,7 +32,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
   functionality.
   """
 
-  def __init__(self, url = None, spec_string = None, lazy = False):
+  def __init__(self, url = None, spec_string = None, lazy = False, **kwargs):
     """
     Load, parse and validate specs.
 
@@ -43,6 +43,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     :param str spec_string: The specifications to parse.
     :param bool lazy: If true, do not load or parse anything. Instead wait for
       the parse function to be invoked.
+    :param bool strict: [optional] if False, accepts non-String keys by
+      stringifying them before validation. Defaults to True.
     """
     assert url or spec_string and not (url and spec_string), \
         'You must provide either a URL to read, or a spec string to '\
@@ -61,6 +63,9 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 
     # Initialize variables we're filling later
     self.specification = None
+
+    # Add kw args as options
+    self._options = kwargs
 
     # Start parsing if lazy mode is not requested.
     if not lazy:
@@ -84,6 +89,11 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       from .util.formats import parse_spec
       self.specification = parse_spec(self._spec_string, self.url)
 
+    # Perform some sanitization in lenient mode.
+    if not self._options.get('strict', True):
+      from .util import stringify_keys
+      self.specification = stringify_keys(self.specification)
+
     # If we have a parsed spec, convert it to JSON. Then we can validate
     # the JSON. At this point, we *require* a parsed specification to exist,
     # so we might as well assert.
@@ -100,7 +110,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 class ResolvingParser(BaseParser):
   """The ResolvingParser extends BaseParser with resolving references."""
 
-  def __init__(self, url = None, spec_string = None, lazy = False):
+  def __init__(self, url = None, spec_string = None, lazy = False, **kwargs):
     """
     See :py:class:`BaseParser`.
 
@@ -112,7 +122,8 @@ class ResolvingParser(BaseParser):
         self,
         url = url,
         spec_string = spec_string,
-        lazy = lazy
+        lazy = lazy,
+        **kwargs
     )
 
   def _validate(self):
