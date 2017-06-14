@@ -37,6 +37,12 @@ def cli():
            'do so.'
 )
 @click.option(
+    '--strict/--no-strict',
+    default = True,
+    help = 'Be strict or lenient in validating specs. Strict validation '
+           'rejects non-string spec keys, for example in response codes.'
+)
+@click.option(
     '--output-file', '-o',
     type = click.Path(exists = False),
     default = None,
@@ -51,7 +57,7 @@ def cli():
     type = click.Path(exists = False),
     nargs = -1,
 )
-def validate(resolve, output_file, urls):
+def validate(resolve, strict, output_file, urls):
   """
   Validate the given spec or specs.
 
@@ -80,10 +86,10 @@ def validate(resolve, output_file, urls):
     # Create parser to use
     if resolve:
       click.echo(' -> Resolving external references.')
-      parser = prance.ResolvingParser(url, lazy = True)
+      parser = prance.ResolvingParser(url, lazy = True, strict = strict)
     else:
       click.echo(' -> Not resolving external references.')
-      parser = prance.BaseParser(url, lazy = True)
+      parser = prance.BaseParser(url, lazy = True, strict = strict)
 
     # Try parsing
     from prance.util.url import ResolutionError
