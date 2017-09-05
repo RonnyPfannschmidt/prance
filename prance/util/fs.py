@@ -14,6 +14,39 @@ if six.PY2:
 else:
   FileNotFoundError = FileNotFoundError  # pragma: no cover
 
+def from_posix(fname):
+  """
+  Convert a path from posix-like, to the platform format.
+
+  :param str fname: The filename in posix-like format.
+  :return: The filename in the format of the platform.
+  :rtype: str
+  """
+
+  import sys
+  if sys.platform == "win32":
+    if fname[0] == "/":
+      fname = fname[1:]
+    fname = fname.replace("/", "\\")
+  return fname
+
+def to_posix(fname):
+  """
+  Convert a path to posix-like format.
+
+  :param str fname: The filename to convert to posix format.
+  :return: The filename in posix-like format.
+  :rtype: str
+  """
+  
+  import sys
+  if sys.platform == "win32":
+    import os.path
+    if os.path.isabs(fname):
+      fname = "/" + fname
+    fname = fname.replace("\\", "/")
+  return fname
+  
 
 def abspath(filename, relative_to = None):
   """
@@ -29,15 +62,17 @@ def abspath(filename, relative_to = None):
   """
   # Create filename relative to the reference, if it exists.
   import os.path
-  fname = filename
+  fname = from_posix(filename)
   if relative_to and not os.path.isabs(fname):
+    relative_to = from_posix(relative_to)
     if os.path.isdir(relative_to):
       fname = os.path.join(relative_to, fname)
     else:
       fname = os.path.join(os.path.dirname(relative_to), fname)
 
   # Make the result canonical
-  return canonical_filename(fname)
+  fname =  canonical_filename(fname)
+  return to_posix(fname)
 
 
 def canonical_filename(filename):
@@ -53,7 +88,7 @@ def canonical_filename(filename):
   """
   import os, os.path
 
-  path = filename
+  path = from_posix(filename)
   while True:
     path = os.path.abspath(path)
     try:
@@ -86,6 +121,7 @@ def detect_encoding(filename, default_to_utf8 = True, **kwargs):
   """
   # Read no more than 32 bytes or the file's size
   import os.path
+  filename = from_posix(filename)
   file_len = os.path.getsize(filename)
   read_len = min(32, file_len)
 
@@ -137,6 +173,7 @@ def read_file(filename, encoding = None):
   :return: The file contents.
   :rtype: unicode string
   """
+  filename = from_posix(filename)
   if not encoding:
     # Detect encoding
     encoding = detect_encoding(filename)
@@ -163,5 +200,5 @@ def write_file(filename, contents, encoding = None):
     encoding = 'utf-8'
 
   import io
-  with io.open(filename, mode = 'w', encoding = encoding) as handle:
+  with io.open(from_posix(filename), mode = 'w', encoding = encoding) as handle:
     handle.write(contents)

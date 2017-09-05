@@ -8,6 +8,7 @@ __all__ = ()
 
 
 import os
+import sys
 
 import pytest
 
@@ -16,23 +17,48 @@ from prance.util import fs
 
 def test_canonical():
   testname = 'tests/symlink_test'
-  res = fs.canonical_filename(testname)
-  expected = os.path.join(os.getcwd(), 'tests/with_externals.yaml')
-  assert res == expected
+  if sys.platform != "win32":
+    res = fs.canonical_filename(testname)
+    expected = os.path.join(os.getcwd(), 'tests/with_externals.yaml')
+    assert res == expected
 
+def test_to_posix_rel():
+  test = "tests/with_externals.yaml"
+  assert fs.to_posix(os.path.normpath(test)) == test
+
+def test_to_posix_abs():
+  if sys.platform == "win32":
+    test = "c:\\windows\\notepad.exe"
+    expected = "/c:/windows/notepad.exe"
+  else:
+    test = "/etc/passwd"
+    expected = test
+  assert fs.to_posix(test) == expected
+
+def test_from_posix_rel():
+  test = "tests/with_externals.yaml"
+  assert fs.from_posix(test) == os.path.normpath(test)
+
+def test_from_posix_abs():
+  if sys.platform == "win32":
+    test = "/c:/windows/notepad.exe"
+    expected = "c:\\windows\\notepad.exe"
+  else:
+    test = "/etc/passwd"
+    expected = test
+  assert fs.from_posix(test) == expected
 
 def test_abspath_basics():
-  testname = 'tests/with_externals.yaml'
+  testname = os.path.normpath('tests/with_externals.yaml')
   res = fs.abspath(testname)
-  expected = os.path.join(os.getcwd(), testname)
+  expected = fs.to_posix(os.path.join(os.getcwd(), testname))
   assert res == expected
-
 
 def test_abspath_relative():
   testname = 'error.json'
   relative = os.path.join(os.getcwd(), 'tests/with_externals.yaml')
   res = fs.abspath(testname, relative)
-  expected = os.path.join(os.getcwd(), 'tests', testname)
+  expected = fs.to_posix(os.path.join(os.getcwd(), 'tests', testname))
   assert res == expected
 
 
@@ -40,7 +66,7 @@ def test_abspath_relative_dir():
   testname = 'error.json'
   relative = os.path.join(os.getcwd(), 'tests')
   res = fs.abspath(testname, relative)
-  expected = os.path.join(os.getcwd(), 'tests', testname)
+  expected = fs.to_posix(os.path.join(os.getcwd(), 'tests', testname))
   assert res == expected
 
 

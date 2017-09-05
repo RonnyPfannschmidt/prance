@@ -21,7 +21,12 @@ from swagger_spec_validator.common import SwaggerValidationError  # noqa: F401
 from . import mixins
 
 # Placeholder for when no URL is specified for the main spec file
-_PLACEHOLDER_URL = 'file:///__placeholder_url__.yaml'
+import sys
+if sys.platform == "win32":
+  # Placeholder must be absolute
+  _PLACEHOLDER_URL = 'file:///c:/__placeholder_url__.yaml'
+else:
+  _PLACEHOLDER_URL = 'file:///__placeholder_url__.yaml'
 
 
 class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
@@ -54,8 +59,9 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     self.url = None
     if url:
       from .util.url import absurl
+      from .util.fs import abspath
       import os
-      self.url = absurl(url, os.getcwd())
+      self.url = absurl(url, abspath(os.getcwd()))
     else:
       self.url = _PLACEHOLDER_URL
 

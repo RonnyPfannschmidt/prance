@@ -6,6 +6,8 @@ __copyright__ = 'Copyright (c) 2016-2017 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
+import sys
+
 import pytest
 
 from prance.util import url
@@ -28,14 +30,23 @@ def test_absurl_http_fragment():
 
 
 def test_absurl_file():
-  base = 'file:///etc/passwd'
-  test = 'group'
+  if sys.platform == "win32":
+    base = 'file:///c:/windows/notepad.exe'
+    test = "regedit.exe"
+    expect = 'file:///c:/windows/regedit.exe'
+  else:
+    base = 'file:///etc/passwd'
+    test = 'group'
+    expect = 'file:///etc/group'
   res = url.absurl(test, base)
-  assert res.geturl() == 'file:///etc/group'
+  assert res.geturl() == expect
 
 
 def test_absurl_absfile():
-  test = 'file:///etc/passwd'
+  if sys.platform == "win32":
+    test = 'file:///c:/windows/notepad.exe'
+  else:
+    test = 'file:///etc/passwd'
   res = url.absurl(test)
   assert res.geturl() == test
 
