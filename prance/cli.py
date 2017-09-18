@@ -78,10 +78,15 @@ def validate(resolve, strict, output_file, urls):
     raise click.UsageError('If --output-file is given, only one input URL '
         'is allowed!')
 
+  import os.path
+  from prance.util import fs
   # Process files
   for url in urls:
     formatted = click.format_filename(url)
     click.echo('Processing "%s"...' % (formatted, ))
+    fsurl = fs.abspath(url)
+    if os.path.exists(fs.from_posix(fsurl)):
+      url = fsurl
 
     # Create parser to use
     if resolve:

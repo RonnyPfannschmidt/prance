@@ -72,9 +72,11 @@ if __name__ == '__main__':
         'dev': dev_require,
         'icu': icu_require,
       },
-      scripts = [
-        'scripts/prance',
-      ],
+      entry_points={
+          'console_scripts': [
+              'prance=prance.cli:cli',
+           ],
+      },
       zip_safe = True,
       test_suite = 'tests',
       setup_requires = ['pytest-runner'],
