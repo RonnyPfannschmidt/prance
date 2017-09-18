@@ -14,6 +14,7 @@ if six.PY2:
 else:
   FileNotFoundError = FileNotFoundError  # pragma: no cover
 
+
 def from_posix(fname):
   """
   Convert a path from posix-like, to the platform format.
@@ -22,13 +23,13 @@ def from_posix(fname):
   :return: The filename in the format of the platform.
   :rtype: str
   """
-
   import sys
-  if sys.platform == "win32":
-    if fname[0] == "/":
+  if sys.platform == 'win32':  # pragma: nocover
+    if fname[0] == '/':
       fname = fname[1:]
-    fname = fname.replace("/", "\\")
+    fname = fname.replace('/', '\\')
   return fname
+
 
 def to_posix(fname):
   """
@@ -38,15 +39,14 @@ def to_posix(fname):
   :return: The filename in posix-like format.
   :rtype: str
   """
-  
   import sys
-  if sys.platform == "win32":
+  if sys.platform == 'win32':  # pragma: nocover
     import os.path
     if os.path.isabs(fname):
-      fname = "/" + fname
-    fname = fname.replace("\\", "/")
+      fname = '/' + fname
+    fname = fname.replace('\\', '/')
   return fname
-  
+
 
 def abspath(filename, relative_to = None):
   """
@@ -71,7 +71,7 @@ def abspath(filename, relative_to = None):
       fname = os.path.join(os.path.dirname(relative_to), fname)
 
   # Make the result canonical
-  fname =  canonical_filename(fname)
+  fname = canonical_filename(fname)
   return to_posix(fname)
 
 
@@ -200,5 +200,6 @@ def write_file(filename, contents, encoding = None):
     encoding = 'utf-8'
 
   import io
-  with io.open(from_posix(filename), mode = 'w', encoding = encoding) as handle:
+  fname = from_posix(filename)
+  with io.open(fname, mode = 'w', encoding = encoding) as handle:
     handle.write(contents)

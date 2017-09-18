@@ -64,7 +64,7 @@ def absurl(url, relative_to = None):
   # That is, we'll have to set the fragment of the reference URL to that
   # of the input URL, and return the result.
   import os.path
-  from .fs import from_posix, to_posix, abspath
+  from .fs import from_posix, abspath
   result_list = None
   if not parsed.path:
     if not reference or not reference.path:
@@ -87,7 +87,8 @@ def absurl(url, relative_to = None):
 
     result_list = list(parsed)
     result_list[0] = 'file'  # in case it was empty
-    result_list[2] = abspath(from_posix(parsed.path), from_posix(reference.path))
+    result_list[2] = abspath(from_posix(parsed.path),
+            from_posix(reference.path))
 
   # Reassemble the result and return it
   result = parse.ParseResult(*result_list)

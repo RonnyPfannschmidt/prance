@@ -22,7 +22,7 @@ from . import mixins
 
 # Placeholder for when no URL is specified for the main spec file
 import sys
-if sys.platform == "win32":
+if sys.platform == 'win32':  # pragma: nocover
   # Placeholder must be absolute
   _PLACEHOLDER_URL = 'file:///c:/__placeholder_url__.yaml'
 else:
