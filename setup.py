@@ -14,13 +14,13 @@ if __name__ == '__main__':
     from distutils.core import setup, find_packages
 
   dev_require = [
-    'tox>=2.7',
+    'tox>=2.8',
     'bumpversion>=0.5',
-    'pytest>=3.1',
-    'pytest-cov>=2.4',
-    'flake8>=3.3',
+    'pytest>=3.2',
+    'pytest-cov>=2.5',
+    'flake8>=3.4',
     'pep8-naming>=0.4',
-    'flake8-quotes>=0.9',
+    'flake8-quotes>=0.10',
     'flake8_docstrings>=1.1',
     'sphinx>=1.6',
   ]
@@ -44,7 +44,11 @@ if __name__ == '__main__':
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Software Development :: Libraries :: Python Modules',
       ],
@@ -60,8 +64,8 @@ if __name__ == '__main__':
         'PyYAML~=3.12',
         'swagger-spec-validator~=2.1',
         'dpath~=1.4',
-        'requests~=2.17',
-        'six~=1.10',
+        'requests~=2.18',
+        'six~=1.11',
         'click~=6.7',
       ],
       extras_require = {
