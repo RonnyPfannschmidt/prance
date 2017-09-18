@@ -30,6 +30,8 @@ env:
     - CXX=g++-5
 addons:
   apt:
+    sources:
+      - sourceline: 'ppa:ubuntu-toolchain-r/test'
     packages:
       # install toolchains
       - gcc-5
