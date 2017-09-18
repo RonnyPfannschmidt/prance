@@ -71,59 +71,10 @@ Largely, that's it. There is a whole slew of utility code that you may
 or may not find useful, too. Look at the `full documentation
 <https://jfinkhaeuser.github.io/prance/#api-modules>`__ for details.
 
-Setup
------
+Contributing
+============
 
-Use
-`virtualenv <http://docs.python-guide.org/en/latest/dev/virtualenvs/>`__
-to create a virtual environment and change to it or not, as you see fit.
-
-Then install the requirements:
-
-.. code:: bash
-
-    $ pip install -r requirements.txt
-
-Documentation
--------------
-
-After setup, run the following to generate documentation:
-
-.. code:: bash
-
-    $ python setup.py build_sphinx
-
-Development
------------
-
-Test Execution
-~~~~~~~~~~~~~~
-
-Run the whole test suite:
-
-.. code:: bash
-
-    $ python setup.py test
-
-Run a single test scenario:
-
-.. code:: bash
-
-    $ pytest tests/test_resolving_parser.py::test_basics
-
-Run tests on multiple Python versions:
-
-.. code:: bash
-
-    $ tox
-
-Run tests on Python 2.7:
-
-.. code:: bash
-
-    $ tox -e py27
-
-A simple test coverage report is automatically generated.
+See `CONTRIBUTING.md <https://github.com/jfinkhaeuser/prance/blob/master/CONTRIBUTING.md>`__ for details.
 
 License
 =======
