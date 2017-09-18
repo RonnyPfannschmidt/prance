@@ -76,6 +76,6 @@ Some things that will increase the chance that your pull request is accepted:
 
 * Write tests.
 * Follow our style guide. Running the tests runs flake8, our style guide checker.
-* Write a [good commit message]
+* Write a [good commit message][commit].
 
 [commit]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
