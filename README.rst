@@ -139,9 +139,9 @@ Licensed under MITNFA (MIT +no-false-attribs) License. See the
    :target: https://pypi.python.org/pypi/prance/
 .. |PyPI| image:: https://img.shields.io/pypi/v/prance.svg
    :target: https://pypi.python.org/pypi/prance/
-.. |Package Format| image:: https://img.shields.io/pypi/format/Django.svg
+.. |Package Format| image:: https://img.shields.io/pypi/format/prance.svg
    :target: https://pypi.python.org/pypi/prance/
-.. |Python Versions| image:: https://img.shields.io/pypi/pyversions/Django.svg
+.. |Python Versions| image:: https://img.shields.io/pypi/pyversions/prance.svg
    :target: https://pypi.python.org/pypi/prance/
-.. |Package Status| image:: https://img.shields.io/pypi/status/Django.svg
+.. |Package Status| image:: https://img.shields.io/pypi/status/prance.svg
    :target: https://pypi.python.org/pypi/prance/
