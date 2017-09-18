@@ -1,4 +1,5 @@
-|Build Status| |PyPI| |Docs|
+|Build Status| |Docs| |License|
+|PyPI| |Python Versions| |Package Format| |Package Status|
 
 Prance provides parsers for `Swagger/OpenAPI
 2.0 <http://swagger.io/specification/>`__ API specifications in Python.
@@ -132,7 +133,15 @@ Licensed under MITNFA (MIT +no-false-attribs) License. See the
 
 .. |Build Status| image:: https://travis-ci.org/jfinkhaeuser/prance.svg?branch=master
    :target: https://travis-ci.org/jfinkhaeuser/prance
-.. |PyPI| image:: https://img.shields.io/pypi/v/prance.svg?maxAge=2592000
-   :target: https://pypi.python.org/pypi/prance/
 .. |Docs| image:: https://readthedocs.org/projects/prance/badge/?version=latest
    :target: http://prance.readthedocs.io/en/latest/
+.. |License| image:: https://img.shields.io/pypi/l/prance.svg
+   :target: https://pypi.python.org/pypi/prance/
+.. |PyPI| image:: https://img.shields.io/pypi/v/prance.svg
+   :target: https://pypi.python.org/pypi/prance/
+.. |Package Format| image:: https://img.shields.io/pypi/format/Django.svg
+   :target: https://pypi.python.org/pypi/prance/
+.. |Python Versions| image:: https://img.shields.io/pypi/pyversions/Django.svg
+   :target: https://pypi.python.org/pypi/prance/
+.. |Package Status| image:: https://img.shields.io/pypi/status/Django.svg
+   :target: https://pypi.python.org/pypi/prance/
