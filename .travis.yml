@@ -28,8 +28,9 @@ env:
     - secure: OBNymO/NhhWmcI/Vqs4TcxYCSPoDAblnurdjC11h0xi0OVNfddhKEIlcump3G7vZZNJucepp2SOVV8rrUE1ATbxQnZzMwAarfW61l4aoAXP1y4oZkVrDVMdXTKMU2t1iXpjU7rQSCnJ9GhLyyC8I5EJTeJR9nwhts2sh186QyJM3rnjdt8C6PULh48YvpU9sKoazShzqL0s+L8wHQeh1BTRu7DMFQwmZl+dFc1RSO/Q3hpVIBk/9cdlCixWQZzPu14Z0gjX76qsVixKJ1oB+2wVIiMDwMS1h7HGQhJTY3B47orAkiSK8EbmPBBKzqD0oNEq9e98x7V/+Hre7Hw4EoMLZHeBcyeQ998T7XbYpR1/19nVyXb8epZ6q6Uo7q5+GWUr+cDdY+d/AzGed4uOh7YD+mqn+BVg+h5JyGabRpfIAeeCbwQ5Uq9WSdVhcyDeqAwSsC2uGuMSuZaTgs0aU3uXOgZpmCPA35Qs0qVOFldeId7FU+JW+ij98/B+dgTqB7ZXCFsG+BTmYxnE3Iza6dtJoe5NEYadEXiPMZG3BBcra9UN77ltmmsfentujhkgcof1H+1o85nTY2ry6SkTICmibt7egJbiKb1jr0yn0FqBvzUKJCTqIN3gQFWeC2A2FQej2EvxMcx/QRmFPK6ylVQJjbZHsoGJs/yf9fuLlyBg=
     - CC=gcc-7
     - CXX=g++-7
-apt:
-  sources:
-    - ppa:ubuntu-toolchain-r/test
-  packages:
-    - g++-7
+addons:
+  apt:
+    sources:
+      - ppa:ubuntu-toolchain-r/test
+    packages:
+      - g++-7
