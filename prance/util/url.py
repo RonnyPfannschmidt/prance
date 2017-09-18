@@ -64,6 +64,7 @@ def absurl(url, relative_to = None):
   # That is, we'll have to set the fragment of the reference URL to that
   # of the input URL, and return the result.
   import os.path
+  from .fs import from_posix, abspath
   result_list = None
   if not parsed.path:
     if not reference or not reference.path:
@@ -71,7 +72,7 @@ def absurl(url, relative_to = None):
           ' without a reference with path!')
     result_list = list(reference)
     result_list[5] = parsed.fragment
-  elif os.path.isabs(parsed.path):
+  elif os.path.isabs(from_posix(parsed.path)):
     # We have an absolute path, so we can ignore the reference entirely!
     result_list = list(parsed)
     result_list[0] = 'file'  # in case it was empty
@@ -86,8 +87,8 @@ def absurl(url, relative_to = None):
 
     result_list = list(parsed)
     result_list[0] = 'file'  # in case it was empty
-    from .fs import abspath
-    result_list[2] = abspath(parsed.path, reference.path)
+    result_list[2] = abspath(from_posix(parsed.path),
+            from_posix(reference.path))
 
   # Reassemble the result and return it
   result = parse.ParseResult(*result_list)
@@ -110,8 +111,8 @@ def fetch_url(url):
   content = None
   content_type = None
   if url.scheme in (None, '', 'file'):
-    from .fs import read_file
-    content = read_file(url.path)
+    from .fs import read_file, from_posix
+    content = read_file(from_posix(url.path))
   else:
     import requests
     response = requests.get(url.geturl())

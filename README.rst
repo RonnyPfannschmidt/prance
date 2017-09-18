@@ -61,6 +61,11 @@ references, in case you prefer that.
     parser = BaseParser('path/to/my/swagger.yaml')
     parser.specification  # contains specs as a dict still containing JSON references
 
+On Windows, the code reacts correctly if you pass posix-like paths
+(``/c:/swagger``) or if the path is relative.  If you pass absolute
+windows path (like ``c:\swagger.yaml``), you can use
+`prance.util.fs.abspath` to convert them.
+
 URLs can also be parsed:
 
 .. code:: python
