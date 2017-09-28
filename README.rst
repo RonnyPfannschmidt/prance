@@ -1,4 +1,4 @@
-|Build Status| |Docs| |License|
+|Posix Build Status| |Windows Build Status| |Docs| |License|
 |PyPI| |Python Versions| |Package Format| |Package Status|
 
 Prance provides parsers for `Swagger/OpenAPI
@@ -87,8 +87,10 @@ License
 Licensed under MITNFA (MIT +no-false-attribs) License. See the
 `LICENSE.txt <https://github.com/jfinkhaeuser/prance/blob/master/LICENSE.txt>`__ file for details.
 
-.. |Build Status| image:: https://travis-ci.org/jfinkhaeuser/prance.svg?branch=master
+.. |Posix Build Status| image:: https://travis-ci.org/jfinkhaeuser/prance.svg?branch=master
    :target: https://travis-ci.org/jfinkhaeuser/prance
+.. |Windows Build Status| image:: https://ci.appveyor.com/api/projects/status/ic7lo8r95mkee7di/branch/master?svg=true
+   :target: https://ci.appveyor.com/project/jfinkhaeuser/prance
 .. |Docs| image:: https://readthedocs.org/projects/prance/badge/?version=latest
    :target: http://prance.readthedocs.io/en/latest/
 .. |License| image:: https://img.shields.io/pypi/l/prance.svg
