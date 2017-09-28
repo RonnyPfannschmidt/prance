@@ -69,6 +69,9 @@ install:
   # about it being out of date.
   - "pip install --disable-pip-version-check --user --upgrade pip"
 
+  # Dependencies
+  - "appveyor-retry pacman -S -q --noconfirm msys/icu"
+
   # Change to project directory
   - "CD %APPVEYOR_BUILD_FOLDER%"
 
