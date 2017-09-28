@@ -12,34 +12,40 @@ environment:
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7.x"
       PYTHON_ARCH: "32"
+      COMPILER: msys2
+      PLATFORM: x32
+      MSYS2_ARCH: x86_32
+      MSYS2_DIR: msys32
+      MSYSTEM: MINGW32
+      BIT: 32
 
-    - PYTHON: "C:\\Python27-x64"
-      PYTHON_VERSION: "2.7.x"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python34"
-      PYTHON_VERSION: "3.4.x"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python34-x64"
-      PYTHON_VERSION: "3.4.x"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python35"
-      PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python35-x64"
-      PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python36"
-      PYTHON_VERSION: "3.6.x"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6.x"
-      PYTHON_ARCH: "64"
+    #    - PYTHON: "C:\\Python27-x64"
+    #      PYTHON_VERSION: "2.7.x"
+    #      PYTHON_ARCH: "64"
+    #
+    #    - PYTHON: "C:\\Python34"
+    #      PYTHON_VERSION: "3.4.x"
+    #      PYTHON_ARCH: "32"
+    #
+    #    - PYTHON: "C:\\Python34-x64"
+    #      PYTHON_VERSION: "3.4.x"
+    #      PYTHON_ARCH: "64"
+    #
+    #    - PYTHON: "C:\\Python35"
+    #      PYTHON_VERSION: "3.5.x"
+    #      PYTHON_ARCH: "32"
+    #
+    #    - PYTHON: "C:\\Python35-x64"
+    #      PYTHON_VERSION: "3.5.x"
+    #      PYTHON_ARCH: "64"
+    #
+    #    - PYTHON: "C:\\Python36"
+    #      PYTHON_VERSION: "3.6.x"
+    #      PYTHON_ARCH: "32"
+    #
+    #    - PYTHON: "C:\\Python36-x64"
+    #      PYTHON_VERSION: "3.6.x"
+    #      PYTHON_ARCH: "64"
 
 install:
   # If there is a newer build queued for the same PR, cancel this one.
@@ -70,7 +76,8 @@ install:
   - "pip install --disable-pip-version-check --user --upgrade pip"
 
   # Dependencies
-  - "appveyor-retry pacman -S -q --noconfirm msys/icu"
+  - "pacman -Syu --noconfirm"
+  - "appveyor-retry pacman -S -q --noconfirm icu"
 
   # Change to project directory
   - "CD %APPVEYOR_BUILD_FOLDER%"
