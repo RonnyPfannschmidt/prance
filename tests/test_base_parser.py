@@ -85,3 +85,8 @@ def test_cache_specs_mixin(petstore_parser):
 def test_relative_urls_from_string(petstore_parser_from_string):
   # This must succeed
   assert petstore_parser_from_string.yaml(), 'Did not get YAML representation of specs!'
+
+
+def test_bad_backend():
+  with pytest.raises(ValueError):
+    BaseParser('tests/petstore.yaml', backend = 'does_not_exist')

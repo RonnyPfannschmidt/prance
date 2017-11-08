@@ -86,12 +86,16 @@ def test_issue_1_relative_path_references(issue_1_parser):
 def test_issue_5_integer_keys():
   # Must fail in implicit strict mode.
   with pytest.raises(SwaggerValidationError):
-    ResolvingParser('tests/issue_5.yaml')
+    ResolvingParser('tests/issue_5.yaml', backend = 'swagger-spec-validator')
 
   # Must fail in explicit strict mode.
   with pytest.raises(SwaggerValidationError):
-    ResolvingParser('tests/issue_5.yaml', strict = True)
+    ResolvingParser('tests/issue_5.yaml', backend = 'swagger-spec-validator', strict = True)
 
   # Must succeed in non-strict/lenient mode
-  parser = ResolvingParser('tests/issue_5.yaml', strict = False)
+  parser = ResolvingParser('tests/issue_5.yaml', backend = 'swagger-spec-validator', strict = False)
   assert '200' in parser.specification['paths']['/test']['post']['responses']
+
+  # Must succeed with default (flex) parser; note the parser does not stringify the response code
+  parser = ResolvingParser('tests/issue_5.yaml', backend = 'flex')
+  assert 200 in parser.specification['paths']['/test']['post']['responses']

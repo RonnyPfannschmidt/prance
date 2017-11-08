@@ -15,8 +15,10 @@ __all__ = ('util', 'mixins', 'cli')
 __version__ = '0.7.0'
 
 
-# Just re-use the error, but hide the namespace
-from swagger_spec_validator.common import SwaggerValidationError  # noqa: F401
+# Define our own error class
+class SwaggerValidationError(Exception):
+  pass
+
 
 from . import mixins
 
@@ -37,6 +39,11 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
   functionality.
   """
 
+  BACKENDS = {
+    'flex': '_validate_flex',
+    'swagger-spec-validator': '_validate_swagger_spec_validator',
+  }
+
   def __init__(self, url = None, spec_string = None, lazy = False, **kwargs):
     """
     Load, parse and validate specs.
@@ -48,8 +55,11 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     :param str spec_string: The specifications to parse.
     :param bool lazy: If true, do not load or parse anything. Instead wait for
       the parse function to be invoked.
-    :param bool strict: [optional] if False, accepts non-String keys by
-      stringifying them before validation. Defaults to True.
+    :param str backend: [optional] one of 'flex', 'swagger-spec-validator'.
+      Determines the validation backend to use. Defaults to 'flex'.
+    :param bool strict: [optional] Applies only to the 'swagger-spec-validator'
+      backend. If False, accepts non-String keys by stringifying them before
+      validation. Defaults to True.
     """
     assert url or spec_string and not (url and spec_string), \
         'You must provide either a URL to read, or a spec string to '\
@@ -72,6 +82,12 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 
     # Add kw args as options
     self._options = kwargs
+
+    # Verify backend
+    self._backend = self._options.get('backend', 'flex')
+    if self._backend not in BaseParser.BACKENDS.keys():
+      raise ValueError('Backend may only be one of %s!'
+              % (BaseParser.BACKENDS.keys(), ))
 
     # Start parsing if lazy mode is not requested.
     if not lazy:
@@ -108,9 +124,25 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     self._validate()
 
   def _validate(self):
-    # Validate the parsed specs.
+    # Validate the parsed specs, using the given validation backend.
+    validator = getattr(self, BaseParser.BACKENDS[self._backend])
+    validator()
+
+  def _validate_flex(self):
+    from flex.exceptions import ValidationError
+    from flex.core import parse as validate
+    try:
+      validate(self.specification)
+    except ValidationError as ex:
+      raise SwaggerValidationError(str(ex))
+
+  def _validate_swagger_spec_validator(self):
+    from swagger_spec_validator.common import SwaggerValidationError as SSVErr
     from swagger_spec_validator.validator20 import validate_spec
-    validate_spec(self.specification)
+    try:
+      validate_spec(self.specification)
+    except SSVErr as ex:
+      raise SwaggerValidationError(str(ex))
 
 
 class ResolvingParser(BaseParser):
