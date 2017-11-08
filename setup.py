@@ -14,19 +14,23 @@ if __name__ == '__main__':
     from distutils.core import setup, find_packages
 
   dev_require = [
-    'tox>=2.8',
+    'tox>=2.9',
     'bumpversion>=0.5',
     'pytest>=3.2',
     'pytest-cov>=2.5',
-    'flake8>=3.4',
+    'flake8>=3.5',
     'pep8-naming>=0.4',
-    'flake8-quotes>=0.10',
+    'flake8-quotes>=0.12',
     'flake8_docstrings>=1.1',
     'sphinx>=1.6',
   ]
 
   icu_require = [
     'PyICU~=1.9',
+  ]
+
+  ssv_require = [
+    'swagger-spec-validator~=2.1',
   ]
 
   # Run setup
@@ -62,7 +66,7 @@ if __name__ == '__main__':
       install_requires = [
         'chardet~=3.0',
         'PyYAML~=3.12',
-        'swagger-spec-validator~=2.1',
+        'flex~=6.11',
         'dpath~=1.4',
         'requests~=2.18',
         'six~=1.11',
@@ -71,6 +75,7 @@ if __name__ == '__main__':
       extras_require = {
         'dev': dev_require,
         'icu': icu_require,
+        'ssv': ssv_require,
       },
       entry_points={
           'console_scripts': [
