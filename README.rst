@@ -80,8 +80,8 @@ or may not find useful, too. Look at the `full documentation
 Compatibility
 -------------
 
-As of version 0.8, we're using `flex <https://github.com/pipermerriam/flex>` as the default validation backend.
-The previous `swagger-spec-validator <https://github.com/Yelp/swagger_spec_validator>` still works, if you
+As of version 0.8, we're using `flex <https://github.com/pipermerriam/flex>`__ as the default validation backend.
+The previous `swagger-spec-validator <https://github.com/Yelp/swagger_spec_validator>`__ still works, if you
 installed with the `ssv` dependencies.
 
 You can select the backend in the constructor of the parser(s):
@@ -91,7 +91,7 @@ You can select the backend in the constructor of the parser(s):
     parser = ResolvingParser('http://petstore.swagger.io/v2/swagger.json', backend = 'swagger-spec-validator')
 
 Note that the `flex` validator simply accepts integer status codes, despite them not being valid JSON.
-See `issue #5 <https://github.com/jfinkhaeuser/prance/issues/5>` for details. Therefore, `flex` also
+See `issue #5 <https://github.com/jfinkhaeuser/prance/issues/5>`__ for details. Therefore, `flex` also
 does not support the `strict` option.
 
 
