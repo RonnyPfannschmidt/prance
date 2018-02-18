@@ -139,9 +139,15 @@ def fetch_py_pkg_url(url):
   from .fs import read_file, from_posix
   import pkg_resources
   pkg = url.netloc
-  # TODO(dmr, 2018-02-17): I think this parses as `/base.yaml`;
-  # confirm this works in general
   res = url.path
+
+  # url.path yields e.g. '/base.yaml', whereas the use of
+  # resource_filename ensures that 'base.yaml' works no matter where
+  # it's nested, so strip off the leading slash just in case this
+  # could cause issues in some possible case.
+  if res[0] == '/':
+    res = res[1:]
+
   path = pkg_resources.resource_filename(pkg, res)
   content = read_file(from_posix(path))
   return content
