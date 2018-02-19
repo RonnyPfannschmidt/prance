@@ -128,7 +128,7 @@ def fetch_url(url):
 
 def fetch_py_pkg_url(url):
   """
-  fetch a url which references an importable python package
+  Fetch a url which references an importable python package.
 
   the url looks like
 
