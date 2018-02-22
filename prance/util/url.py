@@ -113,6 +113,8 @@ def fetch_url(url):
   if url.scheme in (None, '', 'file'):
     from .fs import read_file, from_posix
     content = read_file(from_posix(url.path))
+  elif url.scheme == 'python':
+    content = fetch_py_pkg_url(url)
   else:
     import requests
     response = requests.get(url.geturl())
@@ -122,3 +124,30 @@ def fetch_url(url):
   # Now return the parsed results
   from .formats import parse_spec
   return parse_spec(content, url.path, content_type = content_type)
+
+
+def fetch_py_pkg_url(url):
+  """
+  Fetch a url which references an importable python package.
+
+  the url looks like
+
+  ```
+  python://common_swag/base.yaml#/definitions/Severity
+  ```
+  """
+  from .fs import read_file, from_posix
+  import pkg_resources
+  pkg = url.netloc
+  res = url.path
+
+  # url.path yields e.g. '/base.yaml', whereas the use of
+  # resource_filename ensures that 'base.yaml' works no matter where
+  # it's nested, so strip off the leading slash just in case this
+  # could cause issues in some possible case.
+  if res[0] == '/':
+    res = res[1:]
+
+  path = pkg_resources.resource_filename(pkg, res)
+  content = read_file(from_posix(path))
+  return content
