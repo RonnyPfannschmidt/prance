@@ -90,12 +90,8 @@ class RefResolver(object):
 
     from dpath import util as dutil
     changes = tuple(self._dereferencing_iterator(self.specs))
-    for path, value in changes:
-      # Note that it's entirely possible for this set() to happen more than
-      # once per path/value pair. If a definition is used twice, and references
-      # another definition, then this second definition will be dereferenced
-      # with both of the uses of the first. But the value will be identical, so
-      # it makes no real changes.
+    uniq_changes = dict(changes)
+    for path, value in uniq_changes.items():
       dutil.set(self.specs, list(path), value)
 
     self.__resolution_status = self.__RS_RESOLVED
