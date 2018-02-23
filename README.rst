@@ -107,6 +107,7 @@ For example, you might create a package `common_swag` with the file
 `base.yaml` containing the definition
 
 .. code:: yaml
+
     definitions:
       Severity:
         type: string
@@ -119,6 +120,7 @@ For example, you might create a package `common_swag` with the file
 In the `setup.py` for `common_swag` you would add lines such as
 
 .. code:: python
+
     packages=find_packages('src'),
     package_dir={'': 'src'},
     package_data={
@@ -129,6 +131,7 @@ Then, having installed `common_swag` into some application, you could
 now write
 
 .. code:: yaml
+
     definitions:
       Message:
         type: object
