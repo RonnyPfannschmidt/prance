@@ -100,8 +100,8 @@ Extensions
 Prance includes the ability to reference outside swagger definitions
 in outside Python packages. Such a package must already be importable
 (i.e. installed), and be accessible via the
-[ResourceManager API](https://setuptools.readthedocs.io/en/latest/pkg_resources.html#resourcemanager-api)
-(some more info [here](https://setuptools.readthedocs.io/en/latest/setuptools.html#including-data-files)).
+`ResourceManager API <https://setuptools.readthedocs.io/en/latest/pkg_resources.html#resourcemanager-api>`__
+(some more info `here <https://setuptools.readthedocs.io/en/latest/setuptools.html#including-data-files>`__).
 
 For example, you might create a package `common_swag` with the file
 `base.yaml` containing the definition
