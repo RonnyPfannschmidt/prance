@@ -94,6 +94,56 @@ Note that the `flex` validator simply accepts integer status codes, despite them
 See `issue #5 <https://github.com/jfinkhaeuser/prance/issues/5>`__ for details. Therefore, `flex` also
 does not support the `strict` option.
 
+Extensions
+----------
+
+Prance includes the ability to reference outside swagger definitions
+in outside Python packages. Such a package must already be importable
+(i.e. installed), and be accessible via the
+[ResourceManager API](https://setuptools.readthedocs.io/en/latest/pkg_resources.html#resourcemanager-api)
+(some more info [here](https://setuptools.readthedocs.io/en/latest/setuptools.html#including-data-files)).
+
+For example, you might create a package `common_swag` with the file
+`base.yaml` containing the definition
+
+.. code:: yaml
+    definitions:
+      Severity:
+        type: string
+        enum:
+        - INFO
+        - WARN
+        - ERROR
+        - FATAL
+
+In the `setup.py` for `common_swag` you would add lines such as
+
+.. code:: python
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    package_data={
+        '': '*.yaml'
+    }
+
+Then, having installed `common_swag` into some application, you could
+now write
+
+.. code:: yaml
+    definitions:
+      Message:
+        type: object
+        properties:
+          severity:
+            $ref: 'python://common_swag/base.yaml#/definitions/Severity'
+          code:
+            type: string
+          summary:
+            type: string
+          description:
+            type: string
+        required:
+        - severity
+        - summary
 
 Contributing
 ============
