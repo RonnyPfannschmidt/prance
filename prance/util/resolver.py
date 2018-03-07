@@ -2,7 +2,7 @@
 """This submodule contains a JSON reference resolver."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2017 Jens Finkhaeuser'
+__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
@@ -88,11 +88,11 @@ class RefResolver(object):
       return
     self.__resolution_status = self.__RS_PROCESSING
 
-    from dpath import util as dutil
+    from prance.util.path import path_set
     changes = tuple(self._dereferencing_iterator(self.specs))
     uniq_changes = dict(changes)
     for path, value in uniq_changes.items():
-      dutil.set(self.specs, list(path), value)
+      path_set(self.specs, list(path), value)
 
     self.__resolution_status = self.__RS_RESOLVED
 
@@ -117,9 +117,9 @@ class RefResolver(object):
     # object.
     value = referenced
     if len(obj_path) != 0:
-      from dpath import util as dutil
+      from prance.util.path import path_get
       try:
-        value = dutil.get(referenced, obj_path)
+        value = path_get(referenced, obj_path)
       except KeyError:
         raise _url.ResolutionError('Cannot resolve reference "%s"!'
             % (urlstring, ))
