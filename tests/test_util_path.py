@@ -20,7 +20,7 @@ def test_get_bad_path():
     path_get({}, 3.14)
 
   with pytest.raises(KeyError):
-    path_get((), ('a', 'b'))
+    path_get([], ('a', 'b'))
 
 
 
@@ -29,7 +29,7 @@ def test_get_value_default():
 
   # No path can be resolved in a value type
   result = None
-  with pytest.raises(KeyError):
+  with pytest.raises(TypeError):
     result = path_get(value, ('foo', 'bar'), 123)
   assert result is None
 
@@ -51,7 +51,7 @@ def test_get_value_no_default():
 
   # No path can be resolved in a value type
   result = 666
-  with pytest.raises(KeyError):
+  with pytest.raises(TypeError):
     result = path_get(value, ('foo', 'bar'))
   assert result is 666
 
@@ -153,7 +153,7 @@ def test_set_bad_path():
     path_set({}, 3.14, None)
 
   with pytest.raises(KeyError):
-    path_set((), ('a', 'b'), None)
+    path_set([], ('a', 'b'), None)
 
 
 def test_set_value():
