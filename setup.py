@@ -67,7 +67,6 @@ if __name__ == '__main__':
         'chardet~=3.0',
         'PyYAML~=3.12',
         'flex~=6.12',
-        'dpath~=1.4',
         'requests~=2.18',
         'six~=1.11',
         'click~=6.7',
