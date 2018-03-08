@@ -78,7 +78,7 @@ definitions:
       - foo
     properties:
       foo:
-        $ref: 'recursive_definitions.yaml#/bar'
+        $ref: 'recursive_files_definitions.yaml#/bar'
   Pet:
     required:
       - id

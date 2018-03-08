@@ -29,8 +29,13 @@ def externals_file():
 
 
 @pytest.fixture
-def recursive_file():
-  return get_specs('tests/recursive.yaml')
+def recursive_objs_file():
+  return get_specs('tests/recursive_objs.yaml')
+
+
+@pytest.fixture
+def recursive_files_file():
+  return get_specs('tests/recursive_files.yaml')
 
 
 @pytest.fixture
@@ -63,11 +68,20 @@ def test_resolver_missing_reference(missing_file):
   assert str(exc.value).startswith('Cannot resolve')
 
 
-def test_resolver_recursive(recursive_file):
+def test_resolver_recursive_objects(recursive_objs_file):
+  # Recursive references to objects are a problem
   import os.path
-  res = resolver.RefResolver(recursive_file,
-      fs.abspath('tests/recursive.yaml'))
+  res = resolver.RefResolver(recursive_objs_file,
+      fs.abspath('tests/recursive_objs.yaml'))
   with pytest.raises(ResolutionError) as exc:
     res.resolve_references()
 
   assert str(exc.value).startswith('Recursion detected')
+
+
+def test_resolver_recursive_files(recursive_files_file):
+  # Recursive references to files are not a problem
+  import os.path
+  res = resolver.RefResolver(recursive_files_file,
+      fs.abspath('tests/recursive_files.yaml'))
+  res.resolve_references()
