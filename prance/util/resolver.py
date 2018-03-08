@@ -16,7 +16,7 @@ class RefResolver(object):
   __RS_PROCESSING = 1
   __RS_RESOLVED   = 2  # noqa: E221
 
-  def __init__(self, specs, url = None, **kwargs):
+  def __init__(self, specs, url = None, **options):
     """
     Construct a JSON reference resolver.
 
@@ -40,7 +40,7 @@ class RefResolver(object):
     self.specs = copy.deepcopy(specs)
     self.url = url
 
-    self.__reference_cache = kwargs.get('reference_cache', {})
+    self.__reference_cache = options.get('reference_cache', {})
 
     if self.url:
       self.parsed_url = _url.absurl(self.url)
