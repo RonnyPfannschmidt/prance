@@ -76,7 +76,7 @@ def test_resolver_recursive_objects(recursive_objs_file):
   with pytest.raises(ResolutionError) as exc:
     res.resolve_references()
 
-  assert str(exc.value).startswith('Recursion detected')
+  assert str(exc.value).startswith('Recursion reached limit')
 
 
 def test_resolver_recursive_files(recursive_files_file):

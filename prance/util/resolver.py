@@ -35,12 +35,26 @@ class RefResolver(object):
         If you wish to use this optimization across distinct RefResolver
         instances, pass a dict here for the RefResolvers you create
         yourself. It's safe to ignore this parameter in other cases.
+    :param int recursion_limit: [optional] set the limit on recursive
+        references. The default is 0. When the limit is reached, the
+        recursion_limit_handler is invoked.
+    :param callable recursion_limit_handler: [optional] A callable that
+        gets invoked when the recursion_limit is reached. Defaults to
+        raising ResolutionError.
     """
     import copy
     self.specs = copy.deepcopy(specs)
     self.url = url
 
     self.__reference_cache = options.get('reference_cache', {})
+
+    self.__recursion_limit = options.get('recursion_limit', 0)
+
+    def _default_handler(refstring):
+      raise _url.ResolutionError('Recursion reached limit of %d trying to '
+            'resolve "%s"!' % (self.__recursion_limit, refstring))
+    self.__recursion_limit_handler = options.get('recursion_limit_handler',
+            _default_handler)
 
     if self.url:
       self.parsed_url = _url.absurl(self.url)
@@ -54,7 +68,7 @@ class RefResolver(object):
       self.parsed_url = self._url_key = None
 
     self.__resolution_status = self.__RS_UNRESOLVED
-    self.__recursion_protection = set()
+    self.__recursion_protection = {}
 
   def _dereferencing_iterator(self, partial, parent_path = ()):
     """
@@ -74,10 +88,11 @@ class RefResolver(object):
       # If the combination of parent path and ref path already exists,
       # we're recursing and shouldn't call _dereferencing_iterator.
       recursion_key = (parent_path, ref_path)
-      if recursion_key in self.__recursion_protection:
-        raise _url.ResolutionError('Recursion detected trying to resolve "%s"!'
-            % (refstring, ))
-      self.__recursion_protection.add(recursion_key)
+      self.__recursion_protection.setdefault(recursion_key, 0)
+      if self.__recursion_protection[recursion_key] > self.__recursion_limit:
+        # TODO use return value?
+        self.__recursion_limit_handler(refstring)
+      self.__recursion_protection[recursion_key] += 1
 
       # If the referenced object contains any reference, yield all the items
       # in it that need dereferencing.
@@ -86,7 +101,7 @@ class RefResolver(object):
 
       # We can remove ourselves from the recursion protection again after
       # children are processed.
-      self.__recursion_protection.remove(recursion_key)
+      self.__recursion_protection[recursion_key] -= 1
 
       # Afterwards also yield the outer item. This makes the
       # _dereferencing_iterator work depth first.
