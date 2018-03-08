@@ -16,9 +16,7 @@ class RefResolver(object):
   __RS_PROCESSING = 1
   __RS_RESOLVED   = 2  # noqa: E221
 
-  __reference_cache = {}
-
-  def __init__(self, specs, url = None):
+  def __init__(self, specs, url = None, **kwargs):
     """
     Construct a JSON reference resolver.
 
@@ -30,14 +28,28 @@ class RefResolver(object):
 
     :param dict specs: The parsed specs in which to resolve any references.
     :param str url: [optional] The URL to base relative references on.
+    :param dict reference_cache: [optional] Reference cache to use. When
+        encountering references, nested RefResolvers are created, and this
+        parameter is used by the RefResolver hierarchy to create only one
+        resolver per unique URL.
+        If you wish to use this optimization across distinct RefResolver
+        instances, pass a dict here for the RefResolvers you create
+        yourself. It's safe to ignore this parameter in other cases.
     """
     import copy
     self.specs = copy.deepcopy(specs)
     self.url = url
 
+    self.__reference_cache = kwargs.get('reference_cache', {})
+
     if self.url:
       self.parsed_url = _url.absurl(self.url)
       self._url_key = _url.urlresource(self.parsed_url)
+
+      # If we have a url, we want to add ourselves to the reference cache
+      # - that creates a reference loop, but prevents child resolvers from
+      # creating a new resolver for this url.
+      self.__reference_cache[self._url_key] = self
     else:
       self.parsed_url = self._url_key = None
 
@@ -142,7 +154,8 @@ class RefResolver(object):
 
     # If we don't have a parser for the url yet, create and cache one.
     if not resolver:
-      resolver = RefResolver(_url.fetch_url(url), url)
+      resolver = RefResolver(_url.fetch_url(url), url,
+              reference_cache = self.__reference_cache)
       self.__reference_cache[url_key] = resolver
 
     # Resolve references *after* (potentially) adding the resolver to the
