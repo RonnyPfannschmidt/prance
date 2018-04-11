@@ -8,13 +8,18 @@ __all__ = ()
 
 import prance.util.url as _url
 
-
 class RefResolver(object):
   """Resolve JSON pointers/references in a spec."""
 
   __RS_UNRESOLVED = 0
   __RS_PROCESSING = 1
   __RS_RESOLVED   = 2  # noqa: E221
+
+  # FIXME
+  def _default_handler(self, refstring):
+    raise _url.ResolutionError('Recursion reached limit of %d trying to '
+          'resolve "%s"!' % (self.__reclimit, refstring))
+
 
   def __init__(self, specs, url = None, **options):
     """
@@ -48,13 +53,10 @@ class RefResolver(object):
 
     self.__reference_cache = options.get('reference_cache', {})
 
-    self.__recursion_limit = options.get('recursion_limit', 0)
+    self.__reclimit = options.get('recursion_limit', 1) # FIXME document value
 
-    def _default_handler(refstring):
-      raise _url.ResolutionError('Recursion reached limit of %d trying to '
-            'resolve "%s"!' % (self.__recursion_limit, refstring))
-    self.__recursion_limit_handler = options.get('recursion_limit_handler',
-            _default_handler)
+    self.__reclimit_handler = options.get('recursion_limit_handler',
+            self._default_handler)
 
     if self.url:
       self.parsed_url = _url.absurl(self.url)
@@ -68,9 +70,9 @@ class RefResolver(object):
       self.parsed_url = self._url_key = None
 
     self.__resolution_status = self.__RS_UNRESOLVED
-    self.__recursion_protection = {}
 
-  def _dereferencing_iterator(self, partial, parent_path = ()):
+# FIXME tail call optimization
+  def _dereferencing_iterator(self, partial, parent_path = (), recursions = ()):
     """
     Iterate over a partial spec, dereferencing all references within.
 
@@ -83,29 +85,32 @@ class RefResolver(object):
     for _, refstring, item_path in reference_iterator(partial):
       # Resolve the reference we're currently dealing with.
       _, ref_path, referenced = self._dereference(refstring)
-      ref_path = tuple(ref_path)
 
-      # If the combination of parent path and ref path already exists,
-      # we're recursing and shouldn't call _dereferencing_iterator.
-      recursion_key = (parent_path, ref_path)
-      self.__recursion_protection.setdefault(recursion_key, 0)
-      if self.__recursion_protection[recursion_key] > self.__recursion_limit:
-        # TODO use return value?
-        self.__recursion_limit_handler(refstring)
-      self.__recursion_protection[recursion_key] += 1
+      # Count how often the reference path has been recursed into.
+      from collections import Counter
+      rec_counter = Counter(recursions)
+
+      ref_key = tuple(ref_path)
+      if rec_counter[ref_key] >= self.__reclimit:
+        # The referenced value may be produced by the handler, or the handler
+        # may raise, etc.
+        ref_value = self.__reclimit_handler(refstring)
+      else:
+        # The referenced value is to be used, but let's copy it to avoid
+        # building recursive structures.
+        from copy import deepcopy
+        ref_value = deepcopy(referenced)
+
+      # Full item path
+      full_path = parent_path + item_path
+
+      # First yield parent
+      yield full_path, ref_value
 
       # If the referenced object contains any reference, yield all the items
       # in it that need dereferencing.
-      for inner in self._dereferencing_iterator(referenced, ref_path):
+      for inner in self._dereferencing_iterator(ref_value, full_path, recursions + (ref_key,)):
         yield inner
-
-      # We can remove ourselves from the recursion protection again after
-      # children are processed.
-      self.__recursion_protection[recursion_key] -= 1
-
-      # Afterwards also yield the outer item. This makes the
-      # _dereferencing_iterator work depth first.
-      yield parent_path + item_path, referenced
 
   def resolve_references(self):
     """Resolve JSON pointers/references in the spec."""
@@ -115,11 +120,17 @@ class RefResolver(object):
       return
     self.__resolution_status = self.__RS_PROCESSING
 
+    # Gather changes from the dereferencing iterator - we need to set new
+    # values from the outside in, so we have to post-process this a little,
+    # sorting paths by path length.
+    changes = dict(tuple(self._dereferencing_iterator(self.specs)))
+    paths = sorted(changes.keys(), key = len)
+
+    # With the paths sorted, set them to the resolved values.
     from prance.util.path import path_set
-    changes = tuple(self._dereferencing_iterator(self.specs))
-    uniq_changes = dict(changes)
-    for path, value in uniq_changes.items():
-      path_set(self.specs, list(path), value)
+    for path in paths:
+      value = changes[path]
+      path_set(self.specs, list(path), value, create = True)
 
     self.__resolution_status = self.__RS_RESOLVED
 
@@ -169,13 +180,13 @@ class RefResolver(object):
 
     # If we don't have a parser for the url yet, create and cache one.
     if not resolver:
+      # FIXME propagate recursion limits *remaining*
       resolver = RefResolver(_url.fetch_url(url), url,
               reference_cache = self.__reference_cache)
       self.__reference_cache[url_key] = resolver
 
     # Resolve references *after* (potentially) adding the resolver to the
-    # cache. This together with the __recursion_protection allows us to detect
-    # and report recursions and bad references.
+    # cache.
     resolver.resolve_references()
 
     # That's it!
