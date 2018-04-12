@@ -41,13 +41,15 @@ def cli():
     default = 'flex',
     metavar = 'BACKEND',
     nargs = 1,
-    help = 'FIXME'
+    help = 'The validation backend to use. One of "flex" or '
+           '"swagger-spec-validator".'
 )
 @click.option(
     '--strict/--no-strict',
     default = True,
     help = 'Be strict or lenient in validating specs. Strict validation '
-           'rejects non-string spec keys, for example in response codes.'
+           'rejects non-string spec keys, for example in response codes. '
+           'Only applies to the "swagger-spec-validator" backend.'
 )
 @click.option(
     '--output-file', '-o',
@@ -71,14 +73,14 @@ def validate(resolve, backend, strict, output_file, urls):
   If the --resolve option is set, references will be resolved before
   validation.
 
-  Note that this can yield unexpected results. The swagger-spec-validator used
-  as a basis for prance cannot deal with relative file path references, and
-  will report them. However, resolving these references before validation will
-  skip these errors.
+  Note that this merges referenced objects into the main specs. Validation
+  backends used by prance cannot validate referenced objects, so resolving
+  the references before validation allows for full spec validation.
 
   If the --output-file option is given, the validated spec is written to that
   file. Please note that with that option given, only one input file may be
-  specified.
+  specified. Using this option together with --resolve effectively creates
+  a compiled and validated spec with no further external references.
   """
   # Ensure that when an output file is given, only one input file exists.
   if output_file and len(urls) > 1:
