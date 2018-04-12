@@ -95,17 +95,52 @@ def absurl(url, relative_to = None):
   return result
 
 
-def fetch_url(url):
+def split_url_reference(base_url, reference):
+  """
+  Return a normalized, parsed URL and object path.
+
+  The reference string is a JSON reference, i.e. a URL with a fragment that
+  contains an object path into the referenced resource.
+
+  The base URL is used as a reference point for relative references.
+
+  :param mixed base_url: A parsed URL.
+  :param str reference: A JSON reference string.
+  :return: The parsed absolute URL of the reference and the object path.
+  """
+  # Parse URL
+  parsed_url = absurl(reference, base_url)
+
+  # Grab object path
+  obj_path = parsed_url.fragment.split('/')
+  while len(obj_path) and not obj_path[0]:
+    obj_path = obj_path[1:]
+
+  return parsed_url, obj_path
+
+
+def fetch_url(url, cache = {}):
   """
   Fetch the URL and parse the contents.
 
   If the URL is a file URL, the format used for parsing depends on the file
   extension. Otherwise, YAML is assumed.
 
+  The URL may also use the `python` scheme. In this scheme, the netloc part
+  refers to an importable python package, and the path part to a path relative
+  to the package path, e.g. `python://some_package/path/to/file.yaml`.
+
   :param tuple url: The url, parsed as returned by `absurl` above.
+  :param Mapping cache: An optional cache. If the URL can be found in the cache,
+    return the cache contents.
   :return: The parsed file.
   :rtype: dict
   """
+  url_key = urlresource(url)
+  entry = cache.get(url_key, None)
+  if entry is not None:
+    return entry
+
   # Fetch contents according to scheme. We assume requests can handle all the
   # non-file schemes, or throw otherwise.
   content = None
@@ -114,7 +149,17 @@ def fetch_url(url):
     from .fs import read_file, from_posix
     content = read_file(from_posix(url.path))
   elif url.scheme == 'python':
-    content = fetch_py_pkg_url(url)
+    # Resolve package path
+    package = url.netloc
+    path = url.path
+    if path[0] == '/':
+      path = path[1:]
+
+    import pkg_resources
+    path = pkg_resources.resource_filename(package, path)
+
+    from .fs import read_file, from_posix
+    content = read_file(from_posix(path))
   else:
     import requests
     response = requests.get(url.geturl())
@@ -123,31 +168,6 @@ def fetch_url(url):
 
   # Now return the parsed results
   from .formats import parse_spec
-  return parse_spec(content, url.path, content_type = content_type)
-
-
-def fetch_py_pkg_url(url):
-  """
-  Fetch a url which references an importable python package.
-
-  the url looks like
-
-  ```
-  python://common_swag/base.yaml#/definitions/Severity
-  ```
-  """
-  from .fs import read_file, from_posix
-  import pkg_resources
-  pkg = url.netloc
-  res = url.path
-
-  # url.path yields e.g. '/base.yaml', whereas the use of
-  # resource_filename ensures that 'base.yaml' works no matter where
-  # it's nested, so strip off the leading slash just in case this
-  # could cause issues in some possible case.
-  if res[0] == '/':
-    res = res[1:]
-
-  path = pkg_resources.resource_filename(pkg, res)
-  content = read_file(from_posix(path))
-  return content
+  result = parse_spec(content, url.path, content_type = content_type)
+  cache[url_key] = result
+  return result

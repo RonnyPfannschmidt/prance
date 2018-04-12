@@ -76,14 +76,58 @@ def test_urlresource():
   assert res == 'http://foo.bar/asdf'
 
 
+def test_split_url_reference():
+  base = url.absurl('http://foo.bar/')
+
+  # Relative reference
+  parsed, path = url.split_url_reference(base, '#foo/bar')
+  assert parsed.netloc == 'foo.bar'
+  assert len(path) == 2
+  assert path[0] == 'foo'
+  assert path[1] == 'bar'
+
+  # Leading slashes are stripped
+  parsed, path = url.split_url_reference(base, '#///foo/bar')
+  assert parsed.netloc == 'foo.bar'
+  assert len(path) == 2
+  assert path[0] == 'foo'
+  assert path[1] == 'bar'
+
+  # Absolute reference
+  parsed, path = url.split_url_reference(base, 'http://somewhere/#foo/bar')
+  assert parsed.netloc == 'somewhere'
+  assert len(path) == 2
+  assert path[0] == 'foo'
+  assert path[1] == 'bar'
+
+
 def test_fetch_url_file():
   from prance.util import fs
   content = url.fetch_url(url.absurl(fs.abspath('tests/with_externals.yaml')))
   assert content['swagger'] == '2.0'
 
 
+def test_fetch_url_cached():
+  from prance.util import fs
+  cache = {}
+
+  content1 = url.fetch_url(url.absurl(fs.abspath('tests/with_externals.yaml')), cache)
+  assert content1['swagger'] == '2.0'
+
+  content2 = url.fetch_url(url.absurl(fs.abspath('tests/with_externals.yaml')), cache)
+  assert content2['swagger'] == '2.0'
+
+  assert id(content1) == id(content2)
+
+
 def test_fetch_url_http():
   exturl = 'http://finkhaeuser.de/projects/prance/petstore.yaml'\
     '#/definitions/Pet'
+  content = url.fetch_url(url.absurl(exturl))
+  assert content['swagger'] == '2.0'
+
+
+def test_fetch_url_python():
+  exturl = 'python://tests/petstore.yaml'
   content = url.fetch_url(url.absurl(exturl))
   assert content['swagger'] == '2.0'
