@@ -39,7 +39,9 @@ external references in) specs:
      -> Resolving external references.
     Validates OK as Swagger/OpenAPI 2.0!
 
-
+There is an interesting side effect to validation with an output file: when
+references are also resolved (the default), the output file effectively
+becomes a compiled spec in which all previous references are resolved.
 
 Code
 ----
