@@ -12,7 +12,7 @@ __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2017 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ('util', 'mixins', 'cli')
-__version__ = '0.9.0'
+__version__ = '0.10.0'
 
 
 # Define our own error class
