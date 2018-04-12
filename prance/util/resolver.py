@@ -8,12 +8,11 @@ __all__ = ()
 
 import prance.util.url as _url
 
-# FIXME
-def _default_handler(limit, parsed_url):
+
+def default_reclimit_handler(limit, parsed_url):
+  """Raise prance.util.url.ResolutionError."""
   raise _url.ResolutionError('Recursion reached limit of %d trying to '
         'resolve "%s"!' % (limit, parsed_url.geturl()))
-
-
 
 
 class RefResolver(object):
@@ -39,18 +38,21 @@ class RefResolver(object):
         instances, pass a dict here for the RefResolvers you create
         yourself. It's safe to ignore this parameter in other cases.
     :param int recursion_limit: [optional] set the limit on recursive
-        references. The default is 0. When the limit is reached, the
-        recursion_limit_handler is invoked.
+        references. The default is 1, indicating that an element may be
+        refered to exactly once when resolving references. When the limit
+        is reached, the recursion_limit_handler is invoked.
     :param callable recursion_limit_handler: [optional] A callable that
         gets invoked when the recursion_limit is reached. Defaults to
-        raising ResolutionError.
+        raising ResolutionError. Receives the recursion_limit as the
+        first parameter, and the parsed reference URL as the second.
     """
     import copy
     self.specs = copy.deepcopy(specs)
     self.url = url
 
-    self.__reclimit = options.get('recursion_limit', 1) # FIXME document value
-    self.__reclimit_handler = options.get('recursion_limit_handler', _default_handler)
+    self.__reclimit = options.get('recursion_limit', 1)
+    self.__reclimit_handler = options.get('recursion_limit_handler',
+            default_reclimit_handler)
     self.__reference_cache = options.get('reference_cache', {})
 
     if self.url:
@@ -69,15 +71,16 @@ class RefResolver(object):
     """Resolve JSON pointers/references in the spec."""
     self.specs = self._resolve_partial(self.parsed_url, self.specs, ())
 
-  def _dereferencing_iterator(self, base_url, partial, parent_path, recursions):
+  def _dereferencing_iterator(self, base_url, partial, path, recursions):
     """
-    FIXME
     Iterate over a partial spec, dereferencing all references within.
 
     Yields the resolved path and value of all items that need substituting.
 
+    :param mixed base_url: URL that the partial specs is located at.
     :param dict partial: The partial specs to work on.
-    :param tuple parent_path: The parent path of the partial specs.
+    :param tuple path: The parent path of the partial specs.
+    :param tuple recursions: A recursion stack for resolving references.
     """
     from .iterators import reference_iterator
     for _, refstring, item_path in reference_iterator(partial):
@@ -102,17 +105,22 @@ class RefResolver(object):
         ref_value = self._dereference(ref_url, obj_path, next_recursions)
 
       # Full item path
-      full_path = parent_path + item_path
+      full_path = path + item_path
 
       # First yield parent
       yield full_path, ref_value
-
 
   def _dereference(self, ref_url, obj_path, recursions):
     """
     Dereference the URL and object path.
 
     Returns the dereferenced object.
+
+    :param mixed ref_url: The URL at which the reference is located.
+    :param list obj_path: The object path within the URL resource.
+    :param tuple recursions: A recursion stack for resolving references.
+    :return: A copy of the dereferenced value, with all internal references
+        resolved.
     """
     # In order to start dereferencing anything in the referenced URL, we have
     # to read and parse it, of course.
@@ -140,7 +148,14 @@ class RefResolver(object):
     return value
 
   def _resolve_partial(self, base_url, partial, recursions):
-    """Resolve a (partial) spec's references."""
+    """
+    Resolve a (partial) spec's references.
+
+    :param mixed base_url: URL that the partial specs is located at.
+    :param dict partial: The partial specs to work on.
+    :param tuple recursions: A recursion stack for resolving references.
+    :return: The partial with all references resolved.
+    """
     # Gather changes from the dereferencing iterator - we need to set new
     # values from the outside in, so we have to post-process this a little,
     # sorting paths by path length.

@@ -131,8 +131,8 @@ def fetch_url(url, cache = {}):
   to the package path, e.g. `python://some_package/path/to/file.yaml`.
 
   :param tuple url: The url, parsed as returned by `absurl` above.
-  :param Mapping cache: An optional cache. If the URL can be found in the cache,
-    return the cache contents.
+  :param Mapping cache: An optional cache. If the URL can be found in the
+    cache, return the cache contents.
   :return: The parsed file.
   :rtype: dict
   """
