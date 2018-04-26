@@ -40,7 +40,6 @@ def iter_entries(parser, backend, version, file_format, path):
 
   for entry in os.listdir(path):
     full = os.path.join(path, entry)
-    print(full)
     testcase_name = None
     if os.path.isfile(full):
       testcase_name = make_name(full, parser, backend, version, file_format, entry)
@@ -50,10 +49,11 @@ def iter_entries(parser, backend, version, file_format, path):
       full = os.path.join(full, 'spec', 'swagger.%s' % (file_format))
       if os.path.isfile(full):
         testcase_name = make_name(full, parser, backend, version, file_format, entry)
-    full = os.path.abspath(full)
 
     if testcase_name:
       dirname = os.path.dirname(full)
+      from prance.util import url
+      absurl = url.absurl(os.path.abspath(full))
       code = """
 # @pytest.mark.xfail
 def %s():
@@ -64,27 +64,23 @@ def %s():
 
   from prance import %s
   try:
-    parser = %s('file://%s', backend = '%s')
+    parser = %s('%s', backend = '%s')
   finally:
     os.chdir(cur)
-""" % (testcase_name, dirname, parser, parser, full, backend)
+""" % (testcase_name, dirname, parser, parser, absurl.geturl(), backend)
       print(code)
-      exec(code, globals(), globals())
+      exec(code, globals())
 
 for parser in ('BaseParser', 'ResolvingParser'):
   from prance.util import validation_backends
   for backend in validation_backends():
     for version in os.listdir(base):
       version_dir = os.path.join(base, version)
-      print( version_dir)
       for file_format in os.listdir(version_dir):
         format_dir = os.path.join(version_dir, file_format)
-        print(format_dir)
 
         if not os.path.isdir(format_dir):  # Assume YAML
           iter_entries(parser, backend, version, 'yaml', version_dir)
         else:
           for entry in os.listdir(format_dir):
             iter_entries(parser, backend, version, file_format, format_dir)
-
-raise Hell
