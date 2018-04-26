@@ -2,14 +2,15 @@
 |PyPI| |Python Versions| |Package Format| |Package Status|
 
 Prance provides parsers for `Swagger/OpenAPI
-2.0 <http://swagger.io/specification/>`__ API specifications in Python.
-It uses `flex <https://github.com/pipermerriam/flex>`__ or
+2.0 and 3.0 <http://swagger.io/specification/>`__ API specifications in Python.
+It uses `flex <https://github.com/pipermerriam/flex>`__,
 `swagger\_spec\_validator <https://github.com/Yelp/swagger_spec_validator>`__
+or `openapi\_spec\_validator <https://github.com/p1c2u/openapi-spec-validator>`__
 to validate specifications, but additionally resolves `JSON
 references <https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03>`__
-in accordance with the Swagger spec.
+in accordance with the OpenAPI spec.
 
-Mostly the latter involves handling non-URI references; Swagger is fine
+Mostly the latter involves handling non-URI references; OpenAPI is fine
 with providing relative file paths, whereas JSON references require URIs
 at this point in time.
 
@@ -82,9 +83,17 @@ or may not find useful, too. Look at the `full documentation
 Compatibility
 -------------
 
-As of version 0.8, we're using `flex <https://github.com/pipermerriam/flex>`__ as the default validation backend.
-The previous `swagger-spec-validator <https://github.com/Yelp/swagger_spec_validator>`__ still works, if you
-installed with the `ssv` dependencies.
+Different validation backends support different features.
+
++------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
+| Backend                | Python Version | OpenAPI Version | Strict Mode | Notes                                                 | Available From | Link                                                                              |
++========================+================+=================+=============+=======================================================+================+===================================================================================+
+| swagger-spec-validator | 2 and 3        | 2.0 only        | yes         | Slow; does not accept integer keys (see strict mode). | prance 0.1     | `swagger\_spec\_validator <https://github.com/Yelp/swagger_spec_validator>`__     |
++------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
+| flex                   | 2 and 3        | 2.0 only        | n/a         | Fastest; the default, and always required.            | prance 0.8     | `flex <https://github.com/pipermerriam/flex>`__                                   |
++------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------------------------------------------------------------------------------------------+
+| openapi-spec-validator | 3 only         | 2.0 and 3.0     | yes         | Slow; does not accept integer keys (see strict mode). | prance 0.12    | `openapi\_spec\_validator <https://github.com/p1c2u/openapi-spec-validator>`__    |
++------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------------------------------------------------------------------------------------------+
 
 You can select the backend in the constructor of the parser(s):
 
@@ -92,9 +101,17 @@ You can select the backend in the constructor of the parser(s):
 
     parser = ResolvingParser('http://petstore.swagger.io/v2/swagger.json', backend = 'swagger-spec-validator')
 
-Note that the `flex` validator simply accepts integer status codes, despite them not being valid JSON.
-See `issue #5 <https://github.com/jfinkhaeuser/prance/issues/5>`__ for details. Therefore, `flex` also
-does not support the `strict` option.
+*A note on strict mode:* The OpenAPI specs are a little ambiguous. On the one hand, they use JSON
+references and JSON schema a fair bit. But on the other hand, what they specify as examples does
+not always match the JSON specs.
+
+Most notably, JSON only accepts string keys in objects. However, some keys in the specs tend to be
+integer values, most notably the status codes for responses. Strict mode rejects non-string keys;
+the default lenient mode accepts them.
+
+Since the `flex` validator is not based on JSON, it does not have this issue. The `strict` option
+therefore does not apply here.
+
 
 Extensions
 ----------
