@@ -59,9 +59,7 @@ def %s():
   import os
   cur = os.getcwd()
 
-  import os.path
-  drive, path = os.path.splitdrive('%s')
-  os.chdir(path)
+  os.chdir('%s')
 
   from prance import %s
   try:
@@ -77,6 +75,7 @@ for parser in ('BaseParser', 'ResolvingParser'):
   for backend in validation_backends():
     for version in os.listdir(base):
       version_dir = os.path.join(base, version)
+      print(version_dir)
       for file_format in os.listdir(version_dir):
         format_dir = os.path.join(version_dir, file_format)
 
