@@ -42,7 +42,11 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
   BACKENDS = {
     'flex': '_validate_flex',
     'swagger-spec-validator': '_validate_swagger_spec_validator',
+    'openapi-spec-validator': '_validate_openapi_spec_validator',
   }
+
+  SPEC_VERSION_2 = 'Swagger/OpenAPI 2.0'
+  SPEC_VERSION_3 = 'OpenAPI 3.0'
 
   def __init__(self, url = None, spec_string = None, lazy = False, **kwargs):
     """
@@ -55,7 +59,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     :param str spec_string: The specifications to parse.
     :param bool lazy: If true, do not load or parse anything. Instead wait for
       the parse function to be invoked.
-    :param str backend: [optional] one of 'flex', 'swagger-spec-validator'.
+    :param str backend: [optional] one of 'flex', 'swagger-spec-validator' or
+      'openapi-spec-validator'.
       Determines the validation backend to use. Defaults to 'flex'.
     :param bool strict: [optional] Applies only to the 'swagger-spec-validator'
       backend. If False, accepts non-String keys by stringifying them before
@@ -79,6 +84,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 
     # Initialize variables we're filling later
     self.specification = None
+    self.version = None
 
     # Add kw args as options
     self._options = kwargs
@@ -136,6 +142,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     except ValidationError as ex:
       raise SwaggerValidationError(str(ex))
 
+    self.version = BaseParser.SPEC_VERSION_2
+
   def _validate_swagger_spec_validator(self):
     from swagger_spec_validator.common import SwaggerValidationError as SSVErr
     from swagger_spec_validator.validator20 import validate_spec
@@ -143,6 +151,25 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       validate_spec(self.specification)
     except SSVErr as ex:
       raise SwaggerValidationError(str(ex))
+
+    self.version = BaseParser.SPEC_VERSION_2
+
+  def _validate_openapi_spec_validator(self):
+    from openapi_spec_validator import validate_v2_spec, validate_v3_spec
+    from jsonschema.exceptions import ValidationError
+
+    # Try v3 first, then fall back to v2
+    try:
+      validate_v3_spec(self.specification)
+      self.version = BaseParser.SPEC_VERSION_3
+    except TypeError as type_ex:  # pragma: nocover
+      raise SwaggerValidationError(str(type_ex))
+    except ValidationError as v3_ex:
+      try:
+        validate_v2_spec(self.specification)
+        self.version = BaseParser.SPEC_VERSION_2
+      except TypeError as type_ex:
+        raise SwaggerValidationError(str(type_ex))
 
 
 class ResolvingParser(BaseParser):
