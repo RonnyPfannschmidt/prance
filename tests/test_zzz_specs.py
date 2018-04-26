@@ -54,7 +54,7 @@ def iter_entries(parser, backend, version, file_format, path):
     if testcase_name:
       dirname = os.path.dirname(full)
       code = """
-@pytest.mark.xfail
+# @pytest.mark.xfail
 def %s():
   import os
   cur = os.getcwd()
