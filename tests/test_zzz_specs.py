@@ -63,7 +63,7 @@ def %s():
 
   from prance import %s
   try:
-    parser = %s('%s', backend = '%s')
+    parser = %s('file://%s', backend = '%s')
   finally:
     os.chdir(cur)
 """ % (testcase_name, dirname, parser, parser, full, backend)
@@ -83,5 +83,3 @@ for parser in ('BaseParser', 'ResolvingParser'):
         else:
           for entry in os.listdir(format_dir):
             iter_entries(parser, backend, version, file_format, format_dir)
-
-raise Hell
