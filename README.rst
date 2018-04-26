@@ -103,6 +103,17 @@ You can select the backend in the constructor of the parser(s):
 
     parser = ResolvingParser('http://petstore.swagger.io/v2/swagger.json', backend = 'swagger-spec-validator')
 
+
+Only the default backend is included in the dependencies; others are detected at run-time. If you
+install them, they can be used:
+
+.. code:: bash
+
+    $ pip install swagger-spec-validator
+    $ pip install prance
+    $ prance validate --backend=swagger-spec-validator path/to/spec.yml
+
+
 *A note on strict mode:* The OpenAPI specs are a little ambiguous. On the one hand, they use JSON
 references and JSON schema a fair bit. But on the other hand, what they specify as examples does
 not always match the JSON specs.
