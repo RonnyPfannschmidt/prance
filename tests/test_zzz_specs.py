@@ -52,8 +52,10 @@ def iter_entries(parser, backend, version, file_format, path):
 
     if testcase_name:
       dirname = os.path.dirname(full)
+      dirname = dirname.replace('\\v', '\\\\v')
       from prance.util import url
-      absurl = url.absurl(os.path.abspath(full))
+      absurl = url.absurl(os.path.abspath(full)).geturl()
+      absurl = absurl.replace('\\v', '\\\\v')
       code = """
 # @pytest.mark.xfail
 def %s():
@@ -67,7 +69,7 @@ def %s():
     parser = %s('%s', backend = '%s')
   finally:
     os.chdir(cur)
-""" % (testcase_name, dirname, parser, parser, absurl.geturl(), backend)
+""" % (testcase_name, dirname, parser, parser, absurl, backend)
       print(code)
       exec(code, globals())
 
