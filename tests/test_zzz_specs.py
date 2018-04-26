@@ -54,8 +54,8 @@ def iter_entries(parser, backend, version, file_format, path):
       dirname = os.path.dirname(full)
       dirname = dirname.replace('\\', '\\\\')
       from prance.util import url
-      absurl = url.absurl(os.path.abspath(full)).geturl()
       full = full.replace('\\', '\\\\')
+      absurl = url.absurl(os.path.abspath(full)).geturl()
       code = """
 # @pytest.mark.xfail
 def %s():
