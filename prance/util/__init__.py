@@ -40,13 +40,13 @@ def validation_backends():
   try:
     import swagger_spec_validator  # noqa: F401
     ret.append('swagger-spec-validator')
-  except ImportError:  # pragma: nocover
+  except (ImportError, SyntaxError):  # pragma: nocover
     pass
 
   try:
     import openapi_spec_validator  # noqa: F401
     ret.append('openapi-spec-validator')
-  except ImportError:  # pragma: nocover
+  except (ImportError, SyntaxError):  # pragma: nocover
     pass
 
   return tuple(ret)
