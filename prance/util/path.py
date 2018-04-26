@@ -82,7 +82,6 @@ def path_set(obj, path, value, **options):
       return
 
     while len(seq) < index:
-      needs_append = True
       seq.append(None)
 
     if value_index_type == int:
