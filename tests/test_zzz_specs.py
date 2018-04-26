@@ -59,7 +59,9 @@ def %s():
   import os
   cur = os.getcwd()
 
-  os.chdir('%s')
+  import os.path
+  drive, path = os.path.splitdrive('%s')
+  os.chdir(path)
 
   from prance import %s
   try:
