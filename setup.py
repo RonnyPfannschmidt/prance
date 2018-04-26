@@ -33,6 +33,10 @@ if __name__ == '__main__':
     'swagger-spec-validator~=2.1',
   ]
 
+  osv_require = [
+    'openapi-spec-validator~=0.2',
+  ]
+
   # Run setup
   setup(
       name = 'prance',
@@ -75,6 +79,7 @@ if __name__ == '__main__':
         'dev': dev_require,
         'icu': icu_require,
         'ssv': ssv_require,
+        'osv': osv_require,
       },
       entry_points={
           'console_scripts': [
