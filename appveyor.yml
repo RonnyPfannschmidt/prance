@@ -67,7 +67,7 @@ install:
 
   # Upgrade to the latest version of pip to avoid it displaying warnings
   # about it being out of date.
-  - "pip install --disable-pip-version-check --user --upgrade pip"
+  - "python -m pip install --disable-pip-version-check --user --upgrade pip"
 
   # Change to project directory
   - "CD %APPVEYOR_BUILD_FOLDER%"
@@ -76,7 +76,7 @@ install:
   # compiled extensions and are not provided as pre-built wheel packages,
   # pip will build them from source using the MSVC compiler matching the
   # target Python version and architecture
-  - "pip install -r requirements_no_icu.txt"
+  - "python -m pip install -r requirements_no_icu.txt"
 
 build_script:
   # Build the compiled extension
