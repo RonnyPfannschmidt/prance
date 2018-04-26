@@ -26,45 +26,35 @@ def make_name(path, parser, backend, version, file_format, entry):
 # One case per combination of:
 # - parser (base, resolving)
 # - validation backend (flex, swagger-spec-validator) (skip ssv if importing it fails)
-# - spec version (v2.0 only so far)
+# - spec version
 # - file format
 # - file
 # That gives >50 test cases
 
-BACKENDS = ('flex', 'swagger-spec-validator')
-try:
-  import swagger_spec_validator
-except ImportError:
-  BACKENDS = ('flex',)
-
 import os, os.path
 base = 'tests/OpenAPI-Specification/examples'
 
-for parser in ('BaseParser', 'ResolvingParser'):
-  for backend in BACKENDS:
-    for version in os.listdir(base):
-      version_dir = os.path.join(base, version)
-      for file_format in os.listdir(version_dir):
-        format_dir = os.path.join(version_dir, file_format)
-        if not os.path.isdir(format_dir):
-          continue  # effectively skips v3.0 for now
+def iter_entries(parser, backend, version, file_format, path):
+  if version == 'v3.0' and backend != 'openapi-spec-validator':
+    return
 
-        for entry in os.listdir(format_dir):
-          full = os.path.join(format_dir, entry)
-          testcase_name = None
-          if os.path.isfile(full):
-            testcase_name = make_name(full, parser, backend, version, file_format, entry)
-          elif os.path.isdir(full):
-            if parser == 'BaseParser':
-              continue  # skip separate files for the BaseParser
-            full = os.path.join(full, 'spec/swagger.%s' % (file_format))
-            if os.path.isfile(full):
-              testcase_name = make_name(full, parser, backend, version, file_format, entry)
-          full = os.path.abspath(full)
+  for entry in os.listdir(path):
+    full = os.path.join(path, entry)
+    testcase_name = None
+    if os.path.isfile(full):
+      testcase_name = make_name(full, parser, backend, version, file_format, entry)
+    elif os.path.isdir(full):
+      if parser == 'BaseParser':
+        continue  # skip separate files for the BaseParser
+      full = os.path.join(full, 'spec/swagger.%s' % (file_format))
+      if os.path.isfile(full):
+        testcase_name = make_name(full, parser, backend, version, file_format, entry)
+    full = os.path.abspath(full)
 
-          if testcase_name:
-            dirname = os.path.dirname(full)
-            code = """
+    if testcase_name:
+      dirname = os.path.dirname(full)
+      code = """
+@pytest.mark.xfail
 def %s():
   import os
   cur = os.getcwd()
@@ -77,5 +67,20 @@ def %s():
   finally:
     os.chdir(cur)
 """ % (testcase_name, dirname, parser, parser, full, backend)
-            print(code)
-            exec(code, globals(), globals())
+      print(code)
+      exec(code, globals(), globals())
+
+for parser in ('BaseParser', 'ResolvingParser'):
+  from prance.util import validation_backends
+  for backend in validation_backends():
+    for version in os.listdir(base):
+      version_dir = os.path.join(base, version)
+      for file_format in os.listdir(version_dir):
+        format_dir = os.path.join(version_dir, file_format)
+
+        if not os.path.isdir(format_dir):  # Assume YAML
+          iter_entries(parser, backend, version, 'yaml', version_dir)
+        else:
+          for entry in os.listdir(format_dir):
+            iter_entries(parser, backend, version, file_format, format_dir)
+
