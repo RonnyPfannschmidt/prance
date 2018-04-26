@@ -84,3 +84,4 @@ for parser in ('BaseParser', 'ResolvingParser'):
           for entry in os.listdir(format_dir):
             iter_entries(parser, backend, version, file_format, format_dir)
 
+raise Hell
