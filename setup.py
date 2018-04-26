@@ -36,7 +36,7 @@ if __name__ == '__main__':
   # Run setup
   setup(
       name = 'prance',
-      version = '0.10.0',
+      version = '0.10.1',
       description = 'Swagger/OpenAPI 2.0 Parser',
       long_description = open('README.rst').read(),
       # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
