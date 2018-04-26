@@ -25,16 +25,23 @@ def make_name(path, parser, backend, version, file_format, entry):
 # Generate test cases at import.
 # One case per combination of:
 # - parser (base, resolving)
-# - validation backend (flex, swagger-spec-validator)
+# - validation backend (flex, swagger-spec-validator) (skip ssv if importing it fails)
 # - spec version (v2.0 only so far)
 # - file format
 # - file
 # That gives >50 test cases
+
+BACKENDS = ('flex', 'swagger-spec-validator')
+try:
+  import swagger_spec_validator
+except ImportError:
+  BACKENDS = ('flex',)
+
 import os, os.path
 base = 'tests/OpenAPI-Specification/examples'
 
 for parser in ('BaseParser', 'ResolvingParser'):
-  for backend in ('flex', 'swagger-spec-validator'):
+  for backend in BACKENDS:
     for version in os.listdir(base):
       version_dir = os.path.join(base, version)
       for file_format in os.listdir(version_dir):

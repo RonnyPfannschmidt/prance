@@ -84,6 +84,12 @@ def test_issue_1_relative_path_references(issue_1_parser):
 
 
 def test_issue_5_integer_keys():
+  # Skip if we don't have SSV
+  try:
+    import swagger_spec_validator
+  except ImportError:
+    return
+
   # Must fail in implicit strict mode.
   with pytest.raises(SwaggerValidationError):
     ResolvingParser('tests/issue_5.yaml', backend = 'swagger-spec-validator')
