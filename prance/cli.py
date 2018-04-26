@@ -41,15 +41,15 @@ def cli():
     default = 'flex',
     metavar = 'BACKEND',
     nargs = 1,
-    help = 'The validation backend to use. One of "flex" or '
-           '"swagger-spec-validator".'
+    help = 'The validation backend to use. One of "flex", '
+           '"swagger-spec-validator" or "openapi-spec-validator".'
 )
 @click.option(
     '--strict/--no-strict',
     default = True,
     help = 'Be strict or lenient in validating specs. Strict validation '
            'rejects non-string spec keys, for example in response codes. '
-           'Only applies to the "swagger-spec-validator" backend.'
+           'Does not apply to the "flex" backend.'
 )
 @click.option(
     '--output-file', '-o',
@@ -120,7 +120,7 @@ def validate(resolve, backend, strict, output_file, urls):
       sys.exit(1)
 
     # All good, next file.
-    click.echo('Validates OK as Swagger/OpenAPI 2.0!')
+    click.echo('Validates OK as %s!' % (parser.version,))
 
     # If an output file is given, write the specs to it.
     if output_file:
