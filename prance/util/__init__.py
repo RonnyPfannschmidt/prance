@@ -2,7 +2,7 @@
 """This submodule contains utility code for Prance."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2017 Jens Finkhaeuser'
+__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ('iterators', 'fs', 'formats', 'resolver', 'url')
 
@@ -27,3 +27,26 @@ def stringify_keys(data):
       value = stringify_keys(value)
     ret[key] = value
   return ret
+
+
+def validation_backends():
+  """
+  Return a list of validation backends supported by the environment.
+
+  Validation backends other than 'flex' are optional.
+  """
+  ret = ['flex']
+
+  try:
+    import swagger_spec_validator  # noqa: F401
+    ret.append('swagger-spec-validator')
+  except ImportError:  # pragma: nocover
+    pass
+
+  try:
+    import openapi_spec_validator  # noqa: F401
+    ret.append('openapi-spec-validator')
+  except ImportError:  # pragma: nocover
+    pass
+
+  return tuple(ret)
