@@ -42,7 +42,9 @@ external references in) specs:
 
 There is an interesting side effect to validation with an output file: when
 references are also resolved (the default), the output file effectively
-becomes a compiled spec in which all previous references are resolved.
+becomes a compiled spec in which all previous references are resolved. Note
+that this combined spec is validated, so mixing OpenAPI versions leads to
+undefined behaviour.
 
 Code
 ----
