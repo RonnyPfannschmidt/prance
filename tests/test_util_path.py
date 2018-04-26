@@ -248,3 +248,10 @@ def test_set_mixed_create():
   result = path_set({}, (0,), 42, create = True)
   assert { 0: 42 } == result
 
+def test_set_mixed_create_no_fill():
+  # Creation should not add items that are not necessary
+  base = { 'foo': [123] }
+
+  result = path_set(base, ('foo', 0), 42, create = True)
+  assert { 'foo': [42] } == result
+

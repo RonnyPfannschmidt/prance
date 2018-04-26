@@ -78,7 +78,11 @@ def path_set(obj, path, value, **options):
     list is added. If the latter is None (unknown), None is added. Otherwise
     a dict is added.
     """
+    if len(seq) > index:
+      return
+
     while len(seq) < index:
+      needs_append = True
       seq.append(None)
 
     if value_index_type == int:
