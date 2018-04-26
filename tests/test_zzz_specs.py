@@ -32,7 +32,7 @@ def make_name(path, parser, backend, version, file_format, entry):
 # That gives >50 test cases
 
 import os, os.path
-base = 'tests/OpenAPI-Specification/examples'
+base = os.path.join('tests', 'OpenAPI-Specification', 'examples')
 
 def iter_entries(parser, backend, version, file_format, path):
   if version == 'v3.0' and backend != 'openapi-spec-validator':
@@ -46,7 +46,7 @@ def iter_entries(parser, backend, version, file_format, path):
     elif os.path.isdir(full):
       if parser == 'BaseParser':
         continue  # skip separate files for the BaseParser
-      full = os.path.join(full, 'spec/swagger.%s' % (file_format))
+      full = os.path.join(full, 'spec', 'swagger.%s' % (file_format))
       if os.path.isfile(full):
         testcase_name = make_name(full, parser, backend, version, file_format, entry)
     full = os.path.abspath(full)
