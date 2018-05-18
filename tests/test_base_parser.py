@@ -43,6 +43,7 @@ def test_version_fail():
     BaseParser(spec_string = """---
 openapi: 4.0.0""")
 
+
 def test_filename_or_spec():
   with pytest.raises(AssertionError):
     BaseParser('', '')
