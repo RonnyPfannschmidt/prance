@@ -74,6 +74,7 @@ if __name__ == '__main__':
         'requests~=2.18',
         'six~=1.11',
         'click~=6.7',
+        'semver~=2.8',
       ],
       extras_require = {
         'dev': dev_require,

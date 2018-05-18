@@ -46,8 +46,6 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 
   SPEC_VERSION_2_PREFIX = 'Swagger/OpenAPI'
   SPEC_VERSION_3_PREFIX = 'OpenAPI'
-  SPEC_VERSION_2 = 'Swagger/OpenAPI 2.0'
-  SPEC_VERSION_3 = 'OpenAPI 3.0.0'
 
   def __init__(self, url = None, spec_string = None, lazy = False, **kwargs):
     """
@@ -158,7 +156,18 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 
     # Validate the parsed specs, using the given validation backend.
     validator = getattr(self, validator_name)
-    validator(spec_version)
+    validator(parsed)
+
+  def __set_version(self, prefix, version):
+    self.version_name = prefix
+    self.version_parsed = version
+    import semver
+    self.semver = semver.format_version(*version)
+
+    stringified = self.semver
+    if prefix == BaseParser.SPEC_VERSION_2_PREFIX:
+      stringified = '%d.%d' % (version[0], version[1])
+    self.version = '%s %s' % (self.version_name, stringified)
 
   def _validate_flex(self, spec_version):
     from flex.exceptions import ValidationError
@@ -169,7 +178,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       from .util.exceptions import raise_from
       raise_from(SwaggerValidationError, ex)
 
-    self.version = '%s %s' % (BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
+    self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
   def _validate_swagger_spec_validator(self, spec_version):
     from swagger_spec_validator.common import SwaggerValidationError as SSVErr
@@ -180,7 +189,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       from .util.exceptions import raise_from
       raise_from(SwaggerValidationError, ex)
 
-    self.version = '%s %s' % (BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
+    self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
   def _validate_openapi_spec_validator(self, spec_version):
     from openapi_spec_validator import validate_v2_spec, validate_v3_spec
@@ -191,13 +200,13 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     try:
       try:
         validate_v3_spec(self.specification)
-        self.version = '%s %s' % (BaseParser.SPEC_VERSION_3_PREFIX, spec_version)
+        self.__set_version(BaseParser.SPEC_VERSION_3_PREFIX, spec_version)
       except TypeError as type_ex:  # pragma: nocover
         raise_from(SwaggerValidationError, type_ex)
       except ValidationError as v3_ex:
         try:
           validate_v2_spec(self.specification)
-          self.version = '%s %s' % (BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
+          self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
         except TypeError as type_ex:
           raise_from(SwaggerValidationError, type_ex)
     except RefResolutionError as ref_ex:
