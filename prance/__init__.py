@@ -19,6 +19,7 @@ __version__ = '0.11.0'
 class SwaggerValidationError(Exception):
   pass
 
+
 from . import mixins
 
 # Placeholder for when no URL is specified for the main spec file
@@ -41,7 +42,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
   BACKENDS = {
     'flex': ((2,), '_validate_flex'),
     'swagger-spec-validator': ((2,), '_validate_swagger_spec_validator'),
-    'openapi-spec-validator': ((2,3), '_validate_openapi_spec_validator'),
+    'openapi-spec-validator': ((2, 3), '_validate_openapi_spec_validator'),
   }
 
   SPEC_VERSION_2_PREFIX = 'Swagger/OpenAPI'
@@ -145,14 +146,16 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     if spec_version is None:
       spec_version = self.specification.get('swagger', None)
     if spec_version is None:
-      raise SwaggerValidationError('Could not determine specification schema version!')
+      raise SwaggerValidationError('Could not determine specification schema '
+          'version!')
 
     # Try parsing the spec version, examine the first component.
     import distutils.version
     parsed = distutils.version.StrictVersion(spec_version).version
     if parsed[0] not in versions:
         raise SwaggerValidationError('Version mismatch: selected backend "%s"'
-          ' does not support specified version %s!' % (self._backend, spec_version))
+          ' does not support specified version %s!' % (self._backend,
+          spec_version))
 
     # Validate the parsed specs, using the given validation backend.
     validator = getattr(self, validator_name)

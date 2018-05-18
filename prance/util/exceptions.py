@@ -30,4 +30,3 @@ elif six.PY2:
   finally:
     klass = None
 """)
-
