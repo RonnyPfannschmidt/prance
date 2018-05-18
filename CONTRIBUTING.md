@@ -47,6 +47,16 @@ Run a single test scenario:
 $ pytest tests/test_resolving_parser.py::test_basics
 ```
 
+Note that tests come in two flavours: one set of tests exercises various package
+functionalities. The other set of tests validates examples from OpenAPI's own
+repositories; these latter tests can be fairly slow to execute.
+
+To run all tests without these spec validation tests, use:
+
+```bash
+$ pytest -k 'not test_zzz_specs.py'
+```
+
 Run tests on multiple Python versions:
 
 ```bash
