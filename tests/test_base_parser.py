@@ -2,7 +2,7 @@
 """Test suite for prance.BaseParser ."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2017 Jens Finkhaeuser'
+__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
@@ -37,6 +37,11 @@ def test_parse_fail():
     BaseParser(spec_string = """---
 invalid 'a'sda YAML""")
 
+
+def test_version_fail():
+  with pytest.raises(SwaggerValidationError):
+    BaseParser(spec_string = """---
+openapi: 4.0.0""")
 
 def test_filename_or_spec():
   with pytest.raises(AssertionError):
@@ -85,8 +90,3 @@ def test_cache_specs_mixin(petstore_parser):
 def test_relative_urls_from_string(petstore_parser_from_string):
   # This must succeed
   assert petstore_parser_from_string.yaml(), 'Did not get YAML representation of specs!'
-
-
-def test_bad_backend():
-  with pytest.raises(ValueError):
-    BaseParser('tests/petstore.yaml', backend = 'does_not_exist')

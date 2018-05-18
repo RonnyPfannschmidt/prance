@@ -19,7 +19,6 @@ __version__ = '0.11.0'
 class SwaggerValidationError(Exception):
   pass
 
-
 from . import mixins
 
 # Placeholder for when no URL is specified for the main spec file
@@ -40,13 +39,15 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
   """
 
   BACKENDS = {
-    'flex': '_validate_flex',
-    'swagger-spec-validator': '_validate_swagger_spec_validator',
-    'openapi-spec-validator': '_validate_openapi_spec_validator',
+    'flex': ((2,), '_validate_flex'),
+    'swagger-spec-validator': ((2,), '_validate_swagger_spec_validator'),
+    'openapi-spec-validator': ((2,3), '_validate_openapi_spec_validator'),
   }
 
+  SPEC_VERSION_2_PREFIX = 'Swagger/OpenAPI'
+  SPEC_VERSION_3_PREFIX = 'OpenAPI'
   SPEC_VERSION_2 = 'Swagger/OpenAPI 2.0'
-  SPEC_VERSION_3 = 'OpenAPI 3.0'
+  SPEC_VERSION_3 = 'OpenAPI 3.0.0'
 
   def __init__(self, url = None, spec_string = None, lazy = False, **kwargs):
     """
@@ -130,46 +131,77 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     self._validate()
 
   def _validate(self):
-    # Validate the parsed specs, using the given validation backend.
-    validator = getattr(self, BaseParser.BACKENDS[self._backend])
-    validator()
+    # Ensure specification is a mapping
+    from collections import Mapping
+    if not isinstance(self.specification, Mapping):
+      raise SwaggerValidationError('Could not parse specifications!')
 
-  def _validate_flex(self):
+    # Ensure the selected backend supports the given spec version
+    versions, validator_name = BaseParser.BACKENDS[self._backend]
+
+    # Fetch the spec version. Note that this is the spec version the spec
+    # *claims* to be; we later set the one we actually could validate as.
+    spec_version = None
+    if spec_version is None:
+      spec_version = self.specification.get('openapi', None)
+    if spec_version is None:
+      spec_version = self.specification.get('swagger', None)
+    if spec_version is None:
+      raise SwaggerValidationError('Could not determine specification schema version!')
+
+    # Try parsing the spec version, examine the first component.
+    import distutils.version
+    parsed = distutils.version.StrictVersion(spec_version).version
+    if parsed[0] not in versions:
+        raise SwaggerValidationError('Version mismatch: selected backend "%s"'
+          ' does not support specified version %s!' % (self._backend, spec_version))
+
+    # Validate the parsed specs, using the given validation backend.
+    validator = getattr(self, validator_name)
+    validator(spec_version)
+
+  def _validate_flex(self, spec_version):
     from flex.exceptions import ValidationError
     from flex.core import parse as validate
     try:
       validate(self.specification)
     except ValidationError as ex:
-      raise SwaggerValidationError(str(ex))
+      from .util.exceptions import raise_from
+      raise_from(SwaggerValidationError, ex)
 
-    self.version = BaseParser.SPEC_VERSION_2
+    self.version = '%s %s' % (BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
-  def _validate_swagger_spec_validator(self):
+  def _validate_swagger_spec_validator(self, spec_version):
     from swagger_spec_validator.common import SwaggerValidationError as SSVErr
     from swagger_spec_validator.validator20 import validate_spec
     try:
       validate_spec(self.specification)
     except SSVErr as ex:
-      raise SwaggerValidationError(str(ex))
+      from .util.exceptions import raise_from
+      raise_from(SwaggerValidationError, ex)
 
-    self.version = BaseParser.SPEC_VERSION_2
+    self.version = '%s %s' % (BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
-  def _validate_openapi_spec_validator(self):
+  def _validate_openapi_spec_validator(self, spec_version):
     from openapi_spec_validator import validate_v2_spec, validate_v3_spec
-    from jsonschema.exceptions import ValidationError
+    from jsonschema.exceptions import ValidationError, RefResolutionError
 
     # Try v3 first, then fall back to v2
+    from .util.exceptions import raise_from
     try:
-      validate_v3_spec(self.specification)
-      self.version = BaseParser.SPEC_VERSION_3
-    except TypeError as type_ex:  # pragma: nocover
-      raise SwaggerValidationError(str(type_ex))
-    except ValidationError as v3_ex:
       try:
-        validate_v2_spec(self.specification)
-        self.version = BaseParser.SPEC_VERSION_2
-      except TypeError as type_ex:
-        raise SwaggerValidationError(str(type_ex))
+        validate_v3_spec(self.specification)
+        self.version = '%s %s' % (BaseParser.SPEC_VERSION_3_PREFIX, spec_version)
+      except TypeError as type_ex:  # pragma: nocover
+        raise_from(SwaggerValidationError, type_ex)
+      except ValidationError as v3_ex:
+        try:
+          validate_v2_spec(self.specification)
+          self.version = '%s %s' % (BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
+        except TypeError as type_ex:
+          raise_from(SwaggerValidationError, type_ex)
+    except RefResolutionError as ref_ex:
+      raise_from(SwaggerValidationError, ref_ex)
 
 
 class ResolvingParser(BaseParser):
