@@ -2,7 +2,7 @@
 """This submodule contains specialty iterators over specs."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2017 Jens Finkhaeuser'
+__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 

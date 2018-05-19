@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Prance implements parsers for Swagger/OpenAPI 2.0 API specs.
+Prance implements parsers for Swagger/OpenAPI 2.0 and 3.0.0 API specs.
 
 See https://openapis.org/ for details on the specification.
 
@@ -9,7 +9,7 @@ ResolvingParser that additionally resolves any $ref references.
 """
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2017 Jens Finkhaeuser'
+__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ('util', 'mixins', 'cli')
 __version__ = '0.11.0'
