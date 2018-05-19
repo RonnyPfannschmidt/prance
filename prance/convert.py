@@ -8,12 +8,11 @@ The functions use https://mermade.org.uk/ APIs for conversion.
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
+__all__ = ()
 
 
 class ConversionError(ValueError):
-  def __init__(self, *args, content_type = None, **kwargs):  # pragma: nocover
-    super(ConversionError, self).__init__(*args, **kwargs)
-    self.detected_content_type = content_type
+  pass  # pragma: nocover
 
 
 def convert_str(spec_str, filename = None, **kwargs):
@@ -52,10 +51,11 @@ def convert_str(spec_str, filename = None, **kwargs):
 
   # Convert via API
   import requests
-  r = requests.post('https://mermade.org.uk/api/v1/convert', data = data, headers = headers)
+  r = requests.post('https://mermade.org.uk/api/v1/convert', data = data,
+      headers = headers)
   if not r.ok:  # pragma: nocover
-    raise ConversionError('Could not convert spec: %d %s' % (r.status_code, r.reason),
-        content_type = content_type)
+    raise ConversionError('Could not convert spec: %d %s' % (
+        r.status_code, r.reason))
 
   return r.text, '%s; %s' % (r.headers['content-type'], r.apparent_encoding)
 
@@ -76,5 +76,3 @@ def convert_url(url, cache = {}):
 
   # Try converting
   return convert_str(content, None, content_type = content_type)
-
-

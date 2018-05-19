@@ -8,7 +8,7 @@ __all__ = ()
 
 
 class ParseError(ValueError):
-  pass  # pragma: no cover
+  pass  # pragma: nocover
 
 
 def __format_preferences(filename, content_type):  # noqa: N802
@@ -193,7 +193,7 @@ def parse_spec(spec_str, filename = None, **kwargs):
 
   The function exists for legacy reasons and just wraps parse_spec_details,
   returning only the parsed specs.
-  
+
   :param str spec_str: The specifications as string.
   :param str filename: [optional] Filename to determine the format from.
   :param str content_type: [optional] Content type to determine the format
