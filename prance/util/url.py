@@ -166,7 +166,6 @@ def fetch_url_text(url, cache = {}):
     content_type = response.headers['content-type']
     content = response.text
 
-  print('put', url_key, id(content))
   cache[url_key] = (content, content_type)
   return content, content_type
 
