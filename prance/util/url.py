@@ -119,9 +119,9 @@ def split_url_reference(base_url, reference):
   return parsed_url, obj_path
 
 
-def fetch_url(url, cache = {}):
+def fetch_url_text(url, cache = {}):
   """
-  Fetch the URL and parse the contents.
+  Fetch the URL.
 
   If the URL is a file URL, the format used for parsing depends on the file
   extension. Otherwise, YAML is assumed.
@@ -133,10 +133,10 @@ def fetch_url(url, cache = {}):
   :param tuple url: The url, parsed as returned by `absurl` above.
   :param Mapping cache: An optional cache. If the URL can be found in the
     cache, return the cache contents.
-  :return: The parsed file.
-  :rtype: dict
+  :return: The resource text of the URL, and the content type.
+  :rtype: tuple
   """
-  url_key = urlresource(url)
+  url_key = 'text_' + urlresource(url)
   entry = cache.get(url_key, None)
   if entry is not None:
     return entry
@@ -165,6 +165,33 @@ def fetch_url(url, cache = {}):
     response = requests.get(url.geturl())
     content_type = response.headers['content-type']
     content = response.text
+
+  print('put', url_key, id(content))
+  cache[url_key] = (content, content_type)
+  return content, content_type
+
+
+def fetch_url(url, cache = {}):
+  """
+  Fetch the URL and parse the contents.
+
+  Same as fetch_url_text(), but also parses the content and only
+  returns the parse results.
+
+  :param tuple url: The url, parsed as returned by `absurl` above.
+  :param Mapping cache: An optional cache. If the URL can be found in the
+    cache, return the cache contents.
+  :return: The parsed file.
+  :rtype: dict
+  """
+  # Return from cache, if parsed result is already present.
+  url_key = urlresource(url)
+  entry = cache.get(url_key, None)
+  if entry is not None:
+    return entry
+
+  # Fetch URL text
+  content, content_type = fetch_url_text(url, cache)
 
   # Now return the parsed results
   from .formats import parse_spec

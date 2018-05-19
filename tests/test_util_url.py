@@ -120,6 +120,16 @@ def test_fetch_url_cached():
   assert id(content1) == id(content2)
 
 
+def test_fetch_url_text_cached():
+  from prance.util import fs
+  cache = {}
+
+  content1, _ = url.fetch_url_text(url.absurl(fs.abspath('tests/with_externals.yaml')), cache)
+  content2, _ = url.fetch_url_text(url.absurl(fs.abspath('tests/with_externals.yaml')), cache)
+
+  assert id(content1) == id(content2)
+
+
 def test_fetch_url_http():
   exturl = 'http://finkhaeuser.de/projects/prance/petstore.yaml'\
     '#/definitions/Pet'
