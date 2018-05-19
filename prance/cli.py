@@ -231,5 +231,40 @@ def compile(ctx, urls, output_file):
   #   __write_to_file(output_file, parser.specification)
 
 
+@cli.command()
+@click.argument(
+    'url_or_path',
+    type = click.Path(exists = False),
+    nargs = 1,
+)
+@click.argument(
+    'output_file',
+    type = click.Path(exists = False),
+    nargs = 1,
+    required = False,
+)
+def convert(url_or_path, output_file):
+  """
+  Convert the given spec to OpenAPI 3.x.y.
+
+  The conversion uses the web API provided by mermade.org.uk to perform the
+  conversion. As long as that service is kept up-to-date and you have an
+  internet connection, conversion should work and should convert to the latest
+  version of the specs.
+  """
+  from .util import url
+  absurl = url.absurl(url_or_path)
+
+  from .convert import convert_url
+  content, content_type = convert_url(absurl)
+
+  if output_file is None:
+    click.echo(content)
+  else:
+    from .util import fs
+    fs.write_file(output_file, content)
+
+
 cli.add_command(validate)
 cli.add_command(compile)
+cli.add_command(convert)
