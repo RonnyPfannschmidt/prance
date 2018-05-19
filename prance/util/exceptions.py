@@ -10,7 +10,7 @@ __all__ = ()
 # Raise the given exception class from the caught exception, preserving
 # stack trace and message as much as possible.
 import six
-if six.PY3:
+if six.PY3:  # pragma: nocover
   six.exec_("""def raise_from(klass, from_value):
   try:
     if from_value is None:
@@ -19,7 +19,7 @@ if six.PY3:
   finally:
     klass = None
 """)
-elif six.PY2:
+elif six.PY2:  # pragma: nocover
   six.exec_("""def raise_from(klass, from_value):
   try:
     if from_value is None:

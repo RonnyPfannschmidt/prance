@@ -11,7 +11,7 @@ ResolvingParser that additionally resolves any $ref references.
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
-__all__ = ('util', 'mixins', 'cli')
+__all__ = ('util', 'mixins', 'cli', 'convert')
 __version__ = '0.11.0'
 
 
@@ -210,7 +210,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
         try:
           validate_v2_spec(self.specification)
           self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
-        except TypeError as type_ex:
+        except TypeError as type_ex:  # pragma: nocover
           raise_from(SwaggerValidationError, type_ex)
     except RefResolutionError as ref_ex:
       raise_from(SwaggerValidationError, ref_ex)
