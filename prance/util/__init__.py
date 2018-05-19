@@ -4,7 +4,8 @@
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
-__all__ = ('iterators', 'fs', 'formats', 'resolver', 'url')
+__all__ = ('iterators', 'fs', 'formats', 'resolver', 'url', 'path',
+    'exceptions')
 
 
 def stringify_keys(data):

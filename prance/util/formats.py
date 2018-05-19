@@ -125,9 +125,37 @@ __FORMAT_TO_SERIALIZER = {
 }
 
 
-def parse_spec(spec_str, filename = None, **kwargs):
+def format_info(format_name):
+  """
+  Return content type and extension for a supported format.
+
+  Valid formats are `YAML` or `JSON`.
+
+  :param str format_name: The name of the format.
+  :return: The preferred content type and file name extension, or
+      (None, None) if the format name is not supported.
+  :rtype: tuple
+  """
+  format_name = format_name.upper()
+
+  content_type = None
+  for content_types, name in __MIME_TO_FORMAT.items():
+    if name == format_name:
+      content_type = content_types[0]
+
+  extension = None
+  for extensions, name in __EXT_TO_FORMAT.items():
+    if name == format_name:
+       extension = extensions[0]
+
+  return content_type, extension
+
+
+def parse_spec_details(spec_str, filename = None, **kwargs):
   """
   Return a parsed dict of the given spec string.
+
+  Also returned are the detected mime type and file name extension.
 
   The default format is assumed to be JSON, but if you provide a filename,
   its extension is used to determine whether YAML or JSON should be
@@ -137,8 +165,9 @@ def parse_spec(spec_str, filename = None, **kwargs):
   :param str filename: [optional] Filename to determine the format from.
   :param str content_type: [optional] Content type to determine the format
       from.
-  :return: The specifications.
-  :rtype: dict
+  :return: The specifications, mime type, and extension.
+  :rtype: tuple
+  :raises ParseError: when parsing fails.
   """
   # Fetch optional content type & determine formats
   content_type = kwargs.get('content_type', None)
@@ -148,12 +177,33 @@ def parse_spec(spec_str, filename = None, **kwargs):
   for f in formats:
     parser = __FORMAT_TO_PARSER[f]
     try:
-      return parser(spec_str)
+      result = parser(spec_str)
+      ctype, ext = format_info(f)
+      return result, ctype, ext
     except ParseError:
       pass
 
   # All failed!
   raise ParseError('Could not detect format of spec string!')
+
+
+def parse_spec(spec_str, filename = None, **kwargs):
+  """
+  Return a parsed dict of the given spec string.
+
+  The function exists for legacy reasons and just wraps parse_spec_details,
+  returning only the parsed specs.
+  
+  :param str spec_str: The specifications as string.
+  :param str filename: [optional] Filename to determine the format from.
+  :param str content_type: [optional] Content type to determine the format
+      from.
+  :return: The specifications.
+  :rtype: dict
+  :raises ParseError: when parsing fails.
+  """
+  result, ctype, ext = parse_spec_details(spec_str, filename, **kwargs)
+  return result
 
 
 def serialize_spec(specs, filename = None, **kwargs):

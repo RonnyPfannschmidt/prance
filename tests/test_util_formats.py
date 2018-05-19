@@ -12,6 +12,35 @@ import pytest
 from prance.util import formats
 
 
+def test_format_info_yaml():
+  ctype, ext = formats.format_info('yaml')
+  assert 'yaml' in ctype
+  assert 'yaml' in ext
+
+
+def test_format_info_json():
+  ctype, ext = formats.format_info('json')
+  assert 'json' in ctype
+  assert 'json' in ext
+
+
+def test_format_info_bad_format():
+  ctype, ext = formats.format_info('foo')
+  assert ctype is None
+  assert ext is None
+
+
+def test_parse_details_yaml():
+  yaml = """---
+foo: bar
+"""
+  parsed, ctype, ext = formats.parse_spec_details(yaml, 'foo.yaml')
+
+  assert parsed['foo'] == 'bar', 'Did not parse with explicit YAML'
+  assert 'yaml' in ctype
+  assert 'yaml' in ext
+
+
 def test_parse_yaml():
   yaml = """---
 foo: bar
