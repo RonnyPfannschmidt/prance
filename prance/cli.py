@@ -217,7 +217,7 @@ def compile(ctx, url_or_path, output_file):
   __validate(parser, name)
 
   # Write output
-  from prance.util import fs, formats
+  from prance.util import formats
   contents = formats.serialize_spec(parser.specification, output_file)
   if output_file is None:
     click.echo(contents)
@@ -250,7 +250,8 @@ def convert(url_or_path, output_file):
   """
   # Convert call
   from .util import url
-  absurl = url.absurl(url_or_path)
+  import os
+  absurl = url.absurl(url_or_path, os.getcwd())
 
   from .convert import convert_url
   content, content_type = convert_url(absurl)
