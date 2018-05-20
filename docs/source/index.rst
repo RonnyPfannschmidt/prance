@@ -21,8 +21,11 @@ API/Modules
 
    prance
    prance.mixins
+   prance.convert
    prance.util.formats
    prance.util.fs
    prance.util.iterators
    prance.util.resolver
    prance.util.url
+   prance.util.exceptions
+   prance.util.path
