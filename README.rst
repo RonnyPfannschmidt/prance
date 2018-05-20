@@ -108,14 +108,14 @@ Different validation backends support different features.
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
 | flex                   | 2 and 3        | 2.0 only        | n/a         | Fastest; the default, and always required.            | prance 0.8     | `flex <https://github.com/pipermerriam/flex>`__                                   |
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
-| openapi-spec-validator | 3 only         | 2.0 and 3.0     | yes         | Slow; does not accept integer keys (see strict mode). | prance 0.12    | `openapi\_spec\_validator <https://github.com/p1c2u/openapi-spec-validator>`__    |
+| openapi-spec-validator | 3 only         | 2.0 and 3.0     | yes         | Slow; does not accept integer keys (see strict mode). | prance 0.11    | `openapi\_spec\_validator <https://github.com/p1c2u/openapi-spec-validator>`__    |
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
 
 You can select the backend in the constructor of the parser(s):
 
 .. code:: python
 
-    parser = ResolvingParser('http://petstore.swagger.io/v2/swagger.json', backend = 'swagger-spec-validator')
+    parser = ResolvingParser('http://petstore.swagger.io/v2/swagger.json', backend = 'openapi-spec-validator')
 
 
 Only the default backend is included in the dependencies; others are detected at run-time. If you
@@ -123,9 +123,9 @@ install them, they can be used:
 
 .. code:: bash
 
-    $ pip install swagger-spec-validator
+    $ pip install openapi-spec-validator
     $ pip install prance
-    $ prance validate --backend=swagger-spec-validator path/to/spec.yml
+    $ prance validate --backend=openapi-spec-validator path/to/spec.yml
 
 
 *A note on strict mode:* The OpenAPI specs are a little ambiguous. On the one hand, they use JSON
