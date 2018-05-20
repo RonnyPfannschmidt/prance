@@ -9,7 +9,7 @@ __all__ = ()
 import pytest
 
 from prance import ResolvingParser
-from prance import SwaggerValidationError
+from prance import ValidationError
 
 @pytest.fixture
 def petstore_parser():

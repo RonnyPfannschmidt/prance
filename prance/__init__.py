@@ -16,7 +16,7 @@ __version__ = '0.11.0'
 
 
 # Define our own error class
-class SwaggerValidationError(Exception):
+class ValidationError(Exception):
   pass
 
 
@@ -33,7 +33,8 @@ else:
 
 class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
   """
-  The BaseParser loads, parses and validates Swagger/OpenAPI 2.0 specs.
+  The BaseParser loads, parses and validates Swagger/OpenAPI 2.0 and 3.0.0
+  specs.
 
   Uses :py:class:`YAMLMixin` and :py:class:`JSONMixin` for additional
   functionality.
@@ -133,7 +134,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     # Ensure specification is a mapping
     from collections import Mapping
     if not isinstance(self.specification, Mapping):
-      raise SwaggerValidationError('Could not parse specifications!')
+      raise ValidationError('Could not parse specifications!')
 
     # Ensure the selected backend supports the given spec version
     versions, validator_name = BaseParser.BACKENDS[self._backend]
@@ -146,14 +147,14 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     if spec_version is None:
       spec_version = self.specification.get('swagger', None)
     if spec_version is None:
-      raise SwaggerValidationError('Could not determine specification schema '
+      raise ValidationError('Could not determine specification schema '
           'version!')
 
     # Try parsing the spec version, examine the first component.
     import distutils.version
     parsed = distutils.version.StrictVersion(spec_version).version
     if parsed[0] not in versions:
-        raise SwaggerValidationError('Version mismatch: selected backend "%s"'
+        raise ValidationError('Version mismatch: selected backend "%s"'
           ' does not support specified version %s!' % (self._backend,
           spec_version))
 
@@ -173,13 +174,13 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     self.version = '%s %s' % (self.version_name, stringified)
 
   def _validate_flex(self, spec_version):
-    from flex.exceptions import ValidationError
+    from flex.exceptions import ValidationError as JSEValidationError
     from flex.core import parse as validate
     try:
       validate(self.specification)
-    except ValidationError as ex:
+    except JSEValidationError as ex:
       from .util.exceptions import raise_from
-      raise_from(SwaggerValidationError, ex)
+      raise_from(ValidationError, ex)
 
     self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
@@ -190,13 +191,14 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       validate_spec(self.specification)
     except SSVErr as ex:
       from .util.exceptions import raise_from
-      raise_from(SwaggerValidationError, ex)
+      raise_from(ValidationError, ex)
 
     self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
   def _validate_openapi_spec_validator(self, spec_version):
     from openapi_spec_validator import validate_v2_spec, validate_v3_spec
-    from jsonschema.exceptions import ValidationError, RefResolutionError
+    from jsonschema.exceptions import ValidationError as JSEValidationError
+    from jsonschema.exceptions import RefResolutionError
 
     # Try v3 first, then fall back to v2
     from .util.exceptions import raise_from
@@ -205,15 +207,15 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
         validate_v3_spec(self.specification)
         self.__set_version(BaseParser.SPEC_VERSION_3_PREFIX, spec_version)
       except TypeError as type_ex:  # pragma: nocover
-        raise_from(SwaggerValidationError, type_ex)
-      except ValidationError as v3_ex:
+        raise_from(ValidationError, type_ex)
+      except JSEValidationError as v3_ex:
         try:
           validate_v2_spec(self.specification)
           self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
         except TypeError as type_ex:  # pragma: nocover
-          raise_from(SwaggerValidationError, type_ex)
+          raise_from(ValidationError, type_ex)
     except RefResolutionError as ref_ex:
-      raise_from(SwaggerValidationError, ref_ex)
+      raise_from(ValidationError, ref_ex)
 
 
 class ResolvingParser(BaseParser):

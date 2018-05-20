@@ -9,7 +9,7 @@ __all__ = ()
 import pytest
 
 from prance import ResolvingParser
-from prance import SwaggerValidationError
+from prance import ValidationError
 from prance.util.fs import FileNotFoundError
 
 def make_name(path, parser, backend, version, file_format, entry):

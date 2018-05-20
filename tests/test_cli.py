@@ -31,7 +31,7 @@ Validates OK as Swagger/OpenAPI 2.0!
   # Bad example
   result = runner.invoke(cli.validate, ['tests/definitions.yaml'])
   assert result.exit_code == 1
-  assert 'SwaggerValidationError' in result.output
+  assert 'ValidationError' in result.output
 
 
 def test_validate_multiple(runner):
@@ -106,7 +106,7 @@ Validates OK as Swagger/OpenAPI 2.0!
   # Bad example
   result = runner.invoke(cli.validate, ['tests/definitions.yaml'])
   assert result.exit_code == 1
-  assert 'SwaggerValidationError' in result.output
+  assert 'ValidationError' in result.output
 
 
 def test_compile_output(runner):
@@ -146,7 +146,7 @@ def test_convert_defaults(runner):
   # Bad example
   result = runner.invoke(cli.validate, ['tests/definitions.yaml'])
   assert result.exit_code == 1
-  assert 'SwaggerValidationError' in result.output
+  assert 'ValidationError' in result.output
 
 
 def test_convert_output(runner):

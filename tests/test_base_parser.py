@@ -9,7 +9,7 @@ __all__ = ()
 import pytest
 
 from prance import BaseParser
-from prance import SwaggerValidationError
+from prance import ValidationError
 from prance.util.fs import FileNotFoundError
 
 
@@ -33,13 +33,13 @@ def test_load_fail():
 
 
 def test_parse_fail():
-  with pytest.raises(SwaggerValidationError):
+  with pytest.raises(ValidationError):
     BaseParser(spec_string = """---
 invalid 'a'sda YAML""")
 
 
 def test_version_fail():
-  with pytest.raises(SwaggerValidationError):
+  with pytest.raises(ValidationError):
     BaseParser(spec_string = """---
 openapi: 4.0.0""")
 

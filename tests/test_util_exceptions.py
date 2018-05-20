@@ -9,26 +9,26 @@ __all__ = ()
 import pytest
 
 from prance.util import exceptions
-from prance import SwaggerValidationError
+from prance import ValidationError
 
 def test_reraise_without_value():
-  with pytest.raises(SwaggerValidationError) as caught:
-    exceptions.raise_from(SwaggerValidationError, None)
+  with pytest.raises(ValidationError) as caught:
+    exceptions.raise_from(ValidationError, None)
 
   # The first is obvious from pytest.raises. The rest tests
   # known attributes
-  assert caught.type == SwaggerValidationError
+  assert caught.type == ValidationError
   assert str(caught.value) == ''
 
 
 def test_reraise_with_value():
-  with pytest.raises(SwaggerValidationError) as caught:
+  with pytest.raises(ValidationError) as caught:
     try:
       raise RuntimeError("foo")
     except RuntimeError as inner:
-      exceptions.raise_from(SwaggerValidationError, inner)
+      exceptions.raise_from(ValidationError, inner)
 
   # The first is obvious from pytest.raises. The rest tests
   # known attributes
-  assert caught.type == SwaggerValidationError
+  assert caught.type == ValidationError
   assert str(caught.value) == 'foo'

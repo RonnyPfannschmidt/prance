@@ -49,10 +49,10 @@ def __parser_for_url(url, resolve, backend, strict):  # noqa: N802
 def __validate(parser, name):  # noqa: N802
   """Validate a spec using this parser."""
   from prance.util.url import ResolutionError
-  from prance import SwaggerValidationError
+  from prance import ValidationError
   try:
     parser.parse()
-  except (ResolutionError, SwaggerValidationError) as err:
+  except (ResolutionError, ValidationError) as err:
     msg = 'ERROR in "%s" [%s]: %s' % (name, type(err).__name__,
         str(err))
     click.secho(msg, err = True, fg = 'red')

@@ -9,7 +9,7 @@ __all__ = ()
 import pytest
 
 from prance import BaseParser
-from prance import SwaggerValidationError
+from prance import ValidationError
 from prance.util import validation_backends
 
 def test_bad_backend():
@@ -28,18 +28,18 @@ def test_flex_validate_success():
 
 
 def test_flex_validate_failure():
-  with pytest.raises(SwaggerValidationError):
+  with pytest.raises(ValidationError):
     parser = BaseParser('tests/missing_reference.yaml', backend = 'flex')
 
 
 if 'swagger-spec-validator' in validation_backends():
   def test_swagger_spec_validator_issue_5_integer_keys():
     # Must fail in implicit strict mode.
-    with pytest.raises(SwaggerValidationError):
+    with pytest.raises(ValidationError):
       BaseParser('tests/issue_5.yaml', backend = 'swagger-spec-validator')
 
     # Must fail in explicit strict mode.
-    with pytest.raises(SwaggerValidationError):
+    with pytest.raises(ValidationError):
       BaseParser('tests/issue_5.yaml', backend = 'swagger-spec-validator', strict = True)
 
     # Must succeed in non-strict/lenient mode
@@ -52,18 +52,18 @@ if 'swagger-spec-validator' in validation_backends():
 
 
   def test_swagger_spec_validator_validate_failure():
-    with pytest.raises(SwaggerValidationError):
+    with pytest.raises(ValidationError):
       parser = BaseParser('tests/missing_reference.yaml', backend = 'swagger-spec-validator')
 
 
 if 'openapi-spec-validator' in validation_backends():
   def test_openapi_spec_validator_issue_5_integer_keys():
     # Must fail in implicit strict mode.
-    with pytest.raises(SwaggerValidationError):
+    with pytest.raises(ValidationError):
       BaseParser('tests/issue_5.yaml', backend = 'openapi-spec-validator')
 
     # Must fail in explicit strict mode.
-    with pytest.raises(SwaggerValidationError):
+    with pytest.raises(ValidationError):
       BaseParser('tests/issue_5.yaml', backend = 'openapi-spec-validator', strict = True)
 
     # Must succeed in non-strict/lenient mode
@@ -76,5 +76,5 @@ if 'openapi-spec-validator' in validation_backends():
 
 
   def test_openapi_spec_validator_validate_failure():
-    with pytest.raises(SwaggerValidationError):
+    with pytest.raises(ValidationError):
       parser = BaseParser('tests/missing_reference.yaml', backend = 'openapi-spec-validator')
