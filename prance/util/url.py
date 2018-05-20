@@ -187,7 +187,7 @@ def fetch_url(url, cache = {}):
   url_key = urlresource(url)
   entry = cache.get(url_key, None)
   if entry is not None:
-    return entry
+    return entry.copy()
 
   # Fetch URL text
   content, content_type = fetch_url_text(url, cache)
@@ -196,4 +196,4 @@ def fetch_url(url, cache = {}):
   from .formats import parse_spec
   result = parse_spec(content, url.path, content_type = content_type)
   cache[url_key] = result
-  return result
+  return result.copy()
