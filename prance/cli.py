@@ -188,47 +188,43 @@ def validate(ctx, output_file, urls):
 
 @backend_options.command()
 @click.argument(
-    'urls',
+    'url_or_path',
     type = click.Path(exists = False),
-    nargs = -1,
+    nargs = 1,
 )
 @click.argument(
     'output_file',
     type = click.Path(exists = False),
     nargs = 1,
+    required = False,
 )
 @click.pass_context
-def compile(ctx, urls, output_file):
+def compile(ctx, url_or_path, output_file):
   """
-  FIXME
+  Compile the given spec, resolving references if required.
 
-  Validate the given spec or specs.
+  Resolves references and uses backends exactly as in the "validate"
+  command, but only works on single URLs.
 
-  If the --resolve option is set, references will be resolved before
-  validation.
-
-  Note that this merges referenced objects into the main specs. Validation
-  backends used by prance cannot validate referenced objects, so resolving
-  the references before validation allows for full spec validation.
+  If an output file name is given, output is written there, otherwise
+  it is written to the terminal.
   """
-  # Process files
-  parsers = []
-  for url in urls:
-    # Create parser to use
-    parser, name = __parser_for_url(url, ctx.obj['resolve'],
-        ctx.obj['backend'], ctx.obj['strict'])
+  # Create parser to use
+  parser, name = __parser_for_url(url_or_path, ctx.obj['resolve'],
+      ctx.obj['backend'], ctx.obj['strict'])
 
-    # Try parsing
-    __validate(parser, name)
+  # Try parsing
+  __validate(parser, name)
 
-    # Add to collection
-    parsers.append(parser)
-
-  print(parsers)
-
-  # If an output file is given, write the specs to it.
-  # if output_file:
-  #   __write_to_file(output_file, parser.specification)
+  # Write output
+  from prance.util import fs, formats
+  contents = formats.serialize_spec(parser.specification, output_file)
+  if output_file is None:
+    click.echo(contents)
+  else:
+    from .util import fs
+    fs.write_file(output_file, contents)
+    click.echo('Output written to "%s".' % (output_file,))
 
 
 @cli.command()
@@ -252,12 +248,14 @@ def convert(url_or_path, output_file):
   internet connection, conversion should work and should convert to the latest
   version of the specs.
   """
+  # Convert call
   from .util import url
   absurl = url.absurl(url_or_path)
 
   from .convert import convert_url
   content, content_type = convert_url(absurl)
 
+  # Write output
   if output_file is None:
     click.echo(content)
   else:
