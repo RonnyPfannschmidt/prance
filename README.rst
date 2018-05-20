@@ -31,20 +31,34 @@ external references in) specs:
     # Validates without resolving
     $ prance validate --no-resolve path/to/swagger.yml
 
-    # Validates and resolves, and writes the results to output.yaml
-    $ prance validate -o output.yaml path/to/swagger.yml
-
     # Fetch URL, validate and resolve.
     $ prance validate http://petstore.swagger.io/v2/swagger.json
     Processing "http://petstore.swagger.io/v2/swagger.json"...
      -> Resolving external references.
     Validates OK as Swagger/OpenAPI 2.0!
 
-There is an interesting side effect to validation with an output file: when
-references are also resolved (the default), the output file effectively
-becomes a compiled spec in which all previous references are resolved. Note
-that this combined spec is validated, so mixing OpenAPI versions leads to
-undefined behaviour.
+Validation is not the only feature of prance. One of the side effects of
+resolving is that from a spec with references, one can create a fully resolved
+output spec. In the past, this was done via options to the `validate` command,
+but now there's a specific command just for this purpose:
+
+.. code:: bash
+
+    # Compile spec
+    $ prance compile path/to/input.yml path/to/output.yml
+
+
+Lastly, with the arrival of OpenAPI 3.0.0, it becomes useful for tooling to
+convert older specs to the new standard. Instead of re-inventing the wheel,
+prance just provides a CLI command for passing specs to the web API of
+`swagger2openapi <https://github.com/Mermade/swagger2openapi>`__ - a working
+internet connection is therefore required for this command:
+
+.. code:: bash
+
+    # Convert spec
+    $ prance compile path/to/swagger.yml path/to/openapi.yml
+
 
 Code
 ----
