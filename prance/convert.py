@@ -76,3 +76,68 @@ def convert_url(url, cache = {}):
 
   # Try converting
   return convert_str(content, None, content_type = content_type)
+
+
+def convert_spec(parser_or_spec, parser_klass = None, *args, **kwargs):
+  """
+  Convert an already parsed spec to OpenAPI 3.x.y.
+
+  Returns a new parser instance with the parsed specs, if possible.
+
+  The first parameter is either a parsed OpenAPI 2.0 spec, or a parser
+  instance, i.e. something derived from prance.BaseParser. If a parser,
+  the returned parser's options are taken from this source parser.
+
+  If the first parameter is a parsed spec, you must specify the class
+  of parser to instanciate. You can specify other options as key word
+  arguments. See the parser klass for details.
+
+  Any key word arguments specified here also override options from a
+  source parser.
+
+  This parametrization may seem a little convoluted. What it does, though,
+  is allow maximum flexibility. You can create parsed (but unvalidated)
+  OpenAPI 3.0 specs even if you only have backends that support vresion 2.0.
+  You can pass the source parser, and the lazy flag, and that's it. If your
+  version 2.0 specs were valid, there's a good chance your converted 3.0
+  specs are also valid.
+
+  :param mixed parser_or_spec: A dict (spec) or an instance of BaseParser
+  :param type parser_klass: [optional] A parser class to instanciate for
+    the result.
+  :return: A parser instance.
+  :rtype: BaseParser or derived.
+  """
+  # Figure out exact configuration to use
+  klass = None
+  options = None
+  spec = None
+
+  from . import BaseParser
+  if isinstance(parser_or_spec, BaseParser):
+    # We have a parser instance
+    klass = parser_klass or type(parser_or_spec)
+    options = parser_or_spec.options.copy()
+    options.update(kwargs)
+    spec = parser_or_spec.specification
+  else:
+    # We must assume a specification
+    klass = parser_klass or BaseParser
+    options = kwargs.copy()
+    spec = parser_or_spec
+
+  # print('Class', klass)
+  # print('Options', options)
+  # print('Spec', spec)
+
+  # We have to serialize the specs in order to convert them. Let's use
+  # YAML.
+  from .util import formats
+  serialized = formats.serialize_spec(spec, content_type = 'text/yaml')
+
+  # Convert serialized
+  converted, ctype = convert_str(serialized, content_type = 'text/yaml')
+
+  # Create parser with options
+  result = klass(spec_string = converted, **options)
+  return result

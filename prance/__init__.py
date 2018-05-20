@@ -33,8 +33,7 @@ else:
 
 class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
   """
-  The BaseParser loads, parses and validates Swagger/OpenAPI 2.0 and 3.0.0
-  specs.
+  The BaseParser loads, parses and validates OpenAPI 2.0 and 3.0.0 specs.
 
   Uses :py:class:`YAMLMixin` and :py:class:`JSONMixin` for additional
   functionality.
@@ -86,13 +85,15 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     # Initialize variables we're filling later
     self.specification = None
     self.version = None
+    self.version_name = None
+    self.version_parsed = ()
 
     # Add kw args as options
-    self._options = kwargs
+    self.options = kwargs
 
     # Verify backend
-    self._backend = self._options.get('backend', 'flex')
-    if self._backend not in BaseParser.BACKENDS.keys():
+    self.backend = self.options.get('backend', 'flex')
+    if self.backend not in BaseParser.BACKENDS.keys():
       raise ValueError('Backend may only be one of %s!'
               % (BaseParser.BACKENDS.keys(), ))
 
@@ -119,7 +120,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       self.specification = parse_spec(self._spec_string, self.url)
 
     # Perform some sanitization in lenient mode.
-    if not self._options.get('strict', True):
+    if not self.options.get('strict', True):
       from .util import stringify_keys
       self.specification = stringify_keys(self.specification)
 
@@ -137,7 +138,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       raise ValidationError('Could not parse specifications!')
 
     # Ensure the selected backend supports the given spec version
-    versions, validator_name = BaseParser.BACKENDS[self._backend]
+    versions, validator_name = BaseParser.BACKENDS[self.backend]
 
     # Fetch the spec version. Note that this is the spec version the spec
     # *claims* to be; we later set the one we actually could validate as.
@@ -155,7 +156,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     parsed = distutils.version.StrictVersion(spec_version).version
     if parsed[0] not in versions:
         raise ValidationError('Version mismatch: selected backend "%s"'
-          ' does not support specified version %s!' % (self._backend,
+          ' does not support specified version %s!' % (self.backend,
           spec_version))
 
     # Validate the parsed specs, using the given validation backend.

@@ -73,3 +73,49 @@ def test_convert_url():
   assert 'openapi' in parsed
   assert parsed['openapi'].startswith('3.')
 
+
+def test_convert_spec():
+  from prance import BaseParser, ResolvingParser, ValidationError
+  parser = BaseParser('tests/petstore.yaml')
+
+  # Conversion should fail with the default backend.
+  with pytest.raises(ValidationError):
+    converted = convert.convert_spec(parser.specification)
+
+  # However, with the lazy flag it should work.
+  converted = convert.convert_spec(parser.specification, lazy = True)
+  assert isinstance(converted, BaseParser)
+
+  # Passing a ResolvingParser class should also work.
+  converted = convert.convert_spec(parser.specification, ResolvingParser, lazy = True)
+  assert isinstance(converted, ResolvingParser)
+
+
+def test_convert_parser_lazy_swagger_backend():
+  from prance import BaseParser, ResolvingParser, ValidationError
+  parser = BaseParser('tests/petstore.yaml')
+
+  # Conversion should fail with the default backend.
+  with pytest.raises(ValidationError):
+    converted = convert.convert_spec(parser)
+
+  # However, with the lazy flag it should work.
+  converted = convert.convert_spec(parser, lazy = True)
+  assert isinstance(converted, BaseParser)
+
+  # Passing a ResolvingParser class should also work.
+  converted = convert.convert_spec(parser, ResolvingParser, lazy = True)
+  assert isinstance(converted, ResolvingParser)
+
+
+from prance.util import validation_backends
+if 'openapi-spec-validator' in validation_backends():
+  def test_convert_parser_validated():
+    from prance import BaseParser
+    parser = BaseParser('tests/petstore.yaml', backend = 'openapi-spec-validator')
+
+    # Conversion should work: it's the right backend, and it validates.
+    converted = convert.convert_spec(parser)
+    assert isinstance(converted, BaseParser)
+    assert converted.version_parsed[0] == 3
+
