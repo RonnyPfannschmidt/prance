@@ -12,10 +12,11 @@ def path_get(obj, path, defaultvalue = None):
   Retrieve the value from obj indicated by path.
 
   Like dict.get(), except:
-  - Any Mapping or Sequence is supported.
-  - Path is itself a Sequence; the first part is applied to the passed object,
-    the second part to the value returned from this operation, and so forth
-    recursively.
+
+    - Any Mapping or Sequence is supported.
+    - Path is itself a Sequence; the first part is applied to the passed
+      object, the second part to the value returned from this operation, and
+      so forth recursively.
 
   :param mixed obj: The Sequence or Mapping from which to retrieve values.
   :param Sequence path: A Sequence of zero or more key/index elements.
