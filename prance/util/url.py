@@ -54,7 +54,7 @@ def absurl(url, relative_to = None):
       from . import fs
       url = fs.to_posix(url)
     parsed = parse.urlparse(url)
-	
+
   # Any non-file scheme we just return immediately.
   if parsed.scheme not in (None, '', 'file'):
     return parsed

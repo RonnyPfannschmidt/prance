@@ -14,25 +14,30 @@ if six.PY2:
 else:
   FileNotFoundError = FileNotFoundError  # pragma: no cover
 
-  
+
+# The following constant and function are taken from
+# https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
+
 # Sadly, Python fails to provide the following magic number for us.
 _ERROR_INVALID_NAME = 123
-'''
+"""
 Windows-specific error code indicating an invalid pathname.
 
 See Also
 ----------
 https://msdn.microsoft.com/en-us/library/windows/desktop/ms681382%28v=vs.85%29.aspx
     Official listing of all such codes.
-'''
+"""
+
 
 def is_pathname_valid(pathname):
   """
-   FIXME
-    `True` if the passed pathname is a valid pathname for the current OS;
-    `False` otherwise.
-  """
+  Return whether a path name is valid.
 
+  :return: True if the passed pathname is valid on the current OS, False
+      otherwise.
+  :rtype: bool
+  """
   import errno, os
   # If this pathname is either not a string or is but is empty, this pathname
   # is invalid.
@@ -98,6 +103,7 @@ def is_pathname_valid(pathname):
   # (e.g., a bug). Permit this exception to unwind the call stack.
   #
   # Did we mention this should be shipped with Python already?
+
 
 def from_posix(fname):
   """
