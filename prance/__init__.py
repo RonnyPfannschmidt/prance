@@ -11,15 +11,11 @@ ResolvingParser that additionally resolves any $ref references.
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
-__all__ = ('util', 'mixins', 'cli', 'convert')
+__all__ = ('util', 'mixins', 'cli', 'convert', 'data')
 __version__ = '0.12.1'
 
 
-# Define our own error class
-class ValidationError(Exception):
-  pass
-
-
+from .util.exceptions import ValidationError
 from . import mixins
 
 # Placeholder for when no URL is specified for the main spec file

@@ -7,6 +7,22 @@ __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 
+class ConversionError(ValueError):
+  pass  # pragma: nocover
+
+
+class ValidationError(Exception):
+  pass  # pragma: nocover
+
+
+class ParseError(ValueError):
+  pass  # pragma: nocover
+
+
+class ResolutionError(LookupError):
+  pass  # pragma: nocover
+
+
 # Raise the given exception class from the caught exception, preserving
 # stack trace and message as much as possible.
 import six

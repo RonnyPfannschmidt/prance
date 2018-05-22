@@ -8,10 +8,7 @@ __all__ = ()
 
 
 import six.moves.urllib.parse as parse
-
-
-class ResolutionError(LookupError):
-  pass
+from .exceptions import ResolutionError
 
 
 def urlresource(url):
