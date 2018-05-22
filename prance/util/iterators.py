@@ -83,5 +83,6 @@ def reference_iterator(specs, path = ()):
     if len(item_path) <= 0:
       continue
     key = item_path[-1]
-    if key == '$ref':
+    import six
+    if key == '$ref' and isinstance(item, six.string_types):
       yield key, item, item_path[:-1]
