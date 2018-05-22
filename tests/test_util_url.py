@@ -70,6 +70,16 @@ def test_absurl_relfile():
     url.absurl(test, base)
 
 
+def test_absurl_paths():
+  base = '/etc/passwd'
+  test = 'foo'
+  with pytest.raises(url.ResolutionError):
+    url.absurl(test)
+
+  res = url.absurl(test, base)
+  assert res.geturl() == 'file:///etc/foo'
+
+
 def test_urlresource():
   parsed = url.absurl('http://foo.bar/asdf?some=query#myfrag')
   res = url.urlresource(parsed)
