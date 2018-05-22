@@ -32,7 +32,7 @@ https://msdn.microsoft.com/en-us/library/windows/desktop/ms681382%28v=vs.85%29.a
 
 def is_pathname_valid(pathname):
   """
-  Return whether a path name is valid.
+  Test whether a path name is valid.
 
   :return: True if the passed pathname is valid on the current OS, False
       otherwise.
@@ -89,11 +89,14 @@ def is_pathname_valid(pathname):
         if hasattr(exc, 'winerror'):
           if exc.winerror == _ERROR_INVALID_NAME:
             return False
-          elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
-            return False
+        elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
+          return False
   # If a "TypeError" exception was raised, it almost certainly has the
   # error message "embedded NUL character" indicating an invalid pathname.
   except TypeError as exc:
+    return False
+  # Null-bytes may also cause this, and they are invalid.
+  except ValueError as exc:
     return False
   # If no exception was raised, all path components and hence this
   # pathname itself are valid. (Praise be to the curmudgeonly python.)
