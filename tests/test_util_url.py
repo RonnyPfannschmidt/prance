@@ -71,13 +71,20 @@ def test_absurl_relfile():
 
 
 def test_absurl_paths():
-  base = '/etc/passwd'
-  test = 'foo'
+  if sys.platform == "win32":
+    base = 'c:\\windows\\notepad.exe'
+    test = "regedit.exe"
+    expect = 'file:///c:/windows/regedit.exe'
+  else:
+    base = '/etc/passwd'
+    test = 'group'
+    expect = 'file:///etc/group'
+
   with pytest.raises(url.ResolutionError):
     url.absurl(test)
 
   res = url.absurl(test, base)
-  assert res.geturl() == 'file:///etc/foo'
+  assert res.geturl() == expect
 
 
 def test_urlresource():
