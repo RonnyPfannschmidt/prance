@@ -49,8 +49,12 @@ def absurl(url, relative_to = None):
   # Parse input URL, if necessary
   parsed = url
   if not isinstance(parsed, tuple):
+    from .fs import is_pathname_valid
+    if is_pathname_valid(url):
+      from . import fs
+      url = fs.to_posix(url)
     parsed = parse.urlparse(url)
-
+	
   # Any non-file scheme we just return immediately.
   if parsed.scheme not in (None, '', 'file'):
     return parsed
@@ -58,6 +62,10 @@ def absurl(url, relative_to = None):
   # Parse up the reference URL
   reference = relative_to
   if reference and not isinstance(reference, tuple):
+    from .fs import is_pathname_valid
+    if is_pathname_valid(reference):
+      from . import fs
+      reference = fs.to_posix(reference)
     reference = parse.urlparse(reference)
 
   # If the input URL has no path, we assume only its fragment matters.
