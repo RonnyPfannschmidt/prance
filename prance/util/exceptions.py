@@ -15,6 +15,10 @@ class ValidationError(Exception):
   pass  # pragma: nocover
 
 
+class SchemaError(Exception):
+  pass  # pragma: nocover
+
+
 class ParseError(ValueError):
   pass  # pragma: nocover
 
