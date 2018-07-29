@@ -168,7 +168,7 @@ def fetch_url_text(url, cache = {}):
   else:
     import requests
     response = requests.get(url.geturl())
-    content_type = response.headers['content-type']
+    content_type = response.headers.get('content-type', 'text/plain')
     content = response.text
 
   cache[url_key] = (content, content_type)
