@@ -1,6 +1,8 @@
 |Posix Build Status| |Windows Build Status| |Docs| |License|
 |PyPI| |Python Versions| |Package Format| |Package Status|
 
+|Logo|
+
 Prance provides parsers for `Swagger/OpenAPI
 2.0 and 3.0 <http://swagger.io/specification/>`__ API specifications in Python.
 It uses `flex <https://github.com/pipermerriam/flex>`__,
@@ -224,3 +226,4 @@ Made by `Moreven B <http://morevenb.com/>`__.
    :target: https://pypi.python.org/pypi/prance/
 .. |Package Status| image:: https://img.shields.io/pypi/status/prance.svg
    :target: https://pypi.python.org/pypi/prance/
+.. |Logo| image:: https://raw.githubusercontent.com/jfinkhaeuser/prance/master/docs/images/prance_logo_256.png
