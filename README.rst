@@ -205,6 +205,9 @@ License
 Licensed under MITNFA (MIT +no-false-attribs) License. See the
 `LICENSE.txt <https://github.com/jfinkhaeuser/prance/blob/master/LICENSE.txt>`__ file for details.
 
+"Prancing unicorn" logo image Copyright (c) Jens Finkhaeuser. All rights reserved.
+Made by `Moreven B <http://morevenb.com/>`__.
+
 .. |Posix Build Status| image:: https://travis-ci.org/jfinkhaeuser/prance.svg?branch=master
    :target: https://travis-ci.org/jfinkhaeuser/prance
 .. |Windows Build Status| image:: https://ci.appveyor.com/api/projects/status/ic7lo8r95mkee7di/branch/master?svg=true
