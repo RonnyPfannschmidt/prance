@@ -168,6 +168,9 @@ def fetch_url_text(url, cache = {}):
   else:
     import requests
     response = requests.get(url.geturl())
+    if not response.ok:
+      raise ResolutionError('Cannot fetch URL "%s": %d %s' % (
+        url.geturl(), response.status_code, response.reason))
     content_type = response.headers.get('content-type', 'text/plain')
     content = response.text
 
