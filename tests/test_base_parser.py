@@ -15,13 +15,13 @@ from prance.util.fs import FileNotFoundError
 
 @pytest.fixture
 def petstore_parser():
-  return BaseParser('tests/petstore.yaml')
+  return BaseParser('tests/specs/petstore.yaml')
 
 
 @pytest.fixture
 def petstore_parser_from_string():
   yaml = None
-  with open('tests/petstore.yaml', 'rb') as f:
+  with open('tests/specs/petstore.yaml', 'rb') as f:
     x = f.read()
     yaml = x.decode('utf8')
   return BaseParser(spec_string = yaml)
@@ -29,7 +29,7 @@ def petstore_parser_from_string():
 
 def test_load_fail():
   with pytest.raises(FileNotFoundError):
-    BaseParser('tests/missing.yaml')
+    BaseParser('tests/specs/missing.yaml')
 
 
 def test_parse_fail():
@@ -54,7 +54,7 @@ def test_load_and_parse_valid(petstore_parser):
 
 
 def test_load_and_parse_lazy():
-  parser = BaseParser('tests/petstore.yaml', lazy = True)
+  parser = BaseParser('tests/specs/petstore.yaml', lazy = True)
   assert parser.specification is None, 'Should not have specs yet!'
 
   parser.parse()

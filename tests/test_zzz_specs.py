@@ -56,7 +56,7 @@ def iter_entries(parser, backend, version, file_format, path):
       from prance.util import url  
       absurl = url.absurl(os.path.abspath(full)).geturl()
       code = """
-# @pytest.mark.xfail
+@pytest.mark.xfail
 def %s():
   import os
   cur = os.getcwd()

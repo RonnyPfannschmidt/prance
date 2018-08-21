@@ -29,32 +29,32 @@ def recursion_limit_handler_none(limit, refstring):
 
 @pytest.fixture
 def externals_file():
-  return get_specs('tests/with_externals.yaml')
+  return get_specs('tests/specs/with_externals.yaml')
 
 
 @pytest.fixture
 def recursive_objs_file():
-  return get_specs('tests/recursive_objs.yaml')
+  return get_specs('tests/specs/recursive_objs.yaml')
 
 
 @pytest.fixture
 def recursive_files_file():
-  return get_specs('tests/recursive_files.yaml')
+  return get_specs('tests/specs/recursive_files.yaml')
 
 
 @pytest.fixture
 def recursion_limit_file():
-  return get_specs('tests/recursion_limit.yaml')
+  return get_specs('tests/specs/recursion_limit.yaml')
 
 
 @pytest.fixture
 def recursion_limit_files_file():
-  return get_specs('tests/recursion_limit_files.yaml')
+  return get_specs('tests/specs/recursion_limit_files.yaml')
 
 
 @pytest.fixture
 def missing_file():
-  return get_specs('tests/missing_reference.yaml')
+  return get_specs('tests/specs/missing_reference.yaml')
 
 
 def test_resolver_noname(externals_file):
@@ -68,14 +68,14 @@ def test_resolver_named(externals_file):
   import os.path
   from prance.util import fs
   res = resolver.RefResolver(externals_file,
-      fs.abspath('tests/with_externals.yaml'))
+      fs.abspath('tests/specs/with_externals.yaml'))
   res.resolve_references()
 
 
 def test_resolver_missing_reference(missing_file):
   import os.path
   res = resolver.RefResolver(missing_file,
-      fs.abspath('tests/missing_reference.yaml'))
+      fs.abspath('tests/specs/missing_reference.yaml'))
   with pytest.raises(ResolutionError) as exc:
     res.resolve_references()
 
@@ -86,7 +86,7 @@ def test_resolver_recursive_objects(recursive_objs_file):
   # Recursive references to objects are a problem
   import os.path
   res = resolver.RefResolver(recursive_objs_file,
-      fs.abspath('tests/recursive_objs.yaml'))
+      fs.abspath('tests/specs/recursive_objs.yaml'))
   with pytest.raises(ResolutionError) as exc:
     res.resolve_references()
 
@@ -97,7 +97,7 @@ def test_resolver_recursive_files(recursive_files_file):
   # Recursive references to files are not a problem
   import os.path
   res = resolver.RefResolver(recursive_files_file,
-      fs.abspath('tests/recursive_files.yaml'))
+      fs.abspath('tests/specs/recursive_files.yaml'))
   res.resolve_references()
 
 
@@ -105,7 +105,7 @@ def test_recursion_limit_do_not_recurse_raise(recursion_limit_file):
   # Expect the default behaviour to raise.
   import os.path
   res = resolver.RefResolver(recursion_limit_file,
-      fs.abspath('tests/recursion_limit.yaml'))
+      fs.abspath('tests/specs/recursion_limit.yaml'))
   with pytest.raises(ResolutionError) as exc:
     res.resolve_references()
 
@@ -117,7 +117,7 @@ def test_recursion_limit_do_not_recurse_ignore(recursion_limit_file):
   # also simply not have the 'next' field - or it should be None
   import os.path
   res = resolver.RefResolver(recursion_limit_file,
-      fs.abspath('tests/recursion_limit.yaml'),
+      fs.abspath('tests/specs/recursion_limit.yaml'),
       recursion_limit_handler = recursion_limit_handler_none)
   res.resolve_references()
 
@@ -139,7 +139,7 @@ def test_recursion_limit_set_limit_ignore(recursion_limit_file):
 
   import os.path
   res = resolver.RefResolver(recursion_limit_file,
-      fs.abspath('tests/recursion_limit.yaml'),
+      fs.abspath('tests/specs/recursion_limit.yaml'),
       recursion_limit = 2,
       recursion_limit_handler = recursion_limit_handler_none)
   res.resolve_references()
@@ -164,7 +164,7 @@ def test_recursion_limit_do_not_recurse_raise_files(recursion_limit_files_file):
   # Expect the default behaviour to raise.
   import os.path
   res = resolver.RefResolver(recursion_limit_files_file,
-      fs.abspath('tests/recursion_limit_files.yaml'))
+      fs.abspath('tests/specs/recursion_limit_files.yaml'))
   with pytest.raises(ResolutionError) as exc:
     res.resolve_references()
 
@@ -176,7 +176,7 @@ def test_recursion_limit_do_not_recurse_ignore_files(recursion_limit_files_file)
   # also simply not have the 'next' field - or it should be None
   import os.path
   res = resolver.RefResolver(recursion_limit_files_file,
-      fs.abspath('tests/recursion_limit_files.yaml'),
+      fs.abspath('tests/specs/recursion_limit_files.yaml'),
       recursion_limit_handler = recursion_limit_handler_none)
   res.resolve_references()
 
@@ -198,7 +198,7 @@ def test_recursion_limit_set_limit_ignore_files(recursion_limit_files_file):
 
   import os.path
   res = resolver.RefResolver(recursion_limit_files_file,
-      fs.abspath('tests/recursion_limit_files.yaml'),
+      fs.abspath('tests/specs/recursion_limit_files.yaml'),
       recursion_limit = 2,
       recursion_limit_handler = recursion_limit_handler_none)
   res.resolve_references()
