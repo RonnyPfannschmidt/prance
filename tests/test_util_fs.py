@@ -16,14 +16,14 @@ from prance.util import fs
 
 
 def test_canonical():
-  testname = 'tests/symlink_test'
+  testname = 'tests/specs/symlink_test'
   if sys.platform != "win32":
     res = fs.canonical_filename(testname)
-    expected = os.path.join(os.getcwd(), 'tests/with_externals.yaml')
+    expected = os.path.join(os.getcwd(), 'tests/specs/with_externals.yaml')
     assert res == expected
 
 def test_to_posix_rel():
-  test = "tests/with_externals.yaml"
+  test = "tests/specs/with_externals.yaml"
   assert fs.to_posix(os.path.normpath(test)) == test
 
 def test_to_posix_abs():
@@ -36,7 +36,7 @@ def test_to_posix_abs():
   assert fs.to_posix(test) == expected
 
 def test_from_posix_rel():
-  test = "tests/with_externals.yaml"
+  test = "tests/specs/with_externals.yaml"
   assert fs.from_posix(test) == os.path.normpath(test)
 
 def test_from_posix_abs():
@@ -49,57 +49,57 @@ def test_from_posix_abs():
   assert fs.from_posix(test) == expected
 
 def test_abspath_basics():
-  testname = os.path.normpath('tests/with_externals.yaml')
+  testname = os.path.normpath('tests/specs/with_externals.yaml')
   res = fs.abspath(testname)
   expected = fs.to_posix(os.path.join(os.getcwd(), testname))
   assert res == expected
 
 def test_abspath_relative():
   testname = 'error.json'
-  relative = os.path.join(os.getcwd(), 'tests/with_externals.yaml')
+  relative = os.path.join(os.getcwd(), 'tests/specs/with_externals.yaml')
   res = fs.abspath(testname, relative)
-  expected = fs.to_posix(os.path.join(os.getcwd(), 'tests', testname))
+  expected = fs.to_posix(os.path.join(os.getcwd(), 'tests', 'specs', testname))
   assert res == expected
 
 
 def test_abspath_relative_dir():
   testname = 'error.json'
-  relative = os.path.join(os.getcwd(), 'tests')
+  relative = os.path.join(os.getcwd(), 'tests', 'specs')
   res = fs.abspath(testname, relative)
-  expected = fs.to_posix(os.path.join(os.getcwd(), 'tests', testname))
+  expected = fs.to_posix(os.path.join(os.getcwd(), 'tests', 'specs', testname))
   assert res == expected
 
 
 def test_detect_encoding():
   # Quick detection should yield utf-8 for the petstore file.
-  assert fs.detect_encoding('tests/petstore.yaml') == 'utf-8'
+  assert fs.detect_encoding('tests/specs/petstore.yaml') == 'utf-8'
 
   # Really, it should be detected as ISO-8859-1 as a superset of ASCII
-  assert fs.detect_encoding('tests/petstore.yaml',
+  assert fs.detect_encoding('tests/specs/petstore.yaml',
                             default_to_utf8 = False) == 'iso-8859-1'
 
   # Deep inspection should yield UTF-8 again.
-  assert fs.detect_encoding('tests/petstore.yaml',
+  assert fs.detect_encoding('tests/specs/petstore.yaml',
                             default_to_utf8 = False,
                             read_all = True) == 'utf-8'
 
   # The UTF-8 file with BOM should be detected properly
-  assert fs.detect_encoding('tests/utf8bom.yaml') == 'utf-8-sig'
+  assert fs.detect_encoding('tests/specs/utf8bom.yaml') == 'utf-8-sig'
 
 
 def test_load_nobom():
-  contents = fs.read_file('tests/petstore.yaml')
+  contents = fs.read_file('tests/specs/petstore.yaml')
   assert contents.index(u'Swagger Petstore') >= 0, 'File reading failed!'
 
 
 def test_load_utf8bom():
-  contents = fs.read_file('tests/utf8bom.yaml')
+  contents = fs.read_file('tests/specs/utf8bom.yaml')
   assert contents.index(u'söme välüe') >= 0, 'UTF-8 BOM handling failed!'
 
 
 def test_load_utf8bom_override():
   with pytest.raises(UnicodeDecodeError):
-    fs.read_file('tests/utf8bom.yaml', 'ascii')
+    fs.read_file('tests/specs/utf8bom.yaml', 'ascii')
 
 
 def test_write_file():

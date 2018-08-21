@@ -60,7 +60,7 @@ def test_convert_petstore_yaml_explicit_name(petstore_yaml):
 
 def test_convert_url():
   from prance.util import url
-  converted, content_type = convert.convert_url(url.absurl('python://tests/petstore.yaml'))
+  converted, content_type = convert.convert_url(url.absurl('python://tests/specs/petstore.yaml'))
 
   # Check correct content type
   assert 'yaml' in content_type
@@ -76,7 +76,7 @@ def test_convert_url():
 
 def test_convert_spec():
   from prance import BaseParser, ResolvingParser, ValidationError
-  parser = BaseParser('tests/petstore.yaml')
+  parser = BaseParser('tests/specs/petstore.yaml')
 
   # Conversion should fail with the default backend.
   with pytest.raises(ValidationError):
@@ -93,7 +93,7 @@ def test_convert_spec():
 
 def test_convert_parser_lazy_swagger_backend():
   from prance import BaseParser, ResolvingParser, ValidationError
-  parser = BaseParser('tests/petstore.yaml')
+  parser = BaseParser('tests/specs/petstore.yaml')
 
   # Conversion should fail with the default backend.
   with pytest.raises(ValidationError):
@@ -112,7 +112,7 @@ from prance.util import validation_backends
 if 'openapi-spec-validator' in validation_backends():
   def test_convert_parser_validated():
     from prance import BaseParser
-    parser = BaseParser('tests/petstore.yaml', backend = 'openapi-spec-validator')
+    parser = BaseParser('tests/specs/petstore.yaml', backend = 'openapi-spec-validator')
 
     # Conversion should work: it's the right backend, and it validates.
     converted = convert.convert_spec(parser)

@@ -13,18 +13,18 @@ from prance import ValidationError
 
 @pytest.fixture
 def petstore_parser():
-  return ResolvingParser('tests/petstore.yaml')
+  return ResolvingParser('tests/specs/petstore.yaml')
 
 
 @pytest.fixture
 def with_externals_parser():
-  return ResolvingParser('tests/with_externals.yaml')
+  return ResolvingParser('tests/specs/with_externals.yaml')
 
 
 @pytest.fixture
 def petstore_parser_from_string():
   yaml = None
-  with open('tests/petstore.yaml', 'rb') as f:
+  with open('tests/specs/petstore.yaml', 'rb') as f:
     x = f.read()
     yaml = x.decode('utf8')
   return ResolvingParser(spec_string = yaml)
@@ -32,7 +32,7 @@ def petstore_parser_from_string():
 
 @pytest.fixture
 def issue_1_parser():
-  return ResolvingParser('tests/issue_1.json')
+  return ResolvingParser('tests/specs/issue_1.json')
 
 
 def test_basics(petstore_parser):
