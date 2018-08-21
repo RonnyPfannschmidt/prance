@@ -86,7 +86,7 @@ def is_pathname_valid(pathname):
         #   generic "errno" attribute whose value is either:
         #   * Under most POSIX-compatible OSes, "ENAMETOOLONG".
         #   * Under some edge-case OSes (e.g., SunOS, *BSD), "ERANGE".
-        if hasattr(exc, 'winerror'):
+        if hasattr(exc, 'winerror'):  # pragma: nocover
           if exc.winerror == _ERROR_INVALID_NAME:
             return False
         elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
@@ -96,7 +96,7 @@ def is_pathname_valid(pathname):
   except TypeError as exc:
     return False
   # Null-bytes may also cause this, and they are invalid.
-  except ValueError as exc:
+  except ValueError as exc:  # pragma: nocover
     return False
   # If no exception was raised, all path components and hence this
   # pathname itself are valid. (Praise be to the curmudgeonly python.)

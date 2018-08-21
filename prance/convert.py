@@ -11,8 +11,7 @@ __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 
-class ConversionError(ValueError):
-  pass  # pragma: nocover
+from .util.exceptions import ConversionError
 
 
 def convert_str(spec_str, filename = None, **kwargs):

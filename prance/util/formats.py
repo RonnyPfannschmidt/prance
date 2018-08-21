@@ -7,8 +7,7 @@ __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 
-class ParseError(ValueError):
-  pass  # pragma: nocover
+from .exceptions import ParseError
 
 
 def __format_preferences(filename, content_type):  # noqa: N802
