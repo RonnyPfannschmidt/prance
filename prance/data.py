@@ -6,6 +6,7 @@ __copyright__ = 'Copyright (c) 2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
+# FIXME exclude from coverage when openapi-spec-validator does not exist
 
 def validate_json_schema(data, schema, subschema = None):
   """
