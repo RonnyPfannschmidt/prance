@@ -120,7 +120,7 @@ def test_split_url_reference():
 
 def test_fetch_url_file():
   from prance.util import fs
-  content = url.fetch_url(url.absurl(fs.abspath('tests/with_externals.yaml')))
+  content = url.fetch_url(url.absurl(fs.abspath('tests/specs/with_externals.yaml')))
   assert content['swagger'] == '2.0'
 
 
@@ -128,10 +128,10 @@ def test_fetch_url_cached():
   from prance.util import fs
   cache = {}
 
-  content1 = url.fetch_url(url.absurl(fs.abspath('tests/with_externals.yaml')), cache)
+  content1 = url.fetch_url(url.absurl(fs.abspath('tests/specs/with_externals.yaml')), cache)
   assert content1['swagger'] == '2.0'
 
-  content2 = url.fetch_url(url.absurl(fs.abspath('tests/with_externals.yaml')), cache)
+  content2 = url.fetch_url(url.absurl(fs.abspath('tests/specs/with_externals.yaml')), cache)
   assert content2['swagger'] == '2.0'
 
   # Dicts are mutable, therefore we can't compare IDs. But individual
@@ -143,8 +143,8 @@ def test_fetch_url_text_cached():
   from prance.util import fs
   cache = {}
 
-  content1, _ = url.fetch_url_text(url.absurl(fs.abspath('tests/with_externals.yaml')), cache)
-  content2, _ = url.fetch_url_text(url.absurl(fs.abspath('tests/with_externals.yaml')), cache)
+  content1, _ = url.fetch_url_text(url.absurl(fs.abspath('tests/specs/with_externals.yaml')), cache)
+  content2, _ = url.fetch_url_text(url.absurl(fs.abspath('tests/specs/with_externals.yaml')), cache)
 
   # Strings are immutable, therefore IDs should be identical
   assert id(content1) == id(content2)
@@ -158,6 +158,6 @@ def test_fetch_url_http():
 
 
 def test_fetch_url_python():
-  exturl = 'python://tests/petstore.yaml'
+  exturl = 'python://tests/specs/petstore.yaml'
   content = url.fetch_url(url.absurl(exturl))
   assert content['swagger'] == '2.0'

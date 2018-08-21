@@ -20,28 +20,28 @@ def runner():
 
 def test_validate_defaults(runner):
   # Good example
-  result = runner.invoke(cli.validate, ['tests/petstore.yaml'])
+  result = runner.invoke(cli.validate, ['tests/specs/petstore.yaml'])
   assert result.exit_code == 0
-  expected = """Processing "tests/petstore.yaml"...
+  expected = """Processing "tests/specs/petstore.yaml"...
  -> Resolving external references.
 Validates OK as Swagger/OpenAPI 2.0!
 """
   assert result.output == expected
 
   # Bad example
-  result = runner.invoke(cli.validate, ['tests/definitions.yaml'])
+  result = runner.invoke(cli.validate, ['tests/specs/definitions.yaml'])
   assert result.exit_code == 1
   assert 'ValidationError' in result.output
 
 
 def test_validate_multiple(runner):
   result = runner.invoke(cli.validate,
-      ['tests/petstore.yaml', 'tests/petstore.yaml'])
+      ['tests/specs/petstore.yaml', 'tests/specs/petstore.yaml'])
   assert result.exit_code == 0
-  expected = """Processing "tests/petstore.yaml"...
+  expected = """Processing "tests/specs/petstore.yaml"...
  -> Resolving external references.
 Validates OK as Swagger/OpenAPI 2.0!
-Processing "tests/petstore.yaml"...
+Processing "tests/specs/petstore.yaml"...
  -> Resolving external references.
 Validates OK as Swagger/OpenAPI 2.0!
 """
@@ -50,9 +50,9 @@ Validates OK as Swagger/OpenAPI 2.0!
 
 def test_validate_no_resolve(runner):
   # Good example
-  result = runner.invoke(cli.validate, ['--no-resolve', 'tests/petstore.yaml'])
+  result = runner.invoke(cli.validate, ['--no-resolve', 'tests/specs/petstore.yaml'])
   assert result.exit_code == 0
-  expected = """Processing "tests/petstore.yaml"...
+  expected = """Processing "tests/specs/petstore.yaml"...
  -> Not resolving external references.
 Validates OK as Swagger/OpenAPI 2.0!
 """
@@ -61,7 +61,7 @@ Validates OK as Swagger/OpenAPI 2.0!
 
 def test_validate_output_too_many_inputs(runner):
   result = runner.invoke(cli.validate,
-      ['-o', 'foo', 'tests/petstore.yaml', 'tests/petstore.yaml'])
+      ['-o', 'foo', 'tests/specs/petstore.yaml', 'tests/specs/petstore.yaml'])
   assert result.exit_code == 2
   assert 'If --output-file is given,' in result.output
 
@@ -74,7 +74,7 @@ def test_validate_output(runner):
   for outname in outnames:
     with runner.isolated_filesystem():
       result = runner.invoke(cli.validate,
-          ['-o', outname, os.path.join(curdir, 'tests/petstore.yaml')])
+          ['-o', outname, os.path.join(curdir, 'tests/specs/petstore.yaml')])
       assert result.exit_code == 0
 
       # There also must be a 'foo' file now.
@@ -95,16 +95,16 @@ def test_validate_output(runner):
 
 def test_compile_defaults(runner):
   # Good example
-  result = runner.invoke(cli.compile, ['tests/petstore.yaml'])
+  result = runner.invoke(cli.compile, ['tests/specs/petstore.yaml'])
   assert result.exit_code == 0
-  expected = """Processing "tests/petstore.yaml"...
+  expected = """Processing "tests/specs/petstore.yaml"...
  -> Resolving external references.
 Validates OK as Swagger/OpenAPI 2.0!
 """
   assert result.output.startswith(expected)
 
   # Bad example
-  result = runner.invoke(cli.validate, ['tests/definitions.yaml'])
+  result = runner.invoke(cli.validate, ['tests/specs/definitions.yaml'])
   assert result.exit_code == 1
   assert 'ValidationError' in result.output
 
@@ -117,7 +117,7 @@ def test_compile_output(runner):
   for outname in outnames:
     with runner.isolated_filesystem():
       result = runner.invoke(cli.compile,
-          [os.path.join(curdir, 'tests/petstore.yaml'), outname])
+          [os.path.join(curdir, 'tests/specs/petstore.yaml'), outname])
       assert result.exit_code == 0
 
       # There also must be a 'foo' file now.
@@ -138,13 +138,13 @@ def test_compile_output(runner):
 
 def test_convert_defaults(runner):
   # Good example
-  result = runner.invoke(cli.convert, ['tests/petstore.yaml'])
+  result = runner.invoke(cli.convert, ['tests/specs/petstore.yaml'])
   assert result.exit_code == 0
   assert 'openapi' in result.output
   assert '3.' in result.output
 
   # Bad example
-  result = runner.invoke(cli.validate, ['tests/definitions.yaml'])
+  result = runner.invoke(cli.validate, ['tests/specs/definitions.yaml'])
   assert result.exit_code == 1
   assert 'ValidationError' in result.output
 
@@ -157,7 +157,7 @@ def test_convert_output(runner):
   for outname in outnames:
     with runner.isolated_filesystem():
       result = runner.invoke(cli.convert,
-          [os.path.join(curdir, 'tests/petstore.yaml'), outname])
+          [os.path.join(curdir, 'tests/specs/petstore.yaml'), outname])
       assert result.exit_code == 0
 
       # There also must be a 'foo' file now.
