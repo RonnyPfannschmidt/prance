@@ -87,6 +87,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     self.version = None
     self.version_name = None
     self.version_parsed = ()
+    self.valid = False
 
     # Add kw args as options
     self.options = kwargs
@@ -161,7 +162,11 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 
     # Validate the parsed specs, using the given validation backend.
     validator = getattr(self, validator_name)
+
+    # Set valid flag according to whether validator succeeds
+    self.valid = False
     validator(parsed)
+    self.valid = True
 
   def __set_version(self, prefix, version):
     self.version_name = prefix
@@ -175,6 +180,9 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     self.version = '%s %s' % (self.version_name, stringified)
 
   def _validate_flex(self, spec_version):
+    # Set the version independently of whether validation succeeds
+    self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
+
     from flex.exceptions import ValidationError as JSEValidationError
     from flex.core import parse as validate
     try:
@@ -183,9 +191,10 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       from .util.exceptions import raise_from
       raise_from(ValidationError, ex)
 
+  def _validate_swagger_spec_validator(self, spec_version):
+    # Set the version independently of whether validation succeeds
     self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
-  def _validate_swagger_spec_validator(self, spec_version):
     from swagger_spec_validator.common import SwaggerValidationError as SSVErr
     from swagger_spec_validator.validator20 import validate_spec
     try:
@@ -194,29 +203,38 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       from .util.exceptions import raise_from
       raise_from(ValidationError, ex)
 
-    self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
-
   def _validate_openapi_spec_validator(self, spec_version):
     from openapi_spec_validator import validate_v2_spec, validate_v3_spec
     from jsonschema.exceptions import ValidationError as JSEValidationError
     from jsonschema.exceptions import RefResolutionError
 
-    # Try v3 first, then fall back to v2
+    # Validate according to detected version. Unsupported versions are
+    # already caught outside of this function.
     from .util.exceptions import raise_from
-    try:
+    if spec_version[0] == 3:
+      # Set the version independently of whether validation succeeds
+      self.__set_version(BaseParser.SPEC_VERSION_3_PREFIX, spec_version)
+
       try:
         validate_v3_spec(self.specification)
-        self.__set_version(BaseParser.SPEC_VERSION_3_PREFIX, spec_version)
       except TypeError as type_ex:  # pragma: nocover
         raise_from(ValidationError, type_ex)
       except JSEValidationError as v3_ex:
-        try:
-          validate_v2_spec(self.specification)
-          self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
-        except TypeError as type_ex:  # pragma: nocover
-          raise_from(ValidationError, type_ex)
-    except RefResolutionError as ref_ex:
-      raise_from(ValidationError, ref_ex)
+        raise_from(ValidationError, v3_ex)
+      except RefResolutionError as ref_ex:
+        raise_from(ValidationError, ref_ex)
+    elif spec_version[0] == 2:
+      # Set the version independently of whether validation succeeds
+      self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
+
+      try:
+        validate_v2_spec(self.specification)
+      except TypeError as type_ex:  # pragma: nocover
+        raise_from(ValidationError, type_ex)
+      except JSEValidationError as v2_ex:
+        raise_from(ValidationError, v2_ex)
+      except RefResolutionError as ref_ex:
+        raise_from(ValidationError, ref_ex)
 
 
 class ResolvingParser(BaseParser):

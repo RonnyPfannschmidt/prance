@@ -78,3 +78,22 @@ if 'openapi-spec-validator' in validation_backends():
   def test_openapi_spec_validator_validate_failure():
     with pytest.raises(ValidationError):
       parser = BaseParser('tests/specs/missing_reference.yaml', backend = 'openapi-spec-validator')
+
+
+  def test_openapi_spec_validator_issue_20_spec_version_handling():
+    # The spec is OpenAPI 3, but broken. Need to set 'strict' to False to stringify keys
+    with pytest.raises(ValidationError):
+      parser = BaseParser('tests/specs/issue_20.yaml', backend = 'openapi-spec-validator', strict = False)
+
+    # Lazy parsing should let us validate what's happening
+    parser = BaseParser('tests/specs/issue_20.yaml', backend = 'openapi-spec-validator', strict = False, lazy = True)
+    assert not parser.valid
+    assert parser.version_parsed == ()
+
+    with pytest.raises(ValidationError):
+      parser.parse()
+
+    # After parsing, the specs are not valid, but the correct version is
+    # detected.
+    assert not parser.valid
+    assert parser.version_parsed == (3, 0, 0)
