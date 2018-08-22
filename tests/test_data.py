@@ -14,7 +14,7 @@ from prance.util import validation_backends
 @pytest.fixture
 def petstore_parser():
   from prance import ResolvingParser
-  return ResolvingParser('tests/petstore.yaml')
+  return ResolvingParser('tests/specs/petstore.yaml')
 
 
 if 'openapi-spec-validator' in validation_backends():
