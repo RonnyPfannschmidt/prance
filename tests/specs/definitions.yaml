@@ -16,7 +16,8 @@ Pets:
   items:
     $ref: '#/Pet'
 id:
+  name: petId
   description: The id of the pet to retrieve
-  schema:
-    id:
-      type: string
+  in: path
+  required: true
+  type: string

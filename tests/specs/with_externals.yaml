@@ -58,9 +58,7 @@ paths:
       tags:
         - pets
       parameters:
-        - name: petId
-          in: path
-          required: true
+        - overwritten: some value
           $ref: 'definitions.yaml#/id'
       responses:
         "200":
