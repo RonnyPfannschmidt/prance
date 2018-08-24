@@ -142,6 +142,56 @@ Since the `flex` validator is not based on JSON, it does not have this issue. Th
 therefore does not apply here.
 
 
+A Note on JSON References
+-------------------------
+
+The relevant parts of the RFC for JSON references can be condensed like this:
+
+    A JSON Reference is a JSON object, which contains a member named
+    "$ref", which has a JSON string value.  Example:
+
+    { "$ref": "http://example.com/example.json#/foo/bar" }
+
+    (...)
+
+    Any members other than "$ref" in a JSON Reference object SHALL be
+    ignored.
+
+    (...)
+
+    Resolution of a JSON Reference object SHOULD yield the referenced
+    JSON value.  Implementations MAY choose to replace the reference with
+    the referenced value.
+
+Prance is strict about ignoring additional keys, and does so by replacing the reference with
+the referenced value.
+
+In practice, that means that given such a reference:
+
+.. code:: yaml
+
+    # main file
+    ---
+    foo: bar
+    $ref: /path/to/ref
+
+    # and at /path/to/ref
+    ---
+    baz: quux
+
+Then, after resolution, the result is the following:
+
+.. code:: yaml
+
+    # resolved
+    ---
+    baz: quux
+
+That is, the key `foo` is ignored as the specs require. That is the reason the OpenAPI
+specs tend to use JSON references within `schema` objects, and place any other parameters
+as siblings of the `schema` object.
+
+
 Extensions
 ----------
 
