@@ -167,6 +167,9 @@ class RefResolver(object):
     from prance.util.path import path_set
     for path in paths:
       value = changes[path]
-      path_set(partial, list(path), value, create = True)
+      if len(path) == 0:
+        partial = value
+      else:
+        path_set(partial, list(path), value, create = True)
 
     return partial
