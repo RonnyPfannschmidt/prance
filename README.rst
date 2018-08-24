@@ -41,7 +41,7 @@ external references in) specs:
 
 Validation is not the only feature of prance. One of the side effects of
 resolving is that from a spec with references, one can create a fully resolved
-output spec. In the past, this was done via options to the `validate` command,
+output spec. In the past, this was done via options to the ``validate`` command,
 but now there's a specific command just for this purpose:
 
 .. code:: bash
@@ -85,7 +85,7 @@ references, in case you prefer that.
 On Windows, the code reacts correctly if you pass posix-like paths
 (``/c:/swagger``) or if the path is relative.  If you pass absolute
 windows path (like ``c:\swagger.yaml``), you can use
-`prance.util.fs.abspath` to convert them.
+``prance.util.fs.abspath`` to convert them.
 
 URLs can also be parsed:
 
@@ -138,7 +138,7 @@ Most notably, JSON only accepts string keys in objects. However, some keys in th
 integer values, most notably the status codes for responses. Strict mode rejects non-string keys;
 the default lenient mode accepts them.
 
-Since the `flex` validator is not based on JSON, it does not have this issue. The `strict` option
+Since the ``flex`` validator is not based on JSON, it does not have this issue. The ``strict`` option
 therefore does not apply here.
 
 
@@ -187,9 +187,9 @@ Then, after resolution, the result is the following:
     ---
     baz: quux
 
-That is, the key `foo` is ignored as the specs require. That is the reason the OpenAPI
-specs tend to use JSON references within `schema` objects, and place any other parameters
-as siblings of the `schema` object.
+That is, the key ``foo`` is ignored as the specs require. That is the reason the OpenAPI
+specs tend to use JSON references within ``schema`` objects, and place any other parameters
+as siblings of the ``schema`` object.
 
 
 Extensions
@@ -201,8 +201,8 @@ in outside Python packages. Such a package must already be importable
 `ResourceManager API <https://setuptools.readthedocs.io/en/latest/pkg_resources.html#resourcemanager-api>`__
 (some more info `here <https://setuptools.readthedocs.io/en/latest/setuptools.html#including-data-files>`__).
 
-For example, you might create a package `common_swag` with the file
-`base.yaml` containing the definition
+For example, you might create a package ``common_swag`` with the file
+``base.yaml`` containing the definition
 
 .. code:: yaml
 
@@ -215,7 +215,7 @@ For example, you might create a package `common_swag` with the file
         - ERROR
         - FATAL
 
-In the `setup.py` for `common_swag` you would add lines such as
+In the ``setup.py`` for ``common_swag`` you would add lines such as
 
 .. code:: python
 
@@ -225,7 +225,7 @@ In the `setup.py` for `common_swag` you would add lines such as
         '': '*.yaml'
     }
 
-Then, having installed `common_swag` into some application, you could
+Then, having installed ``common_swag`` into some application, you could
 now write
 
 .. code:: yaml
