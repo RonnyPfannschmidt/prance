@@ -15,3 +15,8 @@ Pets:
   type: array
   items:
     $ref: '#/Pet'
+id:
+  description: The id of the pet to retrieve
+  schema:
+    id:
+      type: string

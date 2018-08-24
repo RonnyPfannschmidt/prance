@@ -61,8 +61,7 @@ paths:
         - name: petId
           in: path
           required: true
-          description: The id of the pet to retrieve
-          type: string
+          $ref: 'definitions.yaml#/id'
       responses:
         "200":
           description: Expected response to a valid request

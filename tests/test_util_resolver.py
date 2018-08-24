@@ -217,3 +217,24 @@ def test_recursion_limit_set_limit_ignore_files(recursion_limit_files_file):
 
   # But the 'next' field of the 'next' field should not be resolved.
   assert next_field['properties']['next']['schema'] is None
+
+def test_issue_22_empty_path(externals_file):
+  import os.path
+  from prance.util import fs
+  res = resolver.RefResolver(externals_file,
+      fs.abspath('tests/specs/with_externals.yaml'))
+  res.resolve_references()
+
+  # The tests should resolve the reference, but the reference overwrites
+  # all else.
+  assert len(res.specs['paths']['/pets/{petId}']['get']['parameters']) == 1
+  param = res.specs['paths']['/pets/{petId}']['get']['parameters'][0]
+
+  # Dereferenced keys must exist here
+  assert 'schema' in param
+  assert 'description' in param
+
+  # Previously defined keys must not
+  assert 'required' not in param
+  assert 'in' not in param
+  assert 'name' not in param
