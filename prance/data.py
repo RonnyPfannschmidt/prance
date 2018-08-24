@@ -8,6 +8,7 @@ __all__ = ()
 
 # FIXME exclude from coverage when openapi-spec-validator does not exist
 
+
 def validate_json_schema(data, schema, subschema = None):
   """
   Validate data against a JSON schema.
