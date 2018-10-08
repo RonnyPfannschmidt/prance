@@ -34,7 +34,7 @@ if __name__ == '__main__':
   ]
 
   osv_require = [
-    'openapi-spec-validator~=0.2',
+    'openapi-spec-validator~=0.2,>=0.2.1',
   ]
 
   # Run setup
