@@ -110,7 +110,7 @@ Different validation backends support different features.
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
 | flex                   | 2 and 3        | 2.0 only        | n/a         | Fastest; the default, and always required.            | prance 0.8     | `flex <https://github.com/pipermerriam/flex>`__                                   |
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
-| openapi-spec-validator | 3 only         | 2.0 and 3.0     | yes         | Slow; does not accept integer keys (see strict mode). | prance 0.11    | `openapi\_spec\_validator <https://github.com/p1c2u/openapi-spec-validator>`__    |
+| openapi-spec-validator | 2 and 3        | 2.0 and 3.0     | yes         | Slow; does not accept integer keys (see strict mode). | prance 0.11    | `openapi\_spec\_validator <https://github.com/p1c2u/openapi-spec-validator>`__    |
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
 
 You can select the backend in the constructor of the parser(s):
