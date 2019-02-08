@@ -134,7 +134,10 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 
   def _validate(self):
     # Ensure specification is a mapping
-    from collections import Mapping
+    try:
+      from collections.abc import Mapping
+    except ImportError:  # Python 2
+      from collections import Mapping
     if not isinstance(self.specification, Mapping):
       raise ValidationError('Could not parse specifications!')
 

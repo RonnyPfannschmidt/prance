@@ -16,15 +16,18 @@ def stringify_keys(data):
   :return: A new dict-like object of the same type with stringified keys,
       but the same values.
   """
-  import collections
-  assert isinstance(data, collections.Mapping)
+  try:
+    from collections.abc import Mapping
+  except ImportError:  # Python 2
+    from collections import Mapping
+  assert isinstance(data, Mapping)
 
   ret = type(data)()
   import six
   for key, value in six.iteritems(data):
     if not isinstance(key, six.string_types):
       key = str(key)
-    if isinstance(value, collections.Mapping):
+    if isinstance(value, Mapping):
       value = stringify_keys(value)
     ret[key] = value
   return ret
