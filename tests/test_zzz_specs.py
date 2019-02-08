@@ -12,6 +12,8 @@ from prance import ResolvingParser
 from prance import ValidationError
 from prance.util.fs import FileNotFoundError
 
+from . import run_if_present
+
 def make_name(path, parser, backend, version, file_format, entry):
   import os.path
   basename = os.path.splitext(entry)[0]

@@ -12,13 +12,17 @@ from prance import BaseParser
 from prance import ValidationError
 from prance.util.fs import FileNotFoundError
 
+from . import run_if_present
+
 
 @pytest.fixture
+@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def petstore_parser():
   return BaseParser('tests/specs/petstore.yaml')
 
 
 @pytest.fixture
+@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def petstore_parser_from_string():
   yaml = None
   with open('tests/specs/petstore.yaml', 'rb') as f:
@@ -53,6 +57,7 @@ def test_load_and_parse_valid(petstore_parser):
   assert petstore_parser.specification, 'No specs loaded!'
 
 
+@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def test_load_and_parse_lazy():
   parser = BaseParser('tests/specs/petstore.yaml', lazy = True)
   assert parser.specification is None, 'Should not have specs yet!'

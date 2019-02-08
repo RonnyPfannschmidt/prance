@@ -11,17 +11,22 @@ import pytest
 from prance import ResolvingParser
 from prance import ValidationError
 
+from . import run_if_present
+
 @pytest.fixture
+@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def petstore_parser():
   return ResolvingParser('tests/specs/petstore.yaml')
 
 
 @pytest.fixture
+@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def with_externals_parser():
   return ResolvingParser('tests/specs/with_externals.yaml')
 
 
 @pytest.fixture
+@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def petstore_parser_from_string():
   yaml = None
   with open('tests/specs/petstore.yaml', 'rb') as f:
@@ -31,6 +36,7 @@ def petstore_parser_from_string():
 
 
 @pytest.fixture
+@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def issue_1_parser():
   return ResolvingParser('tests/specs/issue_1.json')
 

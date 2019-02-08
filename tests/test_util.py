@@ -60,19 +60,3 @@ def test_stringify_keys():
       continue
 
     assert str(key) in result['nested']
-
-
-def test_validation_backends():
-  from prance.util import validation_backends
-
-  backends = validation_backends()
-
-  assert 'flex' in backends
-
-  if len(backends) > 1:
-    assert 'swagger-spec-validator' in backends
-
-    # Only exists for Python 3
-    import sys
-    if sys.version_info[0] == 3:
-      assert 'openapi-spec-validator' in backends
