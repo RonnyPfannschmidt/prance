@@ -11,22 +11,19 @@ import pytest
 from prance import ResolvingParser
 from prance import ValidationError
 
-from . import run_if_present
+from . import none_of
 
 @pytest.fixture
-@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def petstore_parser():
   return ResolvingParser('tests/specs/petstore.yaml')
 
 
 @pytest.fixture
-@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def with_externals_parser():
   return ResolvingParser('tests/specs/with_externals.yaml')
 
 
 @pytest.fixture
-@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def petstore_parser_from_string():
   yaml = None
   with open('tests/specs/petstore.yaml', 'rb') as f:
@@ -36,15 +33,16 @@ def petstore_parser_from_string():
 
 
 @pytest.fixture
-@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def issue_1_parser():
   return ResolvingParser('tests/specs/issue_1.json')
 
 
+@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Missing backends')
 def test_basics(petstore_parser):
   assert petstore_parser.specification, 'No specs loaded!'
 
 
+@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Missing backends')
 def test_petstore_resolve(petstore_parser):
   assert petstore_parser.specification, 'No specs loaded!'
 
@@ -55,6 +53,7 @@ def test_petstore_resolve(petstore_parser):
   assert res['200']['schema']['type'] == 'array', 'Did not resolve right!'
 
 
+@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Missing backends')
 def test_with_externals_resolve(with_externals_parser):
   assert with_externals_parser.specification, 'No specs loaded!'
 
@@ -78,11 +77,13 @@ def test_with_externals_resolve(with_externals_parser):
   assert 'message' in res['default']['schema']['required']
 
 
+@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Missing backends')
 def test_relative_urls_from_string(petstore_parser_from_string):
   # This must succeed
   assert petstore_parser_from_string.yaml(), 'Did not get YAML representation of specs!'
 
 
+@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Missing backends')
 def test_issue_1_relative_path_references(issue_1_parser):
   # Must resolve references correctly
   params = issue_1_parser.specification["paths"]["/test"]["parameters"]

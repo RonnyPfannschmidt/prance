@@ -12,32 +12,32 @@ from prance import BaseParser
 from prance import ValidationError
 from prance.util import validation_backends
 
-from . import run_if_present
+from . import none_of
 
 def test_bad_backend():
   with pytest.raises(ValueError):
     BaseParser('tests/specs/petstore.yaml', backend = 'does_not_exist')
 
 
-@run_if_present('flex')
+@pytest.mark.skipif(none_of('flex'), reason='Missing dependencies: flex')
 def test_flex_issue_5_integer_keys():
   # Must succeed with default (flex) parser; note the parser does not stringify the response code
   parser = BaseParser('tests/specs/issue_5.yaml', backend = 'flex')
   assert 200 in parser.specification['paths']['/test']['post']['responses']
 
 
-@run_if_present('flex')
+@pytest.mark.skipif(none_of('flex'), reason='Missing dependencies: flex')
 def test_flex_validate_success():
   parser = BaseParser('tests/specs/petstore.yaml', backend = 'flex')
 
 
-@run_if_present('flex')
+@pytest.mark.skipif(none_of('flex'), reason='Missing dependencies: flex')
 def test_flex_validate_failure():
   with pytest.raises(ValidationError):
     parser = BaseParser('tests/specs/missing_reference.yaml', backend = 'flex')
 
 
-@run_if_present('swagger_spec_validator')
+@pytest.mark.skipif(none_of('swagger_spec_validator'), reason='Missing dependencies: swagger_spec_validator')
 def test_swagger_spec_validator_issue_5_integer_keys():
   # Must fail in implicit strict mode.
   with pytest.raises(ValidationError):
@@ -52,18 +52,18 @@ def test_swagger_spec_validator_issue_5_integer_keys():
   assert '200' in parser.specification['paths']['/test']['post']['responses']
 
 
-@run_if_present('swagger_spec_validator')
+@pytest.mark.skipif(none_of('swagger_spec_validator'), reason='Missing dependencies: swagger_spec_validator')
 def test_swagger_spec_validator_validate_success():
   parser = BaseParser('tests/specs/petstore.yaml', backend = 'swagger-spec-validator')
 
 
-@run_if_present('swagger_spec_validator')
+@pytest.mark.skipif(none_of('swagger_spec_validator'), reason='Missing dependencies: swagger_spec_validator')
 def test_swagger_spec_validator_validate_failure():
   with pytest.raises(ValidationError):
     parser = BaseParser('tests/specs/missing_reference.yaml', backend = 'swagger-spec-validator')
 
 
-@run_if_present('openapi_spec_validator')
+@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing dependencies: openapi_spec_validator')
 def test_openapi_spec_validator_issue_5_integer_keys():
   # Must fail in implicit strict mode.
   with pytest.raises(ValidationError):
@@ -78,18 +78,18 @@ def test_openapi_spec_validator_issue_5_integer_keys():
   assert '200' in parser.specification['paths']['/test']['post']['responses']
 
 
-@run_if_present('openapi_spec_validator')
+@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing dependencies: openapi_spec_validator')
 def test_openapi_spec_validator_validate_success():
   parser = BaseParser('tests/specs/petstore.yaml', backend = 'openapi-spec-validator')
 
 
-@run_if_present('openapi_spec_validator')
+@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing dependencies: openapi_spec_validator')
 def test_openapi_spec_validator_validate_failure():
   with pytest.raises(ValidationError):
     parser = BaseParser('tests/specs/missing_reference.yaml', backend = 'openapi-spec-validator')
 
 
-@run_if_present('openapi_spec_validator')
+@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing dependencies: openapi_spec_validator')
 def test_openapi_spec_validator_issue_20_spec_version_handling():
   # The spec is OpenAPI 3, but broken. Need to set 'strict' to False to stringify keys
   with pytest.raises(ValidationError):

@@ -8,16 +8,15 @@ __all__ = ()
 
 import pytest
 
-from . import run_if_present
+from . import none_of
 
 @pytest.fixture
-@run_if_present('click')
 def runner():
   from click.testing import CliRunner
   return CliRunner()
 
 
-@run_if_present('click')
+@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
 def test_validate_defaults(runner):
   from prance import cli
 
@@ -36,7 +35,7 @@ Validates OK as Swagger/OpenAPI 2.0!
   assert 'ValidationError' in result.output
 
 
-@run_if_present('click')
+@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
 def test_validate_multiple(runner):
   from prance import cli
 
@@ -53,7 +52,7 @@ Validates OK as Swagger/OpenAPI 2.0!
   assert result.output == expected
 
 
-@run_if_present('click')
+@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
 def test_validate_no_resolve(runner):
   from prance import cli
 
@@ -67,7 +66,7 @@ Validates OK as Swagger/OpenAPI 2.0!
   assert result.output == expected
 
 
-@run_if_present('click')
+@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
 def test_validate_output_too_many_inputs(runner):
   from prance import cli
 
@@ -77,7 +76,7 @@ def test_validate_output_too_many_inputs(runner):
   assert 'If --output-file is given,' in result.output
 
 
-@run_if_present('click')
+@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
 def test_validate_output(runner):
   from prance import cli
 
@@ -107,7 +106,7 @@ def test_validate_output(runner):
       assert result.exit_code == 0
 
 
-@run_if_present('click')
+@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
 def test_compile_defaults(runner):
   from prance import cli
 
@@ -126,7 +125,7 @@ Validates OK as Swagger/OpenAPI 2.0!
   assert 'ValidationError' in result.output
 
 
-@run_if_present('click')
+@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
 def test_compile_output(runner):
   from prance import cli
 
@@ -156,7 +155,7 @@ def test_compile_output(runner):
       assert result.exit_code == 0
 
 
-@run_if_present('click')
+@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
 def test_convert_defaults(runner):
   from prance import cli
 
@@ -172,7 +171,7 @@ def test_convert_defaults(runner):
   assert 'ValidationError' in result.output
 
 
-@run_if_present('click')
+@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
 def test_convert_output(runner):
   from prance import cli
 

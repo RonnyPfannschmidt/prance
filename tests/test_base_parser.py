@@ -12,17 +12,15 @@ from prance import BaseParser
 from prance import ValidationError
 from prance.util.fs import FileNotFoundError
 
-from . import run_if_present
+from . import none_of
 
 
 @pytest.fixture
-@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def petstore_parser():
   return BaseParser('tests/specs/petstore.yaml')
 
 
 @pytest.fixture
-@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
 def petstore_parser_from_string():
   yaml = None
   with open('tests/specs/petstore.yaml', 'rb') as f:
@@ -53,11 +51,12 @@ def test_filename_or_spec():
     BaseParser('', '')
 
 
+@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Backends missing.')
 def test_load_and_parse_valid(petstore_parser):
   assert petstore_parser.specification, 'No specs loaded!'
 
 
-@run_if_present('openapi_spec_validator', 'swagger_spec_validator', 'flex')
+@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Backends missing.')
 def test_load_and_parse_lazy():
   parser = BaseParser('tests/specs/petstore.yaml', lazy = True)
   assert parser.specification is None, 'Should not have specs yet!'
@@ -66,14 +65,17 @@ def test_load_and_parse_lazy():
   assert parser.specification, 'No specs loaded!'
 
 
+@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Backends missing.')
 def test_yaml_valid(petstore_parser):
   assert petstore_parser.yaml(), 'Did not get YAML representation of specs!'
 
 
+@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Backends missing.')
 def test_json_valid(petstore_parser):
   assert petstore_parser.json(), 'Did not get JSON representation of specs!'
 
 
+@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Backends missing.')
 def test_cache_specs_mixin(petstore_parser):
   # In order to test the caching, we need to first use either the YAML or the
   # JSON mixin. Let's use YAML, because it's more swagger-ish
@@ -93,6 +95,7 @@ def test_cache_specs_mixin(petstore_parser):
   assert yaml != petstore_parser.yaml(), 'YAML representation did not change!'
 
 
+@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Backends missing.')
 def test_relative_urls_from_string(petstore_parser_from_string):
   # This must succeed
   assert petstore_parser_from_string.yaml(), 'Did not get YAML representation of specs!'
