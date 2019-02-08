@@ -8,17 +8,19 @@ __all__ = ()
 
 import pytest
 
-from click.testing import CliRunner
-
-from prance import cli
-
+from . import run_if_present
 
 @pytest.fixture
+@run_if_present('click')
 def runner():
+  from click.testing import CliRunner
   return CliRunner()
 
 
+@run_if_present('click')
 def test_validate_defaults(runner):
+  from prance import cli
+
   # Good example
   result = runner.invoke(cli.validate, ['tests/specs/petstore.yaml'])
   assert result.exit_code == 0
@@ -34,7 +36,10 @@ Validates OK as Swagger/OpenAPI 2.0!
   assert 'ValidationError' in result.output
 
 
+@run_if_present('click')
 def test_validate_multiple(runner):
+  from prance import cli
+
   result = runner.invoke(cli.validate,
       ['tests/specs/petstore.yaml', 'tests/specs/petstore.yaml'])
   assert result.exit_code == 0
@@ -48,7 +53,10 @@ Validates OK as Swagger/OpenAPI 2.0!
   assert result.output == expected
 
 
+@run_if_present('click')
 def test_validate_no_resolve(runner):
+  from prance import cli
+
   # Good example
   result = runner.invoke(cli.validate, ['--no-resolve', 'tests/specs/petstore.yaml'])
   assert result.exit_code == 0
@@ -59,14 +67,20 @@ Validates OK as Swagger/OpenAPI 2.0!
   assert result.output == expected
 
 
+@run_if_present('click')
 def test_validate_output_too_many_inputs(runner):
+  from prance import cli
+
   result = runner.invoke(cli.validate,
       ['-o', 'foo', 'tests/specs/petstore.yaml', 'tests/specs/petstore.yaml'])
   assert result.exit_code == 2
   assert 'If --output-file is given,' in result.output
 
 
+@run_if_present('click')
 def test_validate_output(runner):
+  from prance import cli
+
   import os, os.path
   curdir = os.getcwd()
 
@@ -93,7 +107,10 @@ def test_validate_output(runner):
       assert result.exit_code == 0
 
 
+@run_if_present('click')
 def test_compile_defaults(runner):
+  from prance import cli
+
   # Good example
   result = runner.invoke(cli.compile, ['tests/specs/petstore.yaml'])
   assert result.exit_code == 0
@@ -109,7 +126,10 @@ Validates OK as Swagger/OpenAPI 2.0!
   assert 'ValidationError' in result.output
 
 
+@run_if_present('click')
 def test_compile_output(runner):
+  from prance import cli
+
   import os, os.path
   curdir = os.getcwd()
 
@@ -136,7 +156,10 @@ def test_compile_output(runner):
       assert result.exit_code == 0
 
 
+@run_if_present('click')
 def test_convert_defaults(runner):
+  from prance import cli
+
   # Good example
   result = runner.invoke(cli.convert, ['tests/specs/petstore.yaml'])
   assert result.exit_code == 0
@@ -149,7 +172,10 @@ def test_convert_defaults(runner):
   assert 'ValidationError' in result.output
 
 
+@run_if_present('click')
 def test_convert_output(runner):
+  from prance import cli
+
   import os, os.path
   curdir = os.getcwd()
 
