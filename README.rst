@@ -19,6 +19,27 @@ at this point in time.
 Usage
 =====
 
+Installation
+------------
+
+Prance is available from PyPI, and can be installed via pip:
+
+.. code:: bash
+
+    $ pip install prance
+
+Note that this will install the code, but additional subpackages must be specified
+to unlock various pieces of functionality. At minimum, a parsing backend must be
+installed. For the CLI functionality, you need further dependencies.
+
+The recommended installation installs the CLI, uses ICU and installs one validation
+backend:
+
+.. code:: bash
+
+    $ pip install prance[osv,icu,cli]
+
+
 Command Line Interface
 ----------------------
 
@@ -108,7 +129,7 @@ Different validation backends support different features.
 +========================+================+=================+=============+=======================================================+================+===================================================================================+
 | swagger-spec-validator | 2 and 3        | 2.0 only        | yes         | Slow; does not accept integer keys (see strict mode). | prance 0.1     | `swagger\_spec\_validator <https://github.com/Yelp/swagger_spec_validator>`__     |
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
-| flex                   | 2 and 3        | 2.0 only        | n/a         | Fastest; the default, and always required.            | prance 0.8     | `flex <https://github.com/pipermerriam/flex>`__                                   |
+| flex                   | 2 and 3        | 2.0 only        | n/a         | Fastest; unfortunately deprecated.                    | prance 0.8     | `flex <https://github.com/pipermerriam/flex>`__                                   |
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
 | openapi-spec-validator | 2 and 3        | 2.0 and 3.0     | yes         | Slow; does not accept integer keys (see strict mode). | prance 0.11    | `openapi\_spec\_validator <https://github.com/p1c2u/openapi-spec-validator>`__    |
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
@@ -120,8 +141,8 @@ You can select the backend in the constructor of the parser(s):
     parser = ResolvingParser('http://petstore.swagger.io/v2/swagger.json', backend = 'openapi-spec-validator')
 
 
-Only the default backend is included in the dependencies; others are detected at run-time. If you
-install them, they can be used:
+No backend is included in the dependencies; they are detected at run-time. If you install them,
+they can be used:
 
 .. code:: bash
 
