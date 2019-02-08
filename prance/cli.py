@@ -107,6 +107,7 @@ class GroupWithCommandOptions(click.Group):
 
 from prance.util import default_validation_backend
 
+
 @click.group(cls = GroupWithCommandOptions)
 @click.option(
     '--resolve/--no-resolve',

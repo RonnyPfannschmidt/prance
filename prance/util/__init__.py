@@ -34,9 +34,7 @@ def stringify_keys(data):
 
 
 def validation_backends():
-  """
-  Return a list of validation backends supported by the environment.
-  """
+  """Return a list of validation backends supported by the environment."""
   ret = []
 
   try:
