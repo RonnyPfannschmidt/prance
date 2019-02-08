@@ -11,7 +11,7 @@ matrix:
   - python: '3.5'
     env: TOXENV=py35-no_icu
   - python: '3.6'
-    env: TOXENV=py36-{icu,no_icu,flex}
+    env: TOXENV=py36-no_icu,py36-icu,py36-flex
   - python: '3.7'
     env: TOXENV=py37-no_icu
 install:
