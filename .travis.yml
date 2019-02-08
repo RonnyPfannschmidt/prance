@@ -1,5 +1,5 @@
 language: python
-dist: bionic
+dist: trusty
 python:
   - pypy3
   - '2.7'
@@ -33,6 +33,7 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
+    update: true
     packages:
       - g++-7
       - libicu-dev
