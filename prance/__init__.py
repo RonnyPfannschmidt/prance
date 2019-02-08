@@ -93,7 +93,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     self.options = kwargs
 
     # Verify backend
-    self.backend = self.options.get('backend', 'flex')
+    from .util import default_validation_backend
+    self.backend = self.options.get('backend', default_validation_backend())
     if self.backend not in BaseParser.BACKENDS.keys():
       raise ValueError('Backend may only be one of %s!'
               % (BaseParser.BACKENDS.keys(), ))

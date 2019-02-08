@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""CLI for prance."""
+"""CLI for default_validation_backendprance."""
 
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
@@ -105,6 +105,8 @@ class GroupWithCommandOptions(click.Group):
     return command_invoke
 
 
+from prance.util import default_validation_backend
+
 @click.group(cls = GroupWithCommandOptions)
 @click.option(
     '--resolve/--no-resolve',
@@ -114,12 +116,12 @@ class GroupWithCommandOptions(click.Group):
 )
 @click.option(
     '--backend',
-    default = 'flex',
+    default = default_validation_backend(),
     metavar = 'BACKEND',
     nargs = 1,
     help = 'The validation backend to use. One of "flex", '
            '"swagger-spec-validator" or "openapi-spec-validator". The default'
-           'is "flex".'
+           'is the best of the installed backends.'
 )
 @click.option(
     '--strict/--no-strict',

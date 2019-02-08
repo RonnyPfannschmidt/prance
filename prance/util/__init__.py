@@ -46,15 +46,24 @@ def validation_backends():
     pass
 
   try:
-    import swagger_spec_validator  # noqa: F401
-    ret.append('swagger-spec-validator')
-  except (ImportError, SyntaxError):  # pragma: nocover
-    pass
-
-  try:
     import openapi_spec_validator  # noqa: F401
     ret.append('openapi-spec-validator')
   except (ImportError, SyntaxError):  # pragma: nocover
     pass
 
+  try:
+    import swagger_spec_validator  # noqa: F401
+    ret.append('swagger-spec-validator')
+  except (ImportError, SyntaxError):  # pragma: nocover
+    pass
+
   return tuple(ret)
+
+
+def default_validation_backend():
+  """Return the default validation backend, or raise an error."""
+  backends = validation_backends()
+  if len(backends) <= 0:
+    raise RuntimeError('No validation backend available! Install one of '
+        '"flex", "openapi_spec_validator" or "swagger_spec_validator".')
+  return backends[0]
