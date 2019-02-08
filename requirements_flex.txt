@@ -1,1 +1,2 @@
--e .[dev,icu]
+-e .[dev,flex,icu]
+click~=6.7  # for flex

@@ -14,27 +14,35 @@ if __name__ == '__main__':
     from distutils.core import setup, find_packages
 
   dev_require = [
-    'tox>=2.9',
+    'tox>=3.7',
     'bumpversion>=0.5',
-    'pytest>=3.4',
-    'pytest-cov>=2.5',
-    'flake8>=3.5',
-    'pep8-naming>=0.5',
-    'flake8-quotes>=0.14',
+    'pytest>=4.2',
+    'pytest-cov>=2.6',
+    'flake8>=3.7',
+    'pep8-naming>=0.8',
+    'flake8-quotes>=1.0',
     'flake8_docstrings>=1.3',
-    'sphinx>=1.7',
+    'sphinx>=1.8',
   ]
 
   icu_require = [
-    'PyICU~=1.9',
+    'PyICU~=2.2',
   ]
 
   ssv_require = [
-    'swagger-spec-validator~=2.1',
+    'swagger-spec-validator~=2.4',
   ]
 
   osv_require = [
-    'openapi-spec-validator~=0.2,>=0.2.1',
+    'openapi-spec-validator>0.2,>=0.2.1',
+  ]
+
+  flex_require = [
+    'flex',
+  ]
+
+  cli_require = [
+    'click~=7.0',
   ]
 
   # Run setup
@@ -69,11 +77,9 @@ if __name__ == '__main__':
       include_package_data = True,
       install_requires = [
         'chardet~=3.0',
-        'PyYAML~=3.12',
-        'flex~=6.12',
-        'requests~=2.18',
-        'six~=1.11',
-        'click~=6.7',
+        'PyYAML>4,>=4.2b4',
+        'requests~=2.21',
+        'six~=1.12',
         'semver~=2.8',
       ],
       extras_require = {
@@ -81,10 +87,12 @@ if __name__ == '__main__':
         'icu': icu_require,
         'ssv': ssv_require,
         'osv': osv_require,
+        'flex': flex_require,
+        'cli': cli_require,
       },
       entry_points={
           'console_scripts': [
-              'prance=prance.cli:cli',
+              'prance=prance.cli:cli [cli]',
            ],
       },
       zip_safe = True,
