@@ -36,10 +36,14 @@ def stringify_keys(data):
 def validation_backends():
   """
   Return a list of validation backends supported by the environment.
-
-  Validation backends other than 'flex' are optional.
   """
-  ret = ['flex']
+  ret = []
+
+  try:
+    import flex  # noqa: F401
+    ret.append('flex')
+  except (ImportError, SyntaxError):  # pragma: nocover
+    pass
 
   try:
     import swagger_spec_validator  # noqa: F401
