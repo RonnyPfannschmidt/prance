@@ -6,24 +6,35 @@ __copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
-def run_if_present(name):
-  import importlib
-  exists = False
-  try:
-    importlib.import_module(name)
-    exists = True
-  except ImportError:
-    pass
+def run_if_present(*args):
+  """
+  Run the decorated function if any of the named modules are importable.
 
-  print('exists', name, exists)
+  The idea is that one of them must exist, but not all of them. If you have
+  multiple mandatory modules, add multiple decorator lines.
+  """
+  import importlib
+  exists = {
+    True: [],
+    False: [],
+  }
+
+  for name in args:
+    try:
+      importlib.import_module(name)
+      exists[True].append(name)
+    except ImportError:
+      exists[False].append(name)
 
   def wrapper(func):
     import functools
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
-      if exists:
+      if len(exists[True]) > 0:
         return func(*args, **kwargs)
+
       import pytest
-      pytest.skip('Required dependency "%s" does not exist.' % (name,))
+      pytest.skip('None of the following dependencies exist: %s'
+          % (', '.join(exists[False]),))
     return wrapped
   return wrapper
