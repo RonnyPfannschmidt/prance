@@ -1,7 +1,7 @@
 language: python
 dist: bionic
 python:
-  - pypy
+  - pypy3
   - '2.7'
   - '3.4'
   - '3.5'
@@ -36,4 +36,3 @@ addons:
     packages:
       - g++-7
       - libicu-dev
-      - pypy
