@@ -35,7 +35,7 @@ class Sandboxer(object):
       tmp = self.__tmpdir
 
     # Then change to the temporary directory & python path
-    os.chdir(tmp)
+    os.chdir(str(tmp))
     import site
     sys.path.insert(0, tmp)
 
@@ -43,7 +43,7 @@ class Sandboxer(object):
   def __exit__(self, exc_type, exc_value, traceback):
     # Restore current working directory & python path
     import os, sys
-    os.chdir(self.__cwd)
+    os.chdir(str(self.__cwd))
     sys.path = self.__syspath
 
     # Don't suppress exceptions
