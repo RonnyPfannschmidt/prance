@@ -38,7 +38,7 @@ if __name__ == '__main__':
   ]
 
   flex_require = [
-    'flex',
+    'flex~=6.13',
   ]
 
   cli_require = [

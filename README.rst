@@ -163,6 +163,13 @@ Since the ``flex`` validator is not based on JSON, it does not have this issue. 
 therefore does not apply here.
 
 
+*A note on flex usage:* While flex is the fastest validation backend, unfortunately it is no longer
+maintained and there are issues with its dependencies. For one thing, it depends on a version of `PyYAML`
+that contains security flaws. For another, it depends explicitly on older versions of `click`.
+
+If you use the flex subpackage, therefore, you do so at your own risk.
+
+
 A Note on JSON References
 -------------------------
 
