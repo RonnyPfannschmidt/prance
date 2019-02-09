@@ -80,7 +80,7 @@ internet connection is therefore required for this command:
 .. code:: bash
 
     # Convert spec
-    $ prance compile path/to/swagger.yml path/to/openapi.yml
+    $ prance convert path/to/swagger.yml path/to/openapi.yml
 
 
 Code
