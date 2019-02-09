@@ -272,6 +272,8 @@ Contributing
 
 See `CONTRIBUTING.md <https://github.com/jfinkhaeuser/prance/blob/master/CONTRIBUTING.md>`__ for details.
 
+Professional support is available through `finkhaeuser consulting <https://finkhaeuser.de>`__.
+
 License
 =======
 
