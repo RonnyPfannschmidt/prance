@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance?ref=badge_shield)
+
 |Posix Build Status| |Windows Build Status| |Docs| |License|
 |PyPI| |Python Versions| |Package Format| |Package Status|
 
@@ -307,3 +309,7 @@ Made by `Moreven B <http://morevenb.com/>`__.
 .. |Package Status| image:: https://img.shields.io/pypi/status/prance.svg
    :target: https://pypi.python.org/pypi/prance/
 .. |Logo| image:: https://raw.githubusercontent.com/jfinkhaeuser/prance/master/docs/images/prance_logo_256.png
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance?ref=badge_large)
