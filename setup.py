@@ -78,7 +78,7 @@ if __name__ == '__main__':
       include_package_data = True,
       install_requires = [
         'chardet~=3.0',
-        'PyYAML>=5,>=5.1b1',
+        'PyYAML~=5.1',
         'requests~=2.21',
         'six~=1.12',
         'semver~=2.8',
