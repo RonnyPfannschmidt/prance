@@ -41,6 +41,8 @@ def iter_entries(parser, backend, version, file_format, path):
   for entry in os.listdir(path):
     full = os.path.join(path, entry)
     testcase_name = None
+    if entry.startswith('.'):  # skip hidden files
+      continue
     if os.path.isfile(full):
       testcase_name = make_name(full, parser, backend, version, file_format, entry)
     elif os.path.isdir(full):
