@@ -16,31 +16,30 @@ def stringify_keys(data):
   :return: A new dict-like object of the same type with stringified keys,
       but the same values.
   """
-  import collections
-  assert isinstance(data, collections.Mapping)
+  try:
+    from collections.abc import Mapping
+  except ImportError:  # Python 2
+    from collections import Mapping
+  assert isinstance(data, Mapping)
 
   ret = type(data)()
   import six
   for key, value in six.iteritems(data):
     if not isinstance(key, six.string_types):
       key = str(key)
-    if isinstance(value, collections.Mapping):
+    if isinstance(value, Mapping):
       value = stringify_keys(value)
     ret[key] = value
   return ret
 
 
 def validation_backends():
-  """
-  Return a list of validation backends supported by the environment.
-
-  Validation backends other than 'flex' are optional.
-  """
-  ret = ['flex']
+  """Return a list of validation backends supported by the environment."""
+  ret = []
 
   try:
-    import swagger_spec_validator  # noqa: F401
-    ret.append('swagger-spec-validator')
+    import flex  # noqa: F401
+    ret.append('flex')
   except (ImportError, SyntaxError):  # pragma: nocover
     pass
 
@@ -50,4 +49,19 @@ def validation_backends():
   except (ImportError, SyntaxError):  # pragma: nocover
     pass
 
+  try:
+    import swagger_spec_validator  # noqa: F401
+    ret.append('swagger-spec-validator')
+  except (ImportError, SyntaxError):  # pragma: nocover
+    pass
+
   return tuple(ret)
+
+
+def default_validation_backend():
+  """Return the default validation backend, or raise an error."""
+  backends = validation_backends()
+  if len(backends) <= 0:
+    raise RuntimeError('No validation backend available! Install one of '
+        '"flex", "openapi_spec_validator" or "swagger_spec_validator".')
+  return backends[0]

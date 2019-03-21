@@ -1,5 +1,5 @@
 |Posix Build Status| |Windows Build Status| |Docs| |License|
-|PyPI| |Python Versions| |Package Format| |Package Status|
+|PyPI| |Python Versions| |Package Format| |Package Status| |FOSSA Status|
 
 |Logo|
 
@@ -18,6 +18,27 @@ at this point in time.
 
 Usage
 =====
+
+Installation
+------------
+
+Prance is available from PyPI, and can be installed via pip:
+
+.. code:: bash
+
+    $ pip install prance
+
+Note that this will install the code, but additional subpackages must be specified
+to unlock various pieces of functionality. At minimum, a parsing backend must be
+installed. For the CLI functionality, you need further dependencies.
+
+The recommended installation installs the CLI, uses ICU and installs one validation
+backend:
+
+.. code:: bash
+
+    $ pip install prance[osv,icu,cli]
+
 
 Command Line Interface
 ----------------------
@@ -59,7 +80,7 @@ internet connection is therefore required for this command:
 .. code:: bash
 
     # Convert spec
-    $ prance compile path/to/swagger.yml path/to/openapi.yml
+    $ prance convert path/to/swagger.yml path/to/openapi.yml
 
 
 Code
@@ -108,9 +129,9 @@ Different validation backends support different features.
 +========================+================+=================+=============+=======================================================+================+===================================================================================+
 | swagger-spec-validator | 2 and 3        | 2.0 only        | yes         | Slow; does not accept integer keys (see strict mode). | prance 0.1     | `swagger\_spec\_validator <https://github.com/Yelp/swagger_spec_validator>`__     |
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
-| flex                   | 2 and 3        | 2.0 only        | n/a         | Fastest; the default, and always required.            | prance 0.8     | `flex <https://github.com/pipermerriam/flex>`__                                   |
+| flex                   | 2 and 3        | 2.0 only        | n/a         | Fastest; unfortunately deprecated.                    | prance 0.8     | `flex <https://github.com/pipermerriam/flex>`__                                   |
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
-| openapi-spec-validator | 3 only         | 2.0 and 3.0     | yes         | Slow; does not accept integer keys (see strict mode). | prance 0.11    | `openapi\_spec\_validator <https://github.com/p1c2u/openapi-spec-validator>`__    |
+| openapi-spec-validator | 2 and 3        | 2.0 and 3.0     | yes         | Slow; does not accept integer keys (see strict mode). | prance 0.11    | `openapi\_spec\_validator <https://github.com/p1c2u/openapi-spec-validator>`__    |
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
 
 You can select the backend in the constructor of the parser(s):
@@ -120,8 +141,8 @@ You can select the backend in the constructor of the parser(s):
     parser = ResolvingParser('http://petstore.swagger.io/v2/swagger.json', backend = 'openapi-spec-validator')
 
 
-Only the default backend is included in the dependencies; others are detected at run-time. If you
-install them, they can be used:
+No backend is included in the dependencies; they are detected at run-time. If you install them,
+they can be used:
 
 .. code:: bash
 
@@ -140,6 +161,13 @@ the default lenient mode accepts them.
 
 Since the ``flex`` validator is not based on JSON, it does not have this issue. The ``strict`` option
 therefore does not apply here.
+
+
+*A note on flex usage:* While flex is the fastest validation backend, unfortunately it is no longer
+maintained and there are issues with its dependencies. For one thing, it depends on a version of `PyYAML`
+that contains security flaws. For another, it depends explicitly on older versions of `click`.
+
+If you use the flex subpackage, therefore, you do so at your own risk.
 
 
 A Note on JSON References
@@ -251,6 +279,8 @@ Contributing
 
 See `CONTRIBUTING.md <https://github.com/jfinkhaeuser/prance/blob/master/CONTRIBUTING.md>`__ for details.
 
+Professional support is available through `finkhaeuser consulting <https://finkhaeuser.de>`__.
+
 License
 =======
 
@@ -276,4 +306,7 @@ Made by `Moreven B <http://morevenb.com/>`__.
    :target: https://pypi.python.org/pypi/prance/
 .. |Package Status| image:: https://img.shields.io/pypi/status/prance.svg
    :target: https://pypi.python.org/pypi/prance/
+.. |FOSSA Status| image:: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance.svg?type=shield
+   :target: https://app.fossa.io/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance?ref=badge_shield
 .. |Logo| image:: https://raw.githubusercontent.com/jfinkhaeuser/prance/master/docs/images/prance_logo_256.png
+

@@ -14,6 +14,8 @@ import pytest
 
 from prance.util import fs
 
+from . import sandbox
+
 
 def test_canonical():
   testname = 'tests/specs/symlink_test'
@@ -102,12 +104,8 @@ def test_load_utf8bom_override():
     fs.read_file('tests/specs/utf8bom.yaml', 'ascii')
 
 
-def test_write_file():
-  # What we're doing here has really nothing to do with click's CliRunner,
-  # but since we have it, we might as well use its sandboxing feature.
-  from click.testing import CliRunner
-  runner = CliRunner()
-  with runner.isolated_filesystem():
+def test_write_file(tmpdir):
+  with sandbox.sandbox(tmpdir):
     test_text = u'söme täxt'
     fs.write_file('test.out', test_text)
 
@@ -120,12 +118,8 @@ def test_write_file():
     assert test_text == contents
 
 
-def test_write_file_bom():
-  # What we're doing here has really nothing to do with click's CliRunner,
-  # but since we have it, we might as well use its sandboxing feature.
-  from click.testing import CliRunner
-  runner = CliRunner()
-  with runner.isolated_filesystem():
+def test_write_file_bom(tmpdir):
+  with sandbox.sandbox(tmpdir):
     test_text = u'söme täxt'
     fs.write_file('test.out', test_text, 'utf-8-sig')
 

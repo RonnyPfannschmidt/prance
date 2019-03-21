@@ -12,7 +12,7 @@ __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ('util', 'mixins', 'cli', 'convert', 'data')
-__version__ = '0.13.0'
+__version__ = '0.15.0'
 
 
 from .util.exceptions import ValidationError
@@ -89,7 +89,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     self.options = kwargs
 
     # Verify backend
-    self.backend = self.options.get('backend', 'flex')
+    from .util import default_validation_backend
+    self.backend = self.options.get('backend', default_validation_backend())
     if self.backend not in BaseParser.BACKENDS.keys():
       raise ValueError('Backend may only be one of %s!'
               % (BaseParser.BACKENDS.keys(), ))
@@ -130,7 +131,10 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 
   def _validate(self):
     # Ensure specification is a mapping
-    from collections import Mapping
+    try:
+      from collections.abc import Mapping
+    except ImportError:  # Python 2
+      from collections import Mapping
     if not isinstance(self.specification, Mapping):
       raise ValidationError('Could not parse specifications!')
 
