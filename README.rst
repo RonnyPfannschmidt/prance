@@ -306,7 +306,7 @@ Made by `Moreven B <http://morevenb.com/>`__.
    :target: https://pypi.python.org/pypi/prance/
 .. |Package Status| image:: https://img.shields.io/pypi/status/prance.svg
    :target: https://pypi.python.org/pypi/prance/
-.. |FOSSA Status| https://app.fossa.io/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance?ref=badge_large
-   :target: image::: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance.svg?type=large
+.. |FOSSA Status| image:: https://app.fossa.io/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance?ref=badge_large
+   :target: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance.svg?type=large
 .. |Logo| image:: https://raw.githubusercontent.com/jfinkhaeuser/prance/master/docs/images/prance_logo_256.png
 
