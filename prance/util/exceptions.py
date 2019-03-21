@@ -7,46 +7,38 @@ __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 
-class ConversionError(ValueError):
+import six as _six
+
+
+class _MessageMixin(object):
+  def __unicode__(self):
+    try:
+      return self.args[0]
+    except IndexError:
+      return '%s.%s' % (self.__class__.__module__, self.__class__.__name__)
+
+  if _six.PY3:
+    __str__ = __unicode__
+  else:
+    def __str__(self):
+      return unicode(self).encode('utf-8')  # noqa: F821
+
+
+class ConversionError(_MessageMixin, ValueError):
   pass  # pragma: nocover
 
 
-class ValidationError(Exception):
+class ValidationError(_MessageMixin, ValueError):
   pass  # pragma: nocover
 
 
-class SchemaError(Exception):
+class SchemaError(_MessageMixin, TypeError):
   pass  # pragma: nocover
 
 
-class ParseError(ValueError):
+class ParseError(_MessageMixin, ValueError):
   pass  # pragma: nocover
 
 
-class ResolutionError(LookupError):
+class ResolutionError(_MessageMixin, LookupError):
   pass  # pragma: nocover
-
-
-# Raise the given exception class from the caught exception, preserving
-# stack trace and message as much as possible.
-import six
-if six.PY3:  # pragma: nocover
-  six.exec_("""def raise_from(klass, from_value):
-  try:
-    if from_value is None:
-      raise klass()
-    raise klass(*from_value.args) from from_value
-  finally:
-    klass = None
-""")
-elif six.PY2:  # pragma: nocover
-  six.exec_("""def raise_from(klass, from_value):
-  try:
-    if from_value is None:
-      raise klass()
-    import sys
-    exc_info = sys.exc_info()
-    raise klass, klass(*from_value.args), exc_info[2]
-  finally:
-    klass = None
-""")

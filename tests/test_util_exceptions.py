@@ -11,24 +11,23 @@ import pytest
 from prance.util import exceptions
 from prance import ValidationError
 
-def test_reraise_without_value():
-  with pytest.raises(ValidationError) as caught:
-    exceptions.raise_from(ValidationError, None)
-
-  # The first is obvious from pytest.raises. The rest tests
-  # known attributes
-  assert caught.type == ValidationError
-  assert str(caught.value) == ''
+def test_error_without_value():
+  try:
+    raise ValidationError()
+  except Exception as exc:
+    assert str(exc) == 'prance.util.exceptions.ValidationError'
 
 
-def test_reraise_with_value():
-  with pytest.raises(ValidationError) as caught:
-    try:
-      raise RuntimeError("foo")
-    except RuntimeError as inner:
-      exceptions.raise_from(ValidationError, inner)
+def test_error_with_simple_value():
+  try:
+    raise ValidationError('simple')
+  except Exception as exc:
+    assert str(exc) == 'simple'
 
-  # The first is obvious from pytest.raises. The rest tests
-  # known attributes
-  assert caught.type == ValidationError
-  assert str(caught.value) == 'foo'
+
+def test_error_with_multiline_value():
+  try:
+    raise ValidationError("""multi
+line""")
+  except Exception as exc:
+    assert '\n' in str(exc)
