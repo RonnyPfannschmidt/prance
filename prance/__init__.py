@@ -188,8 +188,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     try:
       validate(self.specification)
     except JSEValidationError as ex:
-      from .util.exceptions import raise_from
-      raise_from(ValidationError, ex)
+      from six import raise_from
+      raise_from(ValidationError(str(ex)), ex)
 
   def _validate_swagger_spec_validator(self, spec_version):  # pragma: nocover
     # Set the version independently of whether validation succeeds
@@ -200,8 +200,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     try:
       validate_spec(self.specification)
     except SSVErr as ex:
-      from .util.exceptions import raise_from
-      raise_from(ValidationError, ex)
+      from six import raise_from
+      raise_from(ValidationError(str(ex)), ex)
 
   def _validate_openapi_spec_validator(self, spec_version):  # pragma: nocover
     from openapi_spec_validator import validate_v2_spec, validate_v3_spec
@@ -210,7 +210,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 
     # Validate according to detected version. Unsupported versions are
     # already caught outside of this function.
-    from .util.exceptions import raise_from
+    from six import raise_from
     if spec_version[0] == 3:
       # Set the version independently of whether validation succeeds
       self.__set_version(BaseParser.SPEC_VERSION_3_PREFIX, spec_version)
@@ -218,11 +218,11 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       try:
         validate_v3_spec(self.specification)
       except TypeError as type_ex:  # pragma: nocover
-        raise_from(ValidationError, type_ex)
+        raise_from(ValidationError(str(type_ex)), type_ex)
       except JSEValidationError as v3_ex:
-        raise_from(ValidationError, v3_ex)
+        raise_from(ValidationError(str(v3_ex)), v3_ex)
       except RefResolutionError as ref_ex:
-        raise_from(ValidationError, ref_ex)
+        raise_from(ValidationError(str(ref_ex)), ref_ex)
     elif spec_version[0] == 2:
       # Set the version independently of whether validation succeeds
       self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
@@ -230,11 +230,11 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       try:
         validate_v2_spec(self.specification)
       except TypeError as type_ex:  # pragma: nocover
-        raise_from(ValidationError, type_ex)
+        raise_from(ValidationError(str(type_ex)), type_ex)
       except JSEValidationError as v2_ex:
-        raise_from(ValidationError, v2_ex)
+        raise_from(ValidationError(str(v2_ex)), v2_ex)
       except RefResolutionError as ref_ex:
-        raise_from(ValidationError, ref_ex)
+        raise_from(ValidationError(str(ref_ex)), ref_ex)
 
 
 class ResolvingParser(BaseParser):

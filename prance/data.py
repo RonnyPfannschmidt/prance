@@ -32,6 +32,8 @@ def validate_json_schema(data, schema, subschema = None):
   from jsonschema.exceptions import ValidationError as JSEValidationError
   from jsonschema.exceptions import SchemaError as JSESchemaError
 
+  from six import raise_from
+
   try:
     # Get validator
     validator = validator_for(schema)
@@ -43,11 +45,11 @@ def validate_json_schema(data, schema, subschema = None):
     # entire schema, exactly like we want.
     validator(schema).validate(data, _schema = subschema)
   except JSEValidationError as exc:
-    from .util.exceptions import raise_from, ValidationError
-    raise_from(ValidationError, exc)
+    from .util.exceptions import ValidationError
+    raise_from(ValidationError(str(exc)), exc)
   except JSESchemaError as exc:
-    from .util.exceptions import raise_from, SchemaError
-    raise_from(SchemaError, exc)
+    from .util.exceptions import SchemaError
+    raise_from(SchemaError(str(exc)), exc)
 
   # Just in case the result is tested
   return True
@@ -74,6 +76,8 @@ def validate_schema_object(data, schema):
     raise ImportError('The "openapi-spec-validator" backend is required for '
         'data validation, as only OpenAPI 3 specs are permitted here.')
 
+  from six import raise_from
+
   # First, ensure that the schema is valid according to the OpenAPI
   # specs.
   from .util.exceptions import ValidationError
@@ -82,8 +86,8 @@ def validate_schema_object(data, schema):
     validate_json_schema(schema, schema_v3,
         subschema = schema_v3['definitions']['schemaOrReference'])
   except ValidationError as exc:
-    from .util.exceptions import raise_from, SchemaError
-    raise_from(SchemaError, exc)
+    from .util.exceptions import SchemaError
+    raise_from(SchemaError(str(exc)), exc)
 
   # Next, validate data according to the sub schema
   return validate_json_schema(data, schema)
