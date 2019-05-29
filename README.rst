@@ -1,5 +1,5 @@
 |Posix Build Status| |Windows Build Status| |Docs| |License|
-|PyPI| |Python Versions| |Package Format| |Package Status| |FOSSA Status|
+|PyPI| |Python Versions| |Package Format| |Package Status| |FOSSA Status| |Liberapay|
 
 |Logo|
 
@@ -308,5 +308,7 @@ Made by `Moreven B <http://morevenb.com/>`__.
    :target: https://pypi.python.org/pypi/prance/
 .. |FOSSA Status| image:: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance.svg?type=shield
    :target: https://app.fossa.io/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance?ref=badge_shield
+.. |Liberapay| image:: http://img.shields.io/liberapay/receives/jfinkhaeuser.svg?logo=liberapay
+   :target: https://liberapay.com/jfinkhaeuser/donate
 .. |Logo| image:: https://raw.githubusercontent.com/jfinkhaeuser/prance/master/docs/images/prance_logo_256.png
 
