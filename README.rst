@@ -38,6 +38,15 @@ backend:
 .. code:: bash
 
     $ pip install prance[osv,icu,cli]
+    
+Make sure you have [ICU Unicode Library](http://site.icu-project.org/home) installed, as well as Python dev library before running the commands above. If not, use the following commands:
+
+### Ubuntu
+
+.. code:: bash
+
+    $ sudo apt-get install libicu-dev
+    $ sudo apt-get install python3-dev
 
 
 Command Line Interface
