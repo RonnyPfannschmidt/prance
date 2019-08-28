@@ -38,10 +38,12 @@ def path_get(obj, path, defaultvalue = None):
     if path is None or len(path) < 1:
       return obj or defaultvalue
 
-    if not isinstance(path[0], int):
+    try:
+      idx = int(path[0])
+    except ValueError:
       raise KeyError('Sequences need integer indices only.')
 
-    return path_get(obj[path[0]], path[1:], defaultvalue)
+    return path_get(obj[idx], path[1:], defaultvalue)
 
   else:
     # Path must be empty.
@@ -139,26 +141,30 @@ def path_set(obj, path, value, **options):
     return obj
 
   elif isinstance(obj, collections.Sequence):
+    idx = path[0]
+
     # If we don't have a mutable sequence, we should raise a TypeError
     if not isinstance(obj, collections.MutableSequence):
       raise TypeError('Sequence is not mutable: %s' % (type(obj),))
 
     # Ensure integer indices
-    if not isinstance(path[0], int):
+    try:
+      idx = int(idx)
+    except ValueError:
       raise KeyError('Sequences need integer indices only.')
 
     # If we're supposed to create and the index at path[0] doesn't exist,
     # then we need to push some dummy objects.
     if create:
-      fill_sequence(obj, path[0], safe_idx(path, 1))
+      fill_sequence(obj, idx, safe_idx(path, 1))
 
     # If the path has only one element, we just overwrite the element at the
     # given index. Otherwise we recurse.
     # print('pl', len(path))
     if len(path) == 1:
-      obj[path[0]] = value
+      obj[idx] = value
     else:
-      path_set(obj[path[0]], path[1:], value, create = create)
+      path_set(obj[idx], path[1:], value, create = create)
 
     return obj
   else:
