@@ -105,7 +105,8 @@ class RefResolver(object):
       if rec_counter[ref_path] >= self.__reclimit:
         # The referenced value may be produced by the handler, or the handler
         # may raise, etc.
-        ref_value = self.__reclimit_handler(self.__reclimit, ref_url, next_recursions)
+        ref_value = self.__reclimit_handler(self.__reclimit, ref_url,
+            next_recursions)
       else:
         # The referenced value is to be used, but let's copy it to avoid
         # building recursive structures.
