@@ -247,3 +247,15 @@ def test_issue_22_empty_path(externals_file):
   # Previously defined keys must not
   assert 'overwritten' not in param
   assert '$ref' not in param
+
+def test_issue_38_tilde_one():
+  specs = get_specs('tests/specs/issue_38_a.yaml')
+  print(specs)
+  res = resolver.RefResolver(specs,
+      fs.abspath('tests/specs/issue_38_a.yaml'))
+  res.resolve_references()
+
+  path = res.specs['paths']['/api/v2/vms']
+  assert 'get' in path
+  assert 'operationId' in path['get']
+  assert 'description' in path['get']

@@ -117,6 +117,13 @@ def test_split_url_reference():
   assert path[0] == 'foo'
   assert path[1] == 'bar'
 
+  # Reference with escaped parts
+  parsed, path = url.split_url_reference(base, 'http://somewhere/#foo/bar~1baz~1quux~0foo')
+  assert parsed.netloc == 'somewhere'
+  assert len(path) == 2
+  assert path[0] == 'foo'
+  assert path[1] == 'bar/baz/quux~foo'
+
 
 def test_fetch_url_file():
   from prance.util import fs
