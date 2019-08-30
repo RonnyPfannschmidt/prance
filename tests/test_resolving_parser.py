@@ -88,3 +88,19 @@ def test_issue_1_relative_path_references(issue_1_parser):
   # Must resolve references correctly
   params = issue_1_parser.specification["paths"]["/test"]["parameters"]
   assert 'id' in params[0]['schema']['required']
+
+
+@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing backends')
+def test_issue_39_sequence_indices():
+  # Must not fail to parse
+  parser = ResolvingParser('tests/specs/issue_39.yaml', backend = 'openapi-spec-validator')
+  print(parser.specification)
+
+  # The /useCase path should have two values in its response example.
+  example = parser.specification['paths']['/useCase']['get']['responses']['200']['content']['application/json']['examples']['response']
+  assert 'value' in example
+  assert len(example['value']) == 2
+
+  # However, the /test path should have only one of the strings.
+  example = parser.specification['paths']['/test']['get']['responses']['200']['content']['application/json']['example']
+  assert example == 'some really long or specific string'
