@@ -23,7 +23,7 @@ def get_specs(fname):
   return specs
 
 
-def recursion_limit_handler_none(limit, refstring):
+def recursion_limit_handler_none(limit, refstring, recursions):
   return None
 
 
