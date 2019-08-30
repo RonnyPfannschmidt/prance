@@ -9,10 +9,15 @@ __all__ = ()
 import prance.util.url as _url
 
 
-def default_reclimit_handler(limit, parsed_url):
+def default_reclimit_handler(limit, parsed_url, recursions = ()):
   """Raise prance.util.url.ResolutionError."""
+  path = []
+  for rc in recursions:
+    path.append('%s#/%s' % (rc[0], '/'.join(rc[1])))
+  path = '\n'.join(path)
+
   raise _url.ResolutionError('Recursion reached limit of %d trying to '
-        'resolve "%s"!' % (limit, parsed_url.geturl()))
+        'resolve "%s"!\n%s' % (limit, parsed_url.geturl(), path))
 
 
 class RefResolver(object):
@@ -44,7 +49,9 @@ class RefResolver(object):
     :param callable recursion_limit_handler: [optional] A callable that
         gets invoked when the recursion_limit is reached. Defaults to
         raising ResolutionError. Receives the recursion_limit as the
-        first parameter, and the parsed reference URL as the second.
+        first parameter, and the parsed reference URL as the second. As
+        the last parameter, it receives a tuple of references that have
+        been detected as recursions.
     """
     import copy
     self.specs = copy.deepcopy(specs)
@@ -98,7 +105,7 @@ class RefResolver(object):
       if rec_counter[ref_path] >= self.__reclimit:
         # The referenced value may be produced by the handler, or the handler
         # may raise, etc.
-        ref_value = self.__reclimit_handler(self.__reclimit, ref_url)
+        ref_value = self.__reclimit_handler(self.__reclimit, ref_url, next_recursions)
       else:
         # The referenced value is to be used, but let's copy it to avoid
         # building recursive structures.
