@@ -124,6 +124,13 @@ def split_url_reference(base_url, reference):
   while len(obj_path) and not obj_path[0]:
     obj_path = obj_path[1:]
 
+  # Normalize the object path by substituting ~1 and ~0 respectively.
+  def _normalize(path):
+    path = path.replace('~1', '/')
+    path = path.replace('~0', '~')
+    return path
+  obj_path = [_normalize(p) for p in obj_path]
+
   return parsed_url, obj_path
 
 
