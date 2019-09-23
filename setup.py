@@ -23,6 +23,7 @@ if __name__ == '__main__':
     'flake8-quotes>=1.0',
     'flake8_docstrings>=1.3',
     'sphinx>=1.8',
+    'towncrier>=19.2',
   ]
 
   icu_require = [

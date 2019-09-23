@@ -10,6 +10,7 @@ Swagger/OpenAPI 2.0 Parser for Python
 
 .. include:: ../../README.rst
 
+
 .. toctree::
    :hidden:
 
@@ -29,3 +30,8 @@ API/Modules
    prance.util.url
    prance.util.exceptions
    prance.util.path
+
+Changes
+=======
+
+.. include:: ../../CHANGES.rst
