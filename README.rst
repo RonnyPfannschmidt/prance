@@ -43,7 +43,7 @@ Make sure you have `ICU Unicode Library <http://site.icu-project.org/home>`__ in
 as well as Python dev library before running the commands above. If not, use the
 following commands:
 
-### Ubuntu
+**Ubuntu**
 
 .. code:: bash
 
