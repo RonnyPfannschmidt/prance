@@ -45,15 +45,24 @@ def item_iterator(value, path = ()):
   # Yield the top-level object, always
   yield path, value
 
+  try:
+    from collections.abc import Mapping
+  except ImportError:  # Python 2
+    from collections import Mapping
+
+  try:
+    from collections.abc import Sequence
+  except ImportError:  # Python 2
+    from collections import Sequence
+
   # For dict and list like objects, we also need to yield each item
   # recursively.
-  import collections
   import six
-  if isinstance(value, collections.Mapping):
+  if isinstance(value, Mapping):
     for key, item in six.viewitems(value):
       for inner_path, inner in item_iterator(item, path + (key,)):
         yield inner_path, inner
-  elif isinstance(value, collections.Sequence) and not isinstance(value,
+  elif isinstance(value, Sequence) and not isinstance(value,
          six.string_types):
     for idx, item in enumerate(value):
       for inner_path, inner in item_iterator(item, path + (idx,)):
