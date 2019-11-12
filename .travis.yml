@@ -2,7 +2,7 @@ language: python
 dist: bionic
 matrix:
   include:
-  - python: pypy3.6-7.2
+  - python: pypy3
     env: TOXENV=pypy3-no_icu
   - python: '3.5'
     env: TOXENV=py35-no_icu
