@@ -47,7 +47,7 @@ env:
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+      - sourceline: 'ppa:ubuntu-toolchain-r/test'
     update: true
     packages:
       - g++-8
