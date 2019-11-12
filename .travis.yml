@@ -11,7 +11,7 @@ matrix:
     env: REQUIREMENTS=requirements_flex.txt
 
   # Other supported versions
-  - python: 'pypy3' # Should work according to docs
+  - python: 'pypy3-7.1.1'  # Try versioning; it sucks, but what are you to do?
     env: REQUIREMENTS=requirements_no_icu.txt
   - python: '3.5'
     env: REQUIREMENTS=requirements_no_icu.txt
