@@ -6,7 +6,7 @@ matrix:
   - python: '3.6'
     env: REQUIREMENTS=requirements_no_icu.txt
   - python: '3.6'
-    env: REQUIREMENTS=requirements.txt EXTRA_STEPS="flake8 build_sphinx" # DEPLOY=1
+    env: REQUIREMENTS=requirements.txt EXTRA_STEPS="flake8 build_sphinx" DEPLOY=1
   - python: '3.6'
     env: REQUIREMENTS=requirements_flex.txt
 
