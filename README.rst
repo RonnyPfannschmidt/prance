@@ -145,6 +145,10 @@ Unfortunately, Travis isn't very good at supporting this. So in the absence
 of spare time, they're disabled. `Issue 50 <https://github.com/jfinkhaeuser/prance/issues/50>`__
 tracks progress on that.
 
+Similarly, but less critically, Python 3.4 is no longer receiving a lot of
+love from CI vendors, so automated builds on that version are no longer
+supported.
+
 *Backends*
 
 Different validation backends support different features.
