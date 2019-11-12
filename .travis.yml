@@ -8,12 +8,10 @@ matrix:
   - python: '3.6'
     env: REQUIREMENTS=requirements.txt EXTRA_STEPS="flake8 build_sphinx" # DEPLOY=1
   - python: '3.6'
-    env: REQUIREMENTS=requirements_bare.txt
-  - python: '3.6'
     env: REQUIREMENTS=requirements_flex.txt
 
   # Other supported versions
-  - python: 'pypy3.6.1-7.1.1'
+  - python: 'pypy3' # Should work according to docs
     env: REQUIREMENTS=requirements_no_icu.txt
   - python: '3.5'
     env: REQUIREMENTS=requirements_no_icu.txt
