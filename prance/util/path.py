@@ -75,7 +75,6 @@ def path_set(obj, path, value, **options):
   :param bool create: [optional] Flag indicating whether to create
     intermediate values or not. Defaults to False.
   """
-
   # Retrieve options
   create = options.get('create', False)
 
