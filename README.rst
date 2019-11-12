@@ -133,6 +133,15 @@ or may not find useful, too. Look at the `full documentation
 Compatibility
 -------------
 
+*Python Versions*
+
+Version 0.16.2 is the last version supporting Python 2. It was released on
+Nov 12th, 2019. Python 2 reaches end of life at the end of 2019. If you wish
+for updates to the Python 2 supported packages, please contact the maintainer
+directly.
+
+*Backends*
+
 Different validation backends support different features.
 
 +------------------------+----------------+-----------------+-------------+-------------------------------------------------------+----------------+-----------------------------------------------------------------------------------+
