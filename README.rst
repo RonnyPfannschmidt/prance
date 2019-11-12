@@ -140,6 +140,11 @@ Nov 12th, 2019. Python 2 reaches end of life at the end of 2019. If you wish
 for updates to the Python 2 supported packages, please contact the maintainer
 directly.
 
+Until fairly recently, we also tested with `PyPy <https://www.pypy.org/>`__.
+Unfortunately, Travis isn't very good at supporting this. So in the absence
+of spare time, they're disabled. `Issue 50 <https://github.com/jfinkhaeuser/prance/issues/50>`__
+tracks progress on that.
+
 *Backends*
 
 Different validation backends support different features.
