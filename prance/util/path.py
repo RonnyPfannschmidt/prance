@@ -23,18 +23,26 @@ def path_get(obj, path, defaultvalue = None):
   :param mixed defaultvalue: If the value at the path does not exist and this
     parameter is not None, it is returned. Otherwise an error is raised.
   """
-  import collections
+  try:
+    from collections.abc import Mapping
+  except ImportError:  # Python 2
+    from collections import Mapping
 
-  if path is not None and not isinstance(path, collections.Sequence):
+  try:
+    from collections.abc import Sequence
+  except ImportError:  # Python 2
+    from collections import Sequence
+
+  if path is not None and not isinstance(path, Sequence):
     raise TypeError('Path is a %s, but must be None or a Collection!'
             % (type(path),))
 
-  if isinstance(obj, collections.Mapping):
+  if isinstance(obj, Mapping):
     if path is None or len(path) < 1:
       return obj or defaultvalue
     return path_get(obj[path[0]], path[1:], defaultvalue)
 
-  elif isinstance(obj, collections.Sequence):
+  elif isinstance(obj, Sequence):
     if path is None or len(path) < 1:
       return obj or defaultvalue
 
@@ -67,8 +75,6 @@ def path_set(obj, path, value, **options):
   :param bool create: [optional] Flag indicating whether to create
     intermediate values or not. Defaults to False.
   """
-  import collections
-
   # Retrieve options
   create = options.get('create', False)
 
@@ -110,16 +116,36 @@ def path_set(obj, path, value, **options):
   # print('path', path)
   # print('value', value)
 
-  if path is not None and not isinstance(path, collections.Sequence):
+  try:
+    from collections.abc import Sequence
+  except ImportError:  # Python 2
+    from collections import Sequence
+
+  try:
+    from collections.abc import MutableSequence
+  except ImportError:  # Python 2
+    from collections import MutableSequence
+
+  try:
+    from collections.abc import Mapping
+  except ImportError:  # Python 2
+    from collections import Mapping
+
+  try:
+    from collections.abc import MutableMapping
+  except ImportError:  # Python 2
+    from collections import MutableMapping
+
+  if path is not None and not isinstance(path, Sequence):
     raise TypeError('Path is a %s, but must be None or a Collection!'
             % (type(path),))
 
   if len(path) < 1:
     raise KeyError('Cannot set with an empty path!')
 
-  if isinstance(obj, collections.Mapping):
+  if isinstance(obj, Mapping):
     # If we don't have a mutable mapping, we should raise a TypeError
-    if not isinstance(obj, collections.MutableMapping):  # pragma: nocover
+    if not isinstance(obj, MutableMapping):  # pragma: nocover
       raise TypeError('Mapping is not mutable: %s' % (type(obj),))
 
     # If the path has only one element, we just overwrite the element at the
@@ -140,11 +166,11 @@ def path_set(obj, path, value, **options):
 
     return obj
 
-  elif isinstance(obj, collections.Sequence):
+  elif isinstance(obj, Sequence):
     idx = path[0]
 
     # If we don't have a mutable sequence, we should raise a TypeError
-    if not isinstance(obj, collections.MutableSequence):
+    if not isinstance(obj, MutableSequence):
       raise TypeError('Sequence is not mutable: %s' % (type(obj),))
 
     # Ensure integer indices
