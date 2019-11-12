@@ -2,20 +2,30 @@ language: python
 dist: bionic
 matrix:
   include:
-  - python: pypy3
-    env: TOXENV=pypy3-no_icu
-  - python: '3.5'
-    env: TOXENV=py35-no_icu
+  # Main development version
   - python: '3.6'
-    env: TOXENV=py36-no_icu,py36-flex,py36-default
+    env: REQUIREMENTS=requirements_no_icu.txt
+  - python: '3.6'
+    env: REQUIREMENTS=requirements.txt EXTRA_STEPS="flake8 build_sphinx" # DEPLOY=1
+  - python: '3.6'
+    env: REQUIREMENTS=requirements_bare.txt
+  - python: '3.6'
+    env: REQUIREMENTS=requirements_flex.txt
+
+  # Other supported versions
+  - python: 'pypy3.6.1-7.1.1'
+    env: REQUIREMENTS=requirements_no_icu.txt
+  - python: '3.5'
+    env: REQUIREMENTS=requirements_no_icu.txt
   - python: '3.7'
-    env: TOXENV=py37-no_icu
+    env: REQUIREMENTS=requirements_no_icu.txt
   - python: '3.8'
-    env: TOXENV=py38-no_icu
+    env: REQUIREMENTS=requirements_no_icu.txt
+
 install:
-  - pip install tox-travis
+  - pip install -r ${REQUIREMENTS}
 script:
-  - tox
+  - python setup.py test ${EXTRA_STEPS}
 after_success:
   - test "${TRAVIS_TAG}" != "" && docs/deploy.sh
 deploy:
@@ -28,7 +38,7 @@ deploy:
     tags: true
     branch: master
     repo: jfinkhaeuser/prance
-    condition: "$(python --version | grep '^Python 3\\.6')"
+    condition: "$(test $DEPLOY == 1 && python --version | grep '^Python 3\\.6')"
 env:
   global:
     - secure: OBNymO/NhhWmcI/Vqs4TcxYCSPoDAblnurdjC11h0xi0OVNfddhKEIlcump3G7vZZNJucepp2SOVV8rrUE1ATbxQnZzMwAarfW61l4aoAXP1y4oZkVrDVMdXTKMU2t1iXpjU7rQSCnJ9GhLyyC8I5EJTeJR9nwhts2sh186QyJM3rnjdt8C6PULh48YvpU9sKoazShzqL0s+L8wHQeh1BTRu7DMFQwmZl+dFc1RSO/Q3hpVIBk/9cdlCixWQZzPu14Z0gjX76qsVixKJ1oB+2wVIiMDwMS1h7HGQhJTY3B47orAkiSK8EbmPBBKzqD0oNEq9e98x7V/+Hre7Hw4EoMLZHeBcyeQ998T7XbYpR1/19nVyXb8epZ6q6Uo7q5+GWUr+cDdY+d/AzGed4uOh7YD+mqn+BVg+h5JyGabRpfIAeeCbwQ5Uq9WSdVhcyDeqAwSsC2uGuMSuZaTgs0aU3uXOgZpmCPA35Qs0qVOFldeId7FU+JW+ij98/B+dgTqB7ZXCFsG+BTmYxnE3Iza6dtJoe5NEYadEXiPMZG3BBcra9UN77ltmmsfentujhkgcof1H+1o85nTY2ry6SkTICmibt7egJbiKb1jr0yn0FqBvzUKJCTqIN3gQFWeC2A2FQej2EvxMcx/QRmFPK6ylVQJjbZHsoGJs/yf9fuLlyBg=
