@@ -23,7 +23,7 @@ def __write_to_file(filename, specs):  # noqa: N802
   fs.write_file(filename, contents)
 
 
-def __parser_for_url(url, resolve, backend, strict):  # noqa: N802
+def __parser_for_url(url, resolve, backend, strict, encoding):  # noqa: N802
   """Return a parser instance for the URL and the given parameters."""
   # Try the URL
   formatted = click.format_filename(url)
@@ -36,14 +36,19 @@ def __parser_for_url(url, resolve, backend, strict):  # noqa: N802
     url = fsurl
 
   # Create parser to use
+  parser = None
   if resolve:
     click.echo(' -> Resolving external references.')
-    return prance.ResolvingParser(url, lazy = True, backend = backend,
-            strict = strict), formatted
+    parser = prance.ResolvingParser(url, lazy = True, backend = backend,
+            strict = strict, encoding = encoding)
   else:
     click.echo(' -> Not resolving external references.')
-    return prance.BaseParser(url, lazy = True, backend = backend,
-            strict = strict), formatted
+    parser = prance.BaseParser(url, lazy = True, backend = backend,
+            strict = strict, encoding = encoding)
+
+  # XXX maybe enable tihs in debug mode or something.
+  # click.echo(' -> Using backend: {0.backend}'.format(parser))
+  return parser, formatted
 
 
 def __validate(parser, name):  # noqa: N802
@@ -131,11 +136,18 @@ from prance.util import default_validation_backend
            'rejects non-string spec keys, for example in response codes. '
            'Does not apply to the "flex" backend.'
 )
+@click.option(
+    '--encoding',
+    default = None,
+    help = 'If given, override file encoding detection and use the given '
+           'encoding for all files. Does not work on remote URLs.'
+)
 @click.pass_context
-def backend_options(ctx, resolve, backend, strict):
+def backend_options(ctx, resolve, backend, strict, encoding):
   ctx.obj['resolve'] = resolve
   ctx.obj['backend'] = backend
   ctx.obj['strict'] = strict
+  ctx.obj['encoding'] = encoding
 
 
 @backend_options.command()
@@ -179,7 +191,7 @@ def validate(ctx, output_file, urls):
   for url in urls:
     # Create parser to use
     parser, name = __parser_for_url(url, ctx.obj['resolve'],
-        ctx.obj['backend'], ctx.obj['strict'])
+        ctx.obj['backend'], ctx.obj['strict'], ctx.obj['encoding'])
 
     # Try parsing
     __validate(parser, name)
@@ -214,7 +226,7 @@ def compile(ctx, url_or_path, output_file):
   """
   # Create parser to use
   parser, name = __parser_for_url(url_or_path, ctx.obj['resolve'],
-      ctx.obj['backend'], ctx.obj['strict'])
+      ctx.obj['backend'], ctx.obj['strict'], ctx.obj['encoding'])
 
   # Try parsing
   __validate(parser, name)
