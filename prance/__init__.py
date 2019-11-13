@@ -183,7 +183,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       stringified = '%d.%d' % (version[0], version[1])
     self.version = '%s %s' % (self.version_name, stringified)
 
-  def _validate_flex(self, spec_version):
+  def _validate_flex(self, spec_version):  # pragma: nocover
     # Set the version independently of whether validation succeeds
     self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 

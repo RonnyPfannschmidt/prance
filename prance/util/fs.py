@@ -2,17 +2,13 @@
 """This submodule contains file system utilities for Prance."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
+__copyright__ = 'Copyright (c) 2016-2019 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 
-# Re-define an error for Python 2.7
-import six
-if six.PY2:
-  FileNotFoundError = OSError  # pragma: no cover
-else:
-  FileNotFoundError = FileNotFoundError  # pragma: no cover
+# Re-define an error for backwards compatibility
+FileNotFoundError = FileNotFoundError  # pragma: no cover
 
 
 # The following constant and function are taken from
@@ -96,14 +92,14 @@ def is_pathname_valid(pathname):
         #   generic "errno" attribute whose value is either:
         #   * Under most POSIX-compatible OSes, "ENAMETOOLONG".
         #   * Under some edge-case OSes (e.g., SunOS, *BSD), "ERANGE".
-        if hasattr(exc, 'winerror'):
+        if hasattr(exc, 'winerror'):  # pragma: nocover
           if exc.winerror == _ERROR_INVALID_NAME:
             return False
         elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
           return False
   # If a "TypeError" exception was raised, it almost certainly has the
   # error message "embedded NUL character" indicating an invalid pathname.
-  except TypeError:
+  except TypeError:  # pragma: nocover
     return False
   # Null-bytes may also cause this, and they are invalid.
   except ValueError:
@@ -247,7 +243,7 @@ def detect_encoding(filename, default_to_utf8 = True, **kwargs):
       # ISO-8859-1, which isn't exactly wrong, but maybe optimistic.
       import icu
       encoding = icu.CharsetDetector(raw).detect().getName().lower()
-    except ImportError:
+    except ImportError:  # pragma: nocover
       # If that doesn't work, try chardet - it's not got native components,
       # which is a bonus in some environments, but it's not as precise.
       import chardet
