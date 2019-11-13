@@ -76,17 +76,34 @@ def test_detect_encoding():
   # Quick detection should yield utf-8 for the petstore file.
   assert fs.detect_encoding('tests/specs/petstore.yaml') == 'utf-8'
 
-  # Really, it should be detected as ISO-8859-1 as a superset of ASCII
+  # Without defaulting to utf-8, it should also work.
   assert fs.detect_encoding('tests/specs/petstore.yaml',
-                            default_to_utf8 = False) == 'iso-8859-1'
+                            default_to_utf8 = False) == 'utf-8'
 
-  # Deep inspection should yield UTF-8 again.
+  # Deep inspection should not change anything because the file size is
+  # too small.
   assert fs.detect_encoding('tests/specs/petstore.yaml',
                             default_to_utf8 = False,
                             read_all = True) == 'utf-8'
 
   # The UTF-8 file with BOM should be detected properly
   assert fs.detect_encoding('tests/specs/utf8bom.yaml') == 'utf-8-sig'
+
+
+def test_issue_51_detect_encoding():
+  # This should be UTF-8, but in issue 51 it was reported that it comes back
+  # as iso-8859-2
+
+  # Detection should be ok if the entire file is read
+  assert fs.detect_encoding('tests/specs/issue_51/openapi-part.yaml', read_all = True) == 'utf-8'
+
+  # After the heuristic change, it reads the whole file anyway.
+  assert fs.detect_encoding('tests/specs/issue_51/openapi-part.yaml') == 'utf-8'
+
+  # Specifically re-encoded as iso-8859-2 should fail - but not as
+  # a call to the detect_encoding() function. Instead, we can only return
+  # a badly detected encoding. Chardet sends iso-8859-1 here.
+  assert fs.detect_encoding('tests/specs/issue_51/openapi-part-iso-8859-2.yaml') == 'iso-8859-1'
 
 
 def test_load_nobom():
@@ -151,4 +168,3 @@ def test_valid_pathname():
 
   # Can't accept too long components
   assert False == is_pathname_valid('a'*256)
-

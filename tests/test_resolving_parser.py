@@ -103,3 +103,24 @@ def test_issue_39_sequence_indices():
   # However, the /test path should have only one of the strings.
   example = parser.specification['paths']['/test']['get']['responses']['200']['content']['application/json']['example']
   assert example == 'some really long or specific string'
+
+
+@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing backends')
+def test_issue_51_encoding_error():
+  # Parsing used to throw - but shouldn't after heuristic change.
+  parser = ResolvingParser('tests/specs/issue_51/openapi-main.yaml',
+          lazy = True, backend = 'openapi-spec-validator',
+          strict = True)
+
+  parser.parse()
+
+  # Parsing with setting an explicit and wrong file encoding should raise
+  # an error, effectively reverting to the old behaviour
+  parser = ResolvingParser('tests/specs/issue_51/openapi-main.yaml',
+          lazy = True, backend = 'openapi-spec-validator',
+          strict = True,
+          encoding = 'iso-8859-2')
+
+  from yaml.reader import ReaderError
+  with pytest.raises(ReaderError):
+    parser.parse()

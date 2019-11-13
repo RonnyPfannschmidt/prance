@@ -30,6 +30,16 @@ https://msdn.microsoft.com/en-us/library/windows/desktop/ms681382%28v=vs.85%29.a
 """
 
 
+# Following Microsoft documentation, set the default read size for detecting
+# a file encoding to a multiple of 4k that seems to work well on various OSes
+# and volume sizes.
+# https://support.microsoft.com/en-us/help/140365/default-cluster-size-for-ntfs-fat-and-exfat
+_READ_CHUNK_SIZE = 64 * 1024
+"""
+Default read size for detecting file encoding.
+"""
+
+
 def is_pathname_valid(pathname):
   """
   Test whether a path name is valid.
@@ -212,11 +222,11 @@ def detect_encoding(filename, default_to_utf8 = True, **kwargs):
   :return: The file encoding.
   :rtype: str
   """
-  # Read no more than 32 bytes or the file's size
+  # Read some of the file
   import os.path
   filename = from_posix(filename)
   file_len = os.path.getsize(filename)
-  read_len = min(32, file_len)
+  read_len = min(_READ_CHUNK_SIZE, file_len)
 
   # ... unless we're supposed to!
   if kwargs.get('read_all', False):
@@ -249,9 +259,19 @@ def detect_encoding(filename, default_to_utf8 = True, **kwargs):
       if encoding == 'ascii':
         encoding = 'iso-8859-1'
 
-    # Return UTF-8 if that is what we're supposed to default to
-    if default_to_utf8 and encoding in ('ascii', 'iso-8859-1'):
-      encoding = 'utf-8'
+    # Both chardet and ICU may detect ISO-8859-x, which may not be possible
+    # to decode as UTF-8. So whatever they report, we'll try decoding as
+    # UTF-8 before reporting it.
+    if default_to_utf8 and encoding in ('ascii', 'iso-8859-1', 'windows-1252'):
+      # Try decoding as utf-8
+      try:
+        raw.decode('utf-8')
+        # If this worked... well there's no guarantee it's utf-8, to be
+        # honest.
+        encoding = 'utf-8'
+      except UnicodeDecodeError:
+        # Decoding as utf-8 failed, so we can't default to it.
+        pass
 
   return encoding
 

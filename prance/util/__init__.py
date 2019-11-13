@@ -63,5 +63,5 @@ def default_validation_backend():
   backends = validation_backends()
   if len(backends) <= 0:
     raise RuntimeError('No validation backend available! Install one of '
-        '"flex", "openapi_spec_validator" or "swagger_spec_validator".')
+        '"flex", "openapi-spec-validator" or "swagger-spec-validator".')
   return backends[0]
