@@ -1,0 +1,2 @@
+Improve test coverage, largely by removing Python 2 specific branches and not
+counting branches for specific configurations.
