@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""CLI for default_validation_backendprance."""
+"""CLI for prance."""
 
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
