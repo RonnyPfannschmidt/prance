@@ -1,2 +1,0 @@
-Remove Python 2.7 from supported/built versions. The CI vendors also don't love
-3.4 any longer. Instead, we've added 3.7 and 3.8 where available.
