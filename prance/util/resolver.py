@@ -52,6 +52,8 @@ class RefResolver(object):
         first parameter, and the parsed reference URL as the second. As
         the last parameter, it receives a tuple of references that have
         been detected as recursions.
+    :param str encoding: [optional] The encoding to use. If not given,
+        detect_encoding is used to determine the encoding.
     """
     import copy
     self.specs = copy.deepcopy(specs)
@@ -73,6 +75,8 @@ class RefResolver(object):
         self.__reference_cache[self._url_key] = self.specs
     else:
       self.parsed_url = self._url_key = None
+
+    self.__encoding = options.get('encoding', None)
 
   def resolve_references(self):
     """Resolve JSON pointers/references in the spec."""
@@ -136,7 +140,7 @@ class RefResolver(object):
     """
     # In order to start dereferencing anything in the referenced URL, we have
     # to read and parse it, of course.
-    contents = _url.fetch_url(ref_url, self.__reference_cache)
+    contents = _url.fetch_url(ref_url, self.__reference_cache, self.__encoding)
 
     # In this inner parser's specification, we can now look for the referenced
     # object.

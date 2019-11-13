@@ -134,7 +134,7 @@ def split_url_reference(base_url, reference):
   return parsed_url, obj_path
 
 
-def fetch_url_text(url, cache = {}):
+def fetch_url_text(url, cache = {}, encoding = None):
   """
   Fetch the URL.
 
@@ -148,6 +148,8 @@ def fetch_url_text(url, cache = {}):
   :param tuple url: The url, parsed as returned by `absurl` above.
   :param Mapping cache: An optional cache. If the URL can be found in the
     cache, return the cache contents.
+  :param str encoding: Provide an encoding for local URLs to override
+    encoding detection, if desired. Defaults to None.
   :return: The resource text of the URL, and the content type.
   :rtype: tuple
   """
@@ -162,7 +164,7 @@ def fetch_url_text(url, cache = {}):
   content_type = None
   if url.scheme in (None, '', 'file'):
     from .fs import read_file, from_posix
-    content = read_file(from_posix(url.path))
+    content = read_file(from_posix(url.path), encoding)
   elif url.scheme == 'python':
     # Resolve package path
     package = url.netloc
@@ -174,7 +176,7 @@ def fetch_url_text(url, cache = {}):
     path = pkg_resources.resource_filename(package, path)
 
     from .fs import read_file, from_posix
-    content = read_file(from_posix(path))
+    content = read_file(from_posix(path), encoding)
   else:
     import requests
     response = requests.get(url.geturl())
@@ -188,7 +190,7 @@ def fetch_url_text(url, cache = {}):
   return content, content_type
 
 
-def fetch_url(url, cache = {}):
+def fetch_url(url, cache = {}, encoding = None):
   """
   Fetch the URL and parse the contents.
 
@@ -198,6 +200,8 @@ def fetch_url(url, cache = {}):
   :param tuple url: The url, parsed as returned by `absurl` above.
   :param Mapping cache: An optional cache. If the URL can be found in the
     cache, return the cache contents.
+  :param str encoding: Provide an encoding for local URLs to override
+    encoding detection, if desired. Defaults to None.
   :return: The parsed file.
   :rtype: dict
   """
@@ -208,7 +212,7 @@ def fetch_url(url, cache = {}):
     return entry.copy()
 
   # Fetch URL text
-  content, content_type = fetch_url_text(url, cache)
+  content, content_type = fetch_url_text(url, cache, encoding = encoding)
 
   # Now return the parsed results
   from .formats import parse_spec

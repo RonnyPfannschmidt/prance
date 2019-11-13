@@ -65,6 +65,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     :param bool strict: [optional] Applies only to the 'swagger-spec-validator'
       backend. If False, accepts non-String keys by stringifying them before
       validation. Defaults to True.
+    :param str encoding: [optional] For local URLs, use the given file encoding
+      instead of auto-detecting. Defaults to None.
     """
     assert url or spec_string and not (url and spec_string), \
         'You must provide either a URL to read, or a spec string to '\
@@ -114,7 +116,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     # If we have a file name, we need to read that in.
     if self.url and self.url != _PLACEHOLDER_URL:
       from .util.url import fetch_url
-      self.specification = fetch_url(self.url)
+      encoding = self.options.get('encoding', None)
+      self.specification = fetch_url(self.url, encoding = encoding)
 
     # If we have a spec string, try to parse it.
     if self._spec_string:
@@ -267,7 +270,8 @@ class ResolvingParser(BaseParser):
     # http://swagger.io/specification/#referenceObject
     # We therefore use our own resolver first, and validate later.
     from .util.resolver import RefResolver
-    resolver = RefResolver(self.specification, self.url)
+    encoding = self.options.get('encoding', None)
+    resolver = RefResolver(self.specification, self.url, encoding = encoding)
     resolver.resolve_references()
     self.specification = resolver.specs
 
