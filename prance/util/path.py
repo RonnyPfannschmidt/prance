@@ -108,7 +108,8 @@ def path_set(obj, path, value, **options):
   # print('path', path)
   # print('value', value)
 
-  from collections.abc import Sequence, MutableSequence, Mapping, MutableMapping
+  from collections.abc import (Sequence, MutableSequence, Mapping,
+      MutableMapping)
 
   if path is not None and not isinstance(path, Sequence):
     raise TypeError('Path is a %s, but must be None or a Collection!'
