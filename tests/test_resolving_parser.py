@@ -37,12 +37,12 @@ def issue_1_parser():
   return ResolvingParser('tests/specs/issue_1.json')
 
 
-@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Missing backends')
+@pytest.mark.skipif(none_of('openapi-spec-validator', 'swagger-spec-validator', 'flex'), reason='Missing backends')
 def test_basics(petstore_parser):
   assert petstore_parser.specification, 'No specs loaded!'
 
 
-@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Missing backends')
+@pytest.mark.skipif(none_of('openapi-spec-validator', 'swagger-spec-validator', 'flex'), reason='Missing backends')
 def test_petstore_resolve(petstore_parser):
   assert petstore_parser.specification, 'No specs loaded!'
 
@@ -53,7 +53,7 @@ def test_petstore_resolve(petstore_parser):
   assert res['200']['schema']['type'] == 'array', 'Did not resolve right!'
 
 
-@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Missing backends')
+@pytest.mark.skipif(none_of('openapi-spec-validator', 'swagger-spec-validator', 'flex'), reason='Missing backends')
 def test_with_externals_resolve(with_externals_parser):
   assert with_externals_parser.specification, 'No specs loaded!'
 
@@ -77,20 +77,20 @@ def test_with_externals_resolve(with_externals_parser):
   assert 'message' in res['default']['schema']['required']
 
 
-@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Missing backends')
+@pytest.mark.skipif(none_of('openapi-spec-validator', 'swagger-spec-validator', 'flex'), reason='Missing backends')
 def test_relative_urls_from_string(petstore_parser_from_string):
   # This must succeed
   assert petstore_parser_from_string.yaml(), 'Did not get YAML representation of specs!'
 
 
-@pytest.mark.skipif(none_of('openapi_spec_validator', 'swagger_spec_validator', 'flex'), reason='Missing backends')
+@pytest.mark.skipif(none_of('openapi-spec-validator', 'swagger-spec-validator', 'flex'), reason='Missing backends')
 def test_issue_1_relative_path_references(issue_1_parser):
   # Must resolve references correctly
   params = issue_1_parser.specification["paths"]["/test"]["parameters"]
   assert 'id' in params[0]['schema']['required']
 
 
-@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing backends')
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
 def test_issue_39_sequence_indices():
   # Must not fail to parse
   parser = ResolvingParser('tests/specs/issue_39.yaml', backend = 'openapi-spec-validator')
@@ -105,7 +105,7 @@ def test_issue_39_sequence_indices():
   assert example == 'some really long or specific string'
 
 
-@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing backends')
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
 def test_issue_51_encoding_error():
   # Parsing used to throw - but shouldn't after heuristic change.
   parser = ResolvingParser('tests/specs/issue_51/openapi-main.yaml',

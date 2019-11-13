@@ -37,7 +37,7 @@ def test_flex_validate_failure():
     parser = BaseParser('tests/specs/missing_reference.yaml', backend = 'flex')
 
 
-@pytest.mark.skipif(none_of('swagger_spec_validator'), reason='Missing dependencies: swagger_spec_validator')
+@pytest.mark.skipif(none_of('swagger-spec-validator'), reason='Missing dependencies: swagger-spec-validator')
 def test_swagger_spec_validator_issue_5_integer_keys():
   # Must fail in implicit strict mode.
   with pytest.raises(ValidationError):
@@ -52,18 +52,18 @@ def test_swagger_spec_validator_issue_5_integer_keys():
   assert '200' in parser.specification['paths']['/test']['post']['responses']
 
 
-@pytest.mark.skipif(none_of('swagger_spec_validator'), reason='Missing dependencies: swagger_spec_validator')
+@pytest.mark.skipif(none_of('swagger-spec-validator'), reason='Missing dependencies: swagger-spec-validator')
 def test_swagger_spec_validator_validate_success():
   parser = BaseParser('tests/specs/petstore.yaml', backend = 'swagger-spec-validator')
 
 
-@pytest.mark.skipif(none_of('swagger_spec_validator'), reason='Missing dependencies: swagger_spec_validator')
+@pytest.mark.skipif(none_of('swagger-spec-validator'), reason='Missing dependencies: swagger-spec-validator')
 def test_swagger_spec_validator_validate_failure():
   with pytest.raises(ValidationError):
     parser = BaseParser('tests/specs/missing_reference.yaml', backend = 'swagger-spec-validator')
 
 
-@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing dependencies: openapi_spec_validator')
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing dependencies: openapi-spec-validator')
 def test_openapi_spec_validator_issue_5_integer_keys():
   # Must fail in implicit strict mode.
   with pytest.raises(ValidationError):
@@ -78,18 +78,18 @@ def test_openapi_spec_validator_issue_5_integer_keys():
   assert '200' in parser.specification['paths']['/test']['post']['responses']
 
 
-@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing dependencies: openapi_spec_validator')
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing dependencies: openapi-spec-validator')
 def test_openapi_spec_validator_validate_success():
   parser = BaseParser('tests/specs/petstore.yaml', backend = 'openapi-spec-validator')
 
 
-@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing dependencies: openapi_spec_validator')
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing dependencies: openapi-spec-validator')
 def test_openapi_spec_validator_validate_failure():
   with pytest.raises(ValidationError):
     parser = BaseParser('tests/specs/missing_reference.yaml', backend = 'openapi-spec-validator')
 
 
-@pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing dependencies: openapi_spec_validator')
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing dependencies: openapi-spec-validator')
 def test_openapi_spec_validator_issue_20_spec_version_handling():
   # The spec is OpenAPI 3, but broken. Need to set 'strict' to False to stringify keys
   with pytest.raises(ValidationError):

@@ -17,6 +17,7 @@ def _find_imports(*args):
   }
 
   for name in args:
+    name = name.replace('-', '_')
     try:
       importlib.import_module(name)
       exists[True].append(name)
