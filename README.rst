@@ -5,9 +5,9 @@
 
 Prance provides parsers for `Swagger/OpenAPI
 2.0 and 3.0 <http://swagger.io/specification/>`__ API specifications in Python.
-It uses `flex <https://github.com/pipermerriam/flex>`__,
-`swagger\_spec\_validator <https://github.com/Yelp/swagger_spec_validator>`__
-or `openapi\_spec\_validator <https://github.com/p1c2u/openapi-spec-validator>`__
+It uses `openapi\_spec\_validator <https://github.com/p1c2u/openapi-spec-validator>`__,
+`swagger\_spec\_validator <https://github.com/Yelp/swagger_spec_validator>`__ or
+`flex <https://github.com/pipermerriam/flex>`__
 to validate specifications, but additionally resolves `JSON
 references <https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03>`__
 in accordance with the OpenAPI spec.
