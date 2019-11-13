@@ -259,9 +259,19 @@ def detect_encoding(filename, default_to_utf8 = True, **kwargs):
       if encoding == 'ascii':
         encoding = 'iso-8859-1'
 
-    # Return UTF-8 if that is what we're supposed to default to
-    if default_to_utf8 and encoding in ('ascii', 'iso-8859-1'):
-      encoding = 'utf-8'
+    # Both chardet and ICU may detect ISO-8859-x, which may not be possible
+    # to decode as UTF-8. So whatever they report, we'll try decoding as
+    # UTF-8 before reporting it.
+    if default_to_utf8 and encoding in ('ascii', 'iso-8859-1', 'windows-1252'):
+      # Try decoding as utf-8
+      try:
+        raw.decode('utf-8')
+        # If this worked... well there's no guarantee it's utf-8, to be
+        # honest.
+        encoding = 'utf-8'
+      except UnicodeDecodeError:
+        # Decoding as utf-8 failed, so we can't default to it.
+        pass
 
   return encoding
 
