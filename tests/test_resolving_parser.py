@@ -107,19 +107,20 @@ def test_issue_39_sequence_indices():
 
 @pytest.mark.skipif(none_of('openapi_spec_validator'), reason='Missing backends')
 def test_issue_51_encoding_error():
-  # Parsing seems to throw.
+  # Parsing used to throw - but shouldn't after heuristic change.
   parser = ResolvingParser('tests/specs/issue_51/openapi-main.yaml',
           lazy = True, backend = 'openapi-spec-validator',
           strict = True)
 
-  from yaml.reader import ReaderError
-  with pytest.raises(ReaderError):
-    parser.parse()
+  parser.parse()
 
-  # Parsing with setting an explicit file encoding should not throw.
+  # Parsing with setting an explicit and wrong file encoding should raise
+  # an error, effectively reverting to the old behaviour
   parser = ResolvingParser('tests/specs/issue_51/openapi-main.yaml',
           lazy = True, backend = 'openapi-spec-validator',
           strict = True,
-          encoding = 'utf-8')
+          encoding = 'iso-8859-2')
 
-  parser.parse()  # Must succeed
+  from yaml.reader import ReaderError
+  with pytest.raises(ReaderError):
+    parser.parse()

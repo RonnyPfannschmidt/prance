@@ -30,6 +30,16 @@ https://msdn.microsoft.com/en-us/library/windows/desktop/ms681382%28v=vs.85%29.a
 """
 
 
+# Following Microsoft documentation, set the default read size for detecting
+# a file encoding to a multiple of 4k that seems to work well on various OSes
+# and volume sizes.
+# https://support.microsoft.com/en-us/help/140365/default-cluster-size-for-ntfs-fat-and-exfat
+_READ_CHUNK_SIZE = 64 * 1024
+"""
+Default read size for detecting file encoding.
+"""
+
+
 def is_pathname_valid(pathname):
   """
   Test whether a path name is valid.
@@ -212,11 +222,11 @@ def detect_encoding(filename, default_to_utf8 = True, **kwargs):
   :return: The file encoding.
   :rtype: str
   """
-  # Read no more than 32 bytes or the file's size
+  # Read some of the file
   import os.path
   filename = from_posix(filename)
   file_len = os.path.getsize(filename)
-  read_len = min(32, file_len)
+  read_len = min(_READ_CHUNK_SIZE, file_len)
 
   # ... unless we're supposed to!
   if kwargs.get('read_all', False):
