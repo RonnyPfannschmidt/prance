@@ -94,7 +94,6 @@ def test_issue_1_relative_path_references(issue_1_parser):
 def test_issue_39_sequence_indices():
   # Must not fail to parse
   parser = ResolvingParser('tests/specs/issue_39.yaml', backend = 'openapi-spec-validator')
-  print(parser.specification)
 
   # The /useCase path should have two values in its response example.
   example = parser.specification['paths']['/useCase']['get']['responses']['200']['content']['application/json']['examples']['response']
