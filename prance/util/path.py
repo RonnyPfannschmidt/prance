@@ -23,15 +23,7 @@ def path_get(obj, path, defaultvalue = None):
   :param mixed defaultvalue: If the value at the path does not exist and this
     parameter is not None, it is returned. Otherwise an error is raised.
   """
-  try:
-    from collections.abc import Mapping
-  except ImportError:  # Python 2
-    from collections import Mapping
-
-  try:
-    from collections.abc import Sequence
-  except ImportError:  # Python 2
-    from collections import Sequence
+  from collections.abc import Mapping, Sequence
 
   if path is not None and not isinstance(path, Sequence):
     raise TypeError('Path is a %s, but must be None or a Collection!'
@@ -116,25 +108,7 @@ def path_set(obj, path, value, **options):
   # print('path', path)
   # print('value', value)
 
-  try:
-    from collections.abc import Sequence
-  except ImportError:  # Python 2
-    from collections import Sequence
-
-  try:
-    from collections.abc import MutableSequence
-  except ImportError:  # Python 2
-    from collections import MutableSequence
-
-  try:
-    from collections.abc import Mapping
-  except ImportError:  # Python 2
-    from collections import Mapping
-
-  try:
-    from collections.abc import MutableMapping
-  except ImportError:  # Python 2
-    from collections import MutableMapping
+  from collections.abc import Sequence, MutableSequence, Mapping, MutableMapping
 
   if path is not None and not isinstance(path, Sequence):
     raise TypeError('Path is a %s, but must be None or a Collection!'

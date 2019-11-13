@@ -102,11 +102,7 @@ class RefResolver(object):
       ref_path = (_url.urlresource(ref_url), tuple(obj_path))
 
       # Count how often the reference path has been recursed into.
-      try:
-        from collections.abc import Counter
-      except ImportError:  # Python 2
-        from collections import Counter
-
+      from collections import Counter
       rec_counter = Counter(recursions)
       next_recursions = recursions + (ref_path,)
 

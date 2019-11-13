@@ -16,10 +16,7 @@ def stringify_keys(data):
   :return: A new dict-like object of the same type with stringified keys,
       but the same values.
   """
-  try:
-    from collections.abc import Mapping
-  except ImportError:  # Python 2
-    from collections import Mapping
+  from collections.abc import Mapping
   assert isinstance(data, Mapping)
 
   ret = type(data)()
