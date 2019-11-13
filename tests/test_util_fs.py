@@ -100,6 +100,11 @@ def test_issue_51_detect_encoding():
   # After the heuristic change, it reads the whole file anyway.
   assert fs.detect_encoding('tests/specs/issue_51/openapi-part.yaml') == 'utf-8'
 
+  # Specifically re-encoded as iso-8859-2 should fail - but not as
+  # a call to the detect_encoding() function. Instead, we can only return
+  # a badly detected encoding. Chardet sends iso-8859-1 here.
+  assert fs.detect_encoding('tests/specs/issue_51/openapi-part-iso-8859-2.yaml') == 'iso-8859-1'
+
 
 def test_load_nobom():
   contents = fs.read_file('tests/specs/petstore.yaml')
