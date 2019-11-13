@@ -1,3 +1,3 @@
-Be a lot more generous when detecting file encodings. Memory is unlikely
-to be a huge problem anyway, as the entire file is going to be read later
-on. But file system access patterns make a reasonable limit useful.
+Try a lot more bytes when detecting file encoding. The new value is meant to
+be a multiple of sector/cluster size that's still reasonable on most OSes and
+volumes.
