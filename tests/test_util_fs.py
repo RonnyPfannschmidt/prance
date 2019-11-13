@@ -14,47 +14,76 @@ import pytest
 
 from prance.util import fs
 
-from . import sandbox
+from . import sandbox, platform
 
-
-def test_canonical():
+@pytest.fixture
+def create_symlink():
+  # Defined as a fixture so we can selectively use it for tests."
   testname = 'tests/specs/symlink_test'
-  if sys.platform != "win32":
-    res = fs.canonical_filename(testname)
-    expected = os.path.join(os.getcwd(), 'tests/specs/with_externals.yaml')
-    assert res == expected
+  import os, os.path
+  if os.path.islink(testname):
+    return testname
+
+  if os.path.exists(testname):
+    os.unlink(testname)
+
+  target = 'with_externals.yaml'
+  os.symlink(target, testname)
+
+  return testname
+
+
+@pytest.mark.skipif(platform('win32'), reason = 'Skip on win32')
+def test_canonical(create_symlink):
+  res = fs.canonical_filename(create_symlink)
+  expected = os.path.join(os.getcwd(), 'tests/specs/with_externals.yaml')
+  assert res == expected
+
 
 def test_to_posix_rel():
   test = "tests/specs/with_externals.yaml"
   assert fs.to_posix(os.path.normpath(test)) == test
 
-def test_to_posix_abs():
-  if sys.platform == "win32":
-    test = "c:\\windows\\notepad.exe"
-    expected = "/c:/windows/notepad.exe"
-  else:
-    test = "/etc/passwd"
-    expected = test
+
+@pytest.mark.skipif(platform('win32'), reason = 'Skip on win32')
+def test_to_posix_abs_posix():
+  test = "/etc/passwd"
+  expected = test
   assert fs.to_posix(test) == expected
+
+
+@pytest.mark.skipif(platform('!win32'), reason = 'Skip on !win32')
+def test_to_posix_abs_win32():
+  test = "c:\\windows\\notepad.exe"
+  expected = "/c:/windows/notepad.exe"
+  assert fs.to_posix(test) == expected
+
 
 def test_from_posix_rel():
   test = "tests/specs/with_externals.yaml"
   assert fs.from_posix(test) == os.path.normpath(test)
 
-def test_from_posix_abs():
-  if sys.platform == "win32":
-    test = "/c:/windows/notepad.exe"
-    expected = "c:\\windows\\notepad.exe"
-  else:
-    test = "/etc/passwd"
-    expected = test
+
+@pytest.mark.skipif(platform('win32'), reason = 'Skip on win32')
+def test_from_posix_abs_posix():
+  test = "/etc/passwd"
+  expected = test
   assert fs.from_posix(test) == expected
+
+
+@pytest.mark.skipif(platform('!win32'), reason = 'Skip on !win32')
+def test_from_posix_abs_win32():
+  test = "/c:/windows/notepad.exe"
+  expected = "c:\\windows\\notepad.exe"
+  assert fs.from_posix(test) == expected
+
 
 def test_abspath_basics():
   testname = os.path.normpath('tests/specs/with_externals.yaml')
   res = fs.abspath(testname)
   expected = fs.to_posix(os.path.join(os.getcwd(), testname))
   assert res == expected
+
 
 def test_abspath_relative():
   testname = 'error.json'

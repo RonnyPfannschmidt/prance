@@ -32,3 +32,32 @@ def none_of(*args):
   """
   exists = _find_imports(*args)
   return len(exists[True]) == 0
+
+
+def _platform(platform, *args):
+  """
+  Helper for platform()
+  """
+  ret = False
+  for arg in args:
+    if arg[0] == '!':
+      arg = arg[1:]
+      if platform != arg:
+        ret = True
+        break
+    elif platform == arg:
+       ret = True
+       break
+
+  return ret
+
+
+def platform(*args):
+  """
+  Return true if the current platform is in one of the given ones.
+
+  Platforms may be specified with leading '!', in which case they
+  a match returns False.
+  """
+  import sys
+  return _platform(sys.platform, *args)

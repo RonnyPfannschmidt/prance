@@ -12,6 +12,8 @@ import pytest
 
 from prance.util import url
 
+from . import platform
+
 
 def test_absurl_http():
   test = 'http://foo.bar/asdf/#lala/quux'
@@ -29,24 +31,34 @@ def test_absurl_http_fragment():
   assert res.fragment == 'another'
 
 
-def test_absurl_file():
-  if sys.platform == "win32":
-    base = 'file:///c:/windows/notepad.exe'
-    test = "regedit.exe"
-    expect = 'file:///c:/windows/regedit.exe'
-  else:
-    base = 'file:///etc/passwd'
-    test = 'group'
-    expect = 'file:///etc/group'
+@pytest.mark.skipif(platform('win32'), reason = 'Skip on win32')
+def test_absurl_file_posix():
+  base = 'file:///etc/passwd'
+  test = 'group'
+  expect = 'file:///etc/group'
   res = url.absurl(test, base)
   assert res.geturl() == expect
 
 
-def test_absurl_absfile():
-  if sys.platform == "win32":
-    test = 'file:///c:/windows/notepad.exe'
-  else:
-    test = 'file:///etc/passwd'
+@pytest.mark.skipif(platform('!win32'), reason = 'Skip on !win32')
+def test_absurl_file_win32():
+  base = 'file:///c:/windows/notepad.exe'
+  test = "regedit.exe"
+  expect = 'file:///c:/windows/regedit.exe'
+  res = url.absurl(test, base)
+  assert res.geturl() == expect
+
+
+@pytest.mark.skipif(platform('win32'), reason = 'Skip on win32')
+def test_absurl_absfile_posix():
+  test = 'file:///etc/passwd'
+  res = url.absurl(test)
+  assert res.geturl() == test
+
+
+@pytest.mark.skipif(platform('!win32'), reason = 'Skip on !win32')
+def test_absurl_absfile_win32():
+  test = 'file:///c:/windows/notepad.exe'
   res = url.absurl(test)
   assert res.geturl() == test
 
@@ -70,15 +82,24 @@ def test_absurl_relfile():
     url.absurl(test, base)
 
 
-def test_absurl_paths():
-  if sys.platform == "win32":
-    base = 'c:\\windows\\notepad.exe'
-    test = "regedit.exe"
-    expect = 'file:///c:/windows/regedit.exe'
-  else:
-    base = '/etc/passwd'
-    test = 'group'
-    expect = 'file:///etc/group'
+@pytest.mark.skipif(platform('win32'), reason = 'Skip on win32')
+def test_absurl_paths_posix():
+  base = '/etc/passwd'
+  test = 'group'
+  expect = 'file:///etc/group'
+
+  with pytest.raises(url.ResolutionError):
+    url.absurl(test)
+
+  res = url.absurl(test, base)
+  assert res.geturl() == expect
+
+
+@pytest.mark.skipif(platform('!win32'), reason = 'Skip on !win32')
+def test_absurl_paths_win32():
+  base = 'c:\\windows\\notepad.exe'
+  test = "regedit.exe"
+  expect = 'file:///c:/windows/regedit.exe'
 
   with pytest.raises(url.ResolutionError):
     url.absurl(test)
