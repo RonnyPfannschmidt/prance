@@ -138,10 +138,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 
   def _validate(self):
     # Ensure specification is a mapping
-    try:
-      from collections.abc import Mapping
-    except ImportError:  # Python 2
-      from collections import Mapping
+    from collections.abc import Mapping
     if not isinstance(self.specification, Mapping):
       raise ValidationError('Could not parse specifications!')
 
@@ -186,7 +183,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       stringified = '%d.%d' % (version[0], version[1])
     self.version = '%s %s' % (self.version_name, stringified)
 
-  def _validate_flex(self, spec_version):
+  def _validate_flex(self, spec_version):  # pragma: nocover
     # Set the version independently of whether validation succeeds
     self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 

@@ -45,15 +45,7 @@ def item_iterator(value, path = ()):
   # Yield the top-level object, always
   yield path, value
 
-  try:
-    from collections.abc import Mapping
-  except ImportError:  # Python 2
-    from collections import Mapping
-
-  try:
-    from collections.abc import Sequence
-  except ImportError:  # Python 2
-    from collections import Sequence
+  from collections.abc import Mapping, Sequence
 
   # For dict and list like objects, we also need to yield each item
   # recursively.
