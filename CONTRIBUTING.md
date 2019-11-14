@@ -63,13 +63,32 @@ Run tests on multiple Python versions:
 $ tox
 ```
 
-Run tests on Python 2.7:
+Run tests on other Python versions:
 
 ```bash
-$ tox -e py27
+$ tox -e py34  # e.g.
 ```
 
 A simple test coverage report is automatically generated.
+
+### Changelog
+
+We're using [towncrier](https://pypi.org/project/towncrier/) to generate a
+changelog. We don't use custom change types, so pick one of `feature`,
+`bugfix`, `doc`, `removal`, `misc`.
+
+Create a simple text file in `changelog.d/<issue-or-pr>.<type>`. Write a
+concise summary of the change and how it affects users.
+
+For very small changes, use `misc` - the descriptions from that type won't
+even be added to the changelog, just a link ot the issue.
+
+Prefer issue numbers over PR numbers, if you have both.
+
+You can run `towncrier --draft` to see how your changes would appear in
+the changelog. Running without draft would alter `CHANGES.rst`, so if you
+do that, make sure *not* to commit the result. That'll be done on `master`
+during release.
 
 ## Pull Requests
 
