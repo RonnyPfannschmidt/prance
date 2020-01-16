@@ -251,7 +251,12 @@ class ResolvingParser(BaseParser):
     Resolves JSON pointers/references (i.e. '$ref' keys) before validating the
     specs. The implication is that self.specfication is fully resolved, and
     does not contain any references.
+
+    Additional parameters, see :py::class:`util.RefResolver`.
     """
+    # Create a reference cache
+    self.__reference_cache = {}
+
     BaseParser.__init__(
         self,
         url = url,
@@ -267,8 +272,16 @@ class ResolvingParser(BaseParser):
     # http://swagger.io/specification/#referenceObject
     # We therefore use our own resolver first, and validate later.
     from .util.resolver import RefResolver
-    encoding = self.options.get('encoding', None)
-    resolver = RefResolver(self.specification, self.url, encoding = encoding)
+    forward_arg_names = ('encoding', 'recursion_limit',
+            'recursion_limit_handler')
+    forward_args = {
+      k: v for (k, v) in self.options.items() if k in forward_arg_names
+    }
+    resolver = RefResolver(
+        self.specification, self.url,
+        reference_cache = self.__reference_cache,
+        **forward_args
+      )
     resolver.resolve_references()
     self.specification = resolver.specs
 
