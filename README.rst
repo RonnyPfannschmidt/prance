@@ -249,6 +249,27 @@ specs tend to use JSON references within ``schema`` objects, and place any other
 as siblings of the ``schema`` object.
 
 
+*Recursion Limits*
+
+Since JSON references can reference an object that references the first object,
+we can create recursive references. By default, when a recursion is detected,
+an exception is raised. There are two ways you can modify this behaviour:
+
+1. Increase the `recursion_limit` from it's default value of `1` to some higher
+   number. This doesn't actually help much on its own.
+
+1. Set the `recursion_limit_handler` parameter to a callable. It accepts the
+   recursion limit, the reference URL of the element being resolved, and the
+   currently known recursions.
+
+`prance.util.resolver.default_reclimit_handler` is the default handler, and
+will always raise an exception.
+
+If the handler you set does not raise an exception, its return value is used
+as the "resolved" value. To simply ignore recursions, use a handler that
+returns `None` - this will translate to the null value in the specs.
+
+
 Extensions
 ----------
 
