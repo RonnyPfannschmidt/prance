@@ -257,7 +257,6 @@ an exception is raised. There are two ways you can modify this behaviour:
 
 1. Increase the `recursion_limit` from it's default value of `1` to some higher
    number. This doesn't actually help much on its own.
-
 1. Set the `recursion_limit_handler` parameter to a callable. It accepts the
    recursion limit, the reference URL of the element being resolved, and the
    currently known recursions.
