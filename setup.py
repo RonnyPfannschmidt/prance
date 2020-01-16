@@ -14,20 +14,20 @@ if __name__ == '__main__':
     from distutils.core import setup, find_packages
 
   dev_require = [
-    'tox>=3.7',
+    'tox>=3.14',
     'bumpversion>=0.5',
-    'pytest>=4.2',
-    'pytest-cov>=2.6',
+    'pytest>=5.3',
+    'pytest-cov>=2.8',
     'flake8>=3.7',
-    'pep8-naming>=0.8',
-    'flake8-quotes>=1.0',
-    'flake8_docstrings>=1.3',
-    'sphinx>=1.8',
+    'pep8-naming>=0.9',
+    'flake8-quotes>=2.1',
+    'flake8_docstrings>=1.5',
+    'sphinx>=2.3',
     'towncrier>=19.2',
   ]
 
   icu_require = [
-    'PyICU~=2.2',
+    'PyICU~=2.4',
   ]
 
   ssv_require = [
@@ -78,10 +78,10 @@ if __name__ == '__main__':
       include_package_data = True,
       install_requires = [
         'chardet~=3.0',
-        'PyYAML~=5.1',
-        'requests~=2.21',
-        'six~=1.12',
-        'semver~=2.8',
+        'PyYAML~=5.3',
+        'requests~=2.22',
+        'six~=1.14',
+        'semver~=2.9',
       ],
       extras_require = {
         'dev': dev_require,
