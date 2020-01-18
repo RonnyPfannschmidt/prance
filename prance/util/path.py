@@ -6,6 +6,8 @@ __copyright__ = 'Copyright (c) 2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
+from urllib.parse import unquote
+
 
 def path_get(obj, path, defaultvalue = None):
   """
@@ -32,7 +34,10 @@ def path_get(obj, path, defaultvalue = None):
   if isinstance(obj, Mapping):
     if path is None or len(path) < 1:
       return obj or defaultvalue
-    return path_get(obj[path[0]], path[1:], defaultvalue)
+    try:
+      return path_get(obj[path[0]], path[1:], defaultvalue)
+    except KeyError as e:
+      return path_get(obj[unquote(path[0])], path[1:], defaultvalue)
 
   elif isinstance(obj, Sequence):
     if path is None or len(path) < 1:

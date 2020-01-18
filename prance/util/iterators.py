@@ -5,7 +5,6 @@ __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
-import urllib.parse
 
 def item_iterator(value, path = ()):
   """
@@ -85,4 +84,4 @@ def reference_iterator(specs, path = ()):
       continue
     key = item_path[-1]
     if key == '$ref':
-      yield key, urllib.parse.unquote(item), item_path[:-1]
+      yield key, item, item_path[:-1]
