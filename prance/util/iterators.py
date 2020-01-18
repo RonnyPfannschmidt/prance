@@ -6,6 +6,7 @@ __copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
+
 def item_iterator(value, path = ()):
   """
   Return item iterator over the a nested dict- or list-like object.
