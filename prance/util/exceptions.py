@@ -9,10 +9,17 @@ __all__ = ()
 
 # Raise the given exception class from the caught exception, preserving
 # stack trace and message as much as possible.
-def raise_from(klass, from_value):
+def raise_from(klass, from_value, extra_message = None):
   try:
     if from_value is None:
-      raise klass()
-    raise klass(*from_value.args) from from_value
+      raise klass(extra_message)
+
+    args = list(from_value.args)
+    if extra_message is not None:
+      if isinstance(args[0], str):
+        args[0] += ' -- ' + extra_message
+      else:
+        args.append(extra_message)
+    raise klass(*args) from from_value
   finally:
     klass = None
