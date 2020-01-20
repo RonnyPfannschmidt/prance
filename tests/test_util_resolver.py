@@ -250,7 +250,6 @@ def test_issue_22_empty_path(externals_file):
 
 def test_issue_38_tilde_one():
   specs = get_specs('tests/specs/issue_38_a.yaml')
-  print(specs)
   res = resolver.RefResolver(specs,
       fs.abspath('tests/specs/issue_38_a.yaml'))
   res.resolve_references()
@@ -259,3 +258,130 @@ def test_issue_38_tilde_one():
   assert 'get' in path
   assert 'operationId' in path['get']
   assert 'description' in path['get']
+
+
+def test_issue_23_partial_resolution_all():
+  specs = get_specs('tests/specs/with_externals.yaml')
+  res = resolver.RefResolver(specs,
+      fs.abspath('tests/specs/with_externals.yaml'))
+  res.resolve_references()
+
+  # By default, all externals need to be resolved.
+  from prance.util.path import path_get
+
+  val = path_get(res.specs, ('paths', '/pets', 'get', 'responses', '200', 'schema'))
+  assert '$ref' not in val
+
+  val = path_get(res.specs, ('paths', '/pets', 'get', 'responses', 'default', 'schema'))
+  assert '$ref' not in val
+
+  val = path_get(res.specs, ('paths', '/pets', 'post', 'responses', 'default', 'schema'))
+  assert '$ref' not in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'parameters', 0))
+  assert '$ref' not in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '200', 'schema'))
+  assert '$ref' not in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', 'default', 'schema'))
+  assert '$ref' not in val
+
+
+def test_issue_23_partial_resolution_internal():
+  specs = get_specs('tests/specs/with_externals.yaml')
+  res = resolver.RefResolver(specs,
+      fs.abspath('tests/specs/with_externals.yaml'),
+      resolve_types = resolver.RESOLVE_INTERNAL
+      )
+  res.resolve_references()
+
+  # By default, all externals need to be resolved.
+  from prance.util.path import path_get
+
+  val = path_get(res.specs, ('paths', '/pets', 'get', 'responses', '200', 'schema'))
+  assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets', 'get', 'responses', 'default', 'schema'))
+  assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets', 'post', 'responses', 'default', 'schema'))
+  assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'parameters', 0))
+  assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '200', 'schema'))
+  assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', 'default', 'schema'))
+  assert '$ref' not in val
+
+
+def test_issue_23_partial_resolution_files():
+  specs = get_specs('tests/specs/with_externals.yaml')
+  res = resolver.RefResolver(specs,
+      fs.abspath('tests/specs/with_externals.yaml'),
+      resolve_types = resolver.RESOLVE_FILES
+      )
+  res.resolve_references()
+
+  # By default, all externals need to be resolved.
+  from prance.util.path import path_get
+
+  val = path_get(res.specs, ('paths', '/pets', 'get', 'responses', '200', 'schema'))
+  assert '$ref' not in val
+
+  val = path_get(res.specs, ('paths', '/pets', 'get', 'responses', 'default', 'schema'))
+  assert '$ref' not in val
+
+  val = path_get(res.specs, ('paths', '/pets', 'post', 'responses', 'default', 'schema'))
+  assert '$ref' not in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'parameters', 0))
+  assert '$ref' not in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '200', 'schema'))
+  assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', 'default', 'schema'))
+  assert '$ref' in val
+
+
+def test_issue_23_partial_resolution_http():
+  specs = get_specs('tests/specs/with_externals.yaml')
+  res = resolver.RefResolver(specs,
+      fs.abspath('tests/specs/with_externals.yaml'),
+      resolve_types = resolver.RESOLVE_HTTP
+      )
+  res.resolve_references()
+
+  # By default, all externals need to be resolved.
+  from prance.util.path import path_get
+
+  val = path_get(res.specs, ('paths', '/pets', 'get', 'responses', '200', 'schema'))
+  assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets', 'get', 'responses', 'default', 'schema'))
+  assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets', 'post', 'responses', 'default', 'schema'))
+  assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'parameters', 0))
+  assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '200', 'schema'))
+  assert '$ref' not in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', 'default', 'schema'))
+  assert '$ref' in val
+
+
+def test_issue_23_partial_resolution_invalid_scheme():
+  specs = {'$ref': 'foo://cannot-do-anything'}
+  res = resolver.RefResolver(specs,
+      fs.abspath('tests/specs/with_externals.yaml'))
+
+  with pytest.raises(ValueError):
+    res.resolve_references()
