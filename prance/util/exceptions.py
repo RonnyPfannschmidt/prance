@@ -12,11 +12,13 @@ __all__ = ()
 def raise_from(klass, from_value, extra_message = None):
   try:
     if from_value is None:
-      raise klass(extra_message)
+      if extra_message is not None:
+        raise klass(extra_message)
+      raise klass()
 
     args = list(from_value.args)
     if extra_message is not None:
-      if isinstance(args[0], str):
+      if len(args) and isinstance(args[0], str):
         args[0] += ' -- ' + extra_message
       else:
         args.append(extra_message)
