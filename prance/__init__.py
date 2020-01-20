@@ -221,8 +221,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
 
       try:
         validate_v3_spec(self.specification)
-      except TypeError as type_ex:  # pragma: nocover
-        raise_from(ValidationError, type_ex)
+      except TypeError as type_ex:
+        raise_from(ValidationError, type_ex, self._strict_warning())
       except JSEValidationError as v3_ex:
         raise_from(ValidationError, v3_ex)
       except RefResolutionError as ref_ex:
@@ -234,11 +234,19 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       try:
         validate_v2_spec(self.specification)
       except TypeError as type_ex:  # pragma: nocover
-        raise_from(ValidationError, type_ex)
+        raise_from(ValidationError, type_ex, self._strict_warning())
       except JSEValidationError as v2_ex:
         raise_from(ValidationError, v2_ex)
       except RefResolutionError as ref_ex:
         raise_from(ValidationError, ref_ex)
+
+  def _strict_warning(self):
+    """Return a warning if strict mode is off."""
+    if self.options.get('strict', True):
+      return ('Strict mode enabled (the default), so this could be due to an '
+          'integer key, such as an HTTP status code.')
+    return ('Strict mode disabled. Prance cannot help you narrow this further '
+        'down, sorry.')
 
 
 class ResolvingParser(BaseParser):

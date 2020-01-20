@@ -79,6 +79,12 @@ def test_openapi_spec_validator_issue_5_integer_keys():
 
 
 @pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing dependencies: openapi-spec-validator')
+def test_openapi_spec_validator_issue_36_error_reporting():
+  with pytest.raises(ValidationError, match = r'Strict mode enabled'):
+    BaseParser('tests/specs/issue_36.yaml')
+
+
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing dependencies: openapi-spec-validator')
 def test_openapi_spec_validator_validate_success():
   parser = BaseParser('tests/specs/petstore.yaml', backend = 'openapi-spec-validator')
 
