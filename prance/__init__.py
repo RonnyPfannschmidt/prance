@@ -9,7 +9,7 @@ ResolvingParser that additionally resolves any $ref references.
 """
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
+__copyright__ = 'Copyright (c) 2016-2020 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ('util', 'mixins', 'cli', 'convert')
 __version__ = '0.17.0'
