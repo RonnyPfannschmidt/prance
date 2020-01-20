@@ -270,6 +270,31 @@ as the "resolved" value. To simply ignore recursions, use a handler that
 returns `None` - this will translate to the null value in the specs.
 
 
+Partial Reference Resolution
+----------------------------
+
+It's possible to instruct the parser to only resolve some kinds of references.
+This allows e.g. resolving references from external URLs, whilst keeping local
+references (i.e. to local files, or file internal) intact.
+
+.. code:: python
+
+    from prance import ResolvingParser
+    from prance.util.resolver import RESOLVE_HTTP
+
+    parser = ResolvingParser('/path/to/spec', resolve_types = RESOLVE_HTTP)
+
+
+Multiple types can be specified by OR-ing constants together:
+
+.. code:: python
+
+    from prance import ResolvingParser
+    from prance.util.resolver import RESOLVE_HTTP, RESOLVE_FILES
+
+    parser = ResolvingParser('/path/to/spec', resolve_types = RESOLVE_HTTP | RESOLVE_FILES)
+
+
 Extensions
 ----------
 

@@ -8,6 +8,16 @@ __all__ = ()
 
 import prance.util.url as _url
 
+#: Resolve internal references
+RESOLVE_INTERNAL = 2 ** 1
+#: Resolve references to HTTP external files.
+RESOLVE_HTTP = 2 ** 2
+#: Resolve references to local files.
+RESOLVE_FILES = 2 ** 3
+
+#: Default, resole all references.
+RESOLVE_ALL = RESOLVE_INTERNAL | RESOLVE_HTTP | RESOLVE_FILES
+
 
 def default_reclimit_handler(limit, parsed_url, recursions = ()):
   """Raise prance.util.url.ResolutionError."""
@@ -54,6 +64,8 @@ class RefResolver(object):
         been detected as recursions.
     :param str encoding: [optional] The encoding to use. If not given,
         detect_encoding is used to determine the encoding.
+    :param int resolve_types: [optional] Specify which types of references to
+        resolve. Defaults to RESOLVE_ALL.
     """
     import copy
     self.specs = copy.deepcopy(specs)
@@ -76,6 +88,7 @@ class RefResolver(object):
     else:
       self.parsed_url = self._url_key = None
 
+    self.__resolve_types = options.get('resolve_types', RESOLVE_ALL)
     self.__encoding = options.get('encoding', None)
 
   def resolve_references(self):
@@ -97,6 +110,9 @@ class RefResolver(object):
     for _, refstring, item_path in reference_iterator(partial):
       # Split the reference string into parsed URL and object path
       ref_url, obj_path = _url.split_url_reference(base_url, refstring)
+
+      if self._skip_reference(ref_url):
+        continue
 
       # The reference path is the url resource and object path
       ref_path = (_url.urlresource(ref_url), tuple(obj_path))
@@ -122,6 +138,21 @@ class RefResolver(object):
       # First yield parent
       yield full_path, ref_value
 
+  def _skip_reference(self, ref_url):
+    """Return whether the URL should not be dereferenced."""
+    if ref_url.scheme.startswith('http'):
+      return (self.__resolve_types & RESOLVE_HTTP) == 0
+    elif ref_url.scheme == 'file':
+      # Internal references
+      if self.url == ref_url.path:
+        return (self.__resolve_types & RESOLVE_INTERNAL) == 0
+      # Local files
+      return (self.__resolve_types & RESOLVE_FILES) == 0
+    else:
+      from urllib.parse import urlunparse
+      raise ValueError('Scheme "%s" is not recognized in reference URL: %s' % (
+          ref_url.scheme, urlunparse(ref_url)))
+
   def _dereference(self, ref_url, obj_path, recursions):
     """
     Dereference the URL and object path.
@@ -146,7 +177,6 @@ class RefResolver(object):
       try:
         value = path_get(value, obj_path)
       except (KeyError, IndexError, TypeError) as ex:
-        print(ex)
         raise _url.ResolutionError('Cannot resolve reference "%s": %s'
             % (ref_url.geturl(), str(ex)))
 
@@ -174,6 +204,7 @@ class RefResolver(object):
     # sorting paths by path length.
     changes = dict(tuple(self._dereferencing_iterator(base_url, partial, (),
         recursions)))
+
     paths = sorted(changes.keys(), key = len)
 
     # With the paths sorted, set them to the resolved values.
