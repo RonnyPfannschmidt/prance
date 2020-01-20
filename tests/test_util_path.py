@@ -248,6 +248,7 @@ def test_set_mixed_create():
   result = path_set({}, (0,), 42, create = True)
   assert { 0: 42 } == result
 
+
 def test_set_mixed_create_no_fill():
   # Creation should not add items that are not necessary
   base = { 'foo': [123] }
@@ -255,3 +256,21 @@ def test_set_mixed_create_no_fill():
   result = path_set(base, ('foo', 0), 42, create = True)
   assert { 'foo': [42] } == result
 
+
+def test_get_informative_key_error():
+  base = { 'foo': { 'bar': [123] } }
+
+  # Match that the object being examing has its path printed, as
+  # well as that the key is included.
+  with pytest.raises(KeyError, match = r'.*"/".*asdf'):
+    path_get(base, ('asdf',))
+
+  with pytest.raises(KeyError, match = r'.*"/foo".*asdf'):
+    path_get(base, ('foo', 'asdf'))
+
+
+def test_get_informative_index_error():
+  base = { 'foo': { 'bar': [123] } }
+
+  with pytest.raises(IndexError, match = r'.*"/foo/bar".*123'):
+    path_get(base, ('foo', 'bar', 123))

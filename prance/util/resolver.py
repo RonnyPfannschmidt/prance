@@ -145,9 +145,10 @@ class RefResolver(object):
       from prance.util.path import path_get
       try:
         value = path_get(value, obj_path)
-      except KeyError:
-        raise _url.ResolutionError('Cannot resolve reference "%s"!'
-            % (ref_url.geturl(), ))
+      except (KeyError, IndexError, TypeError) as ex:
+        print(ex)
+        raise _url.ResolutionError('Cannot resolve reference "%s": %s'
+            % (ref_url.geturl(), str(ex)))
 
     # Deep copy value; we don't want to create recursive structures
     import copy

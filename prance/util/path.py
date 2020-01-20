@@ -7,7 +7,20 @@ __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 
-def path_get(obj, path, defaultvalue = None):
+def _json_ref_escape(path):
+  """JSON-reference escape object path."""
+  path = str(path)  # Could be an int, etc.
+  path = path.replace('~', '~0')
+  path = path.replace('/', '~1')
+  return path
+
+
+def _str_path(path):
+  """Stringify object path."""
+  return '/' + '/'.join([_json_ref_escape(p) for p in path])
+
+
+def path_get(obj, path, defaultvalue = None, path_of_obj = ()):
   """
   Retrieve the value from obj indicated by path.
 
@@ -25,6 +38,9 @@ def path_get(obj, path, defaultvalue = None):
   """
   from collections.abc import Mapping, Sequence
 
+  # For error reporting.
+  path_of_obj_str = _str_path(path_of_obj)
+
   if path is not None and not isinstance(path, Sequence):
     raise TypeError('Path is a %s, but must be None or a Collection!'
             % (type(path),))
@@ -32,7 +48,13 @@ def path_get(obj, path, defaultvalue = None):
   if isinstance(obj, Mapping):
     if path is None or len(path) < 1:
       return obj or defaultvalue
-    return path_get(obj[path[0]], path[1:], defaultvalue)
+
+    if path[0] not in obj:
+      raise KeyError('Object at "%s" does not contain key: %s' % (
+          path_of_obj_str, path[0],))
+
+    return path_get(obj[path[0]], path[1:], defaultvalue,
+              path_of_obj = path_of_obj + (path[0],))
 
   elif isinstance(obj, Sequence):
     if path is None or len(path) < 1:
@@ -41,9 +63,15 @@ def path_get(obj, path, defaultvalue = None):
     try:
       idx = int(path[0])
     except ValueError:
-      raise KeyError('Sequences need integer indices only.')
+      raise KeyError('Sequence at "%s" needs integer indices only, but got: '
+          '%s' % (path_of_obj_str, path[0],))
 
-    return path_get(obj[idx], path[1:], defaultvalue)
+    if idx < 0 or idx >= len(obj):
+      raise IndexError('Index out of bounds for sequence at "%s": %d' % (
+          path_of_obj_str, idx))
+
+    return path_get(obj[idx], path[1:], defaultvalue,
+           path_of_obj = path_of_obj + (path[0],))
 
   else:
     # Path must be empty.
