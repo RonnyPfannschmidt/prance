@@ -18,9 +18,10 @@ jobs:
   #       travis supports them.
   #   - python: 'pypy3-7.1.1'  # Try versioning; it sucks, but what are you to do?
   #     env: REQUIREMENTS=requirements_no_icu.txt
-  - python: '3.5'
-    env: REQUIREMENTS=requirements_no_icu.txt
-    script: python setup.py test --addopts '-m "not requires_network"'
+  # XXX Fails with an intenral error
+  #  - python: '3.5'
+  #    env: REQUIREMENTS=requirements_no_icu.txt
+  #    script: python setup.py test --addopts '-m "not requires_network"'
   - python: '3.7'
     env: REQUIREMENTS=requirements_no_icu.txt
     script: python setup.py test --addopts '-m "not requires_network"'
