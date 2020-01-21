@@ -61,7 +61,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
       the parse function to be invoked.
     :param str backend: [optional] one of 'flex', 'swagger-spec-validator' or
       'openapi-spec-validator'.
-      Determines the validation backend to use. Defaults to 'flex'.
+      Determines the validation backend to use. Defaults to the first installed
+      backend in the ordered list obtained from util.validation_backends().
     :param bool strict: [optional] Applies only to the 'swagger-spec-validator'
       backend. If False, accepts non-String keys by stringifying them before
       validation. Defaults to True.
