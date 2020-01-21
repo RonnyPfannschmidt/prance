@@ -178,6 +178,7 @@ def test_fetch_url_text_cached():
   assert id(content1) == id(content2)
 
 
+@pytest.mark.requires_network()
 def test_fetch_url_http():
   exturl = 'http://finkhaeuser.de/projects/prance/petstore.yaml'\
     '#/definitions/Pet'
