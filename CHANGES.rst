@@ -22,7 +22,7 @@ Maintenance release, focusing on change requests from users.
   occurred.
 
 
-v0.17.0
+v0.18.0
 -------
 * #51: Try a lot more bytes when detecting file encoding. The new value is meant to
   be a multiple of sector/cluster size that's still reasonable on most OSes and
