@@ -6,7 +6,7 @@ matrix:
   - python: '3.6'
     env:
       REQUIREMENTS: requirements_no_icu.txt
-      TEST_ARGS: --addopts "-m 'not requires_network'"
+      TEST_ARGS: "--addopts \"-m 'not requires_network'\""
   - python: '3.6'
     env:
       REQUIREMENTS: requirements.txt
@@ -15,7 +15,7 @@ matrix:
   - python: '3.6'
     env:
       REQUIREMENTS: requirements_flex.txt
-      TEST_ARGS: --addopts "-m 'not requires_network'"
+      TEST_ARGS: "--addopts \"-m 'not requires_network'\""
 
   # Other supported versions
   # FIXME we're disabling pypy builds until
@@ -25,15 +25,15 @@ matrix:
   - python: '3.5'
     env:
       REQUIREMENTS: requirements_no_icu.txt
-      TEST_ARGS: --addopts "-m 'not requires_network'"
+      TEST_ARGS: "--addopts \"-m 'not requires_network'\""
   - python: '3.7'
     env:
       REQUIREMENTS: requirements_no_icu.txt
-      TEST_ARGS: --addopts "-m 'not requires_network'"
+      TEST_ARGS: "--addopts \"-m 'not requires_network'\""
   - python: '3.8'
     env:
       REQUIREMENTS: requirements_no_icu.txt
-      TEST_ARGS: --addopts "-m 'not requires_network'"
+      TEST_ARGS: "--addopts \"-m 'not requires_network'\""
 
 install:
   - pip install -r ${REQUIREMENTS}
