@@ -8,6 +8,7 @@ __all__ = ()
 
 
 import pytest
+from unittest.mock import patch
 
 from prance.util import fs
 from prance.util import resolver
@@ -21,6 +22,11 @@ def get_specs(fname):
   specs = formats.parse_spec(specs, fname)
 
   return specs
+
+
+def mock_get_petstore(*args, **kwargs):
+  from .mock_response import MockResponse, PETSTORE_YAML
+  return MockResponse(text = PETSTORE_YAML)
 
 
 def recursion_limit_handler_none(limit, refstring, recursions):
@@ -64,7 +70,10 @@ def test_resolver_noname(externals_file):
     res.resolve_references()
 
 
-def test_resolver_named(externals_file):
+@patch('requests.get')
+def test_resolver_named(mock_get, externals_file):
+  mock_get.side_effect = mock_get_petstore
+
   import os.path
   from prance.util import fs
   res = resolver.RefResolver(externals_file,
@@ -72,7 +81,10 @@ def test_resolver_named(externals_file):
   res.resolve_references()
 
 
-def test_resolver_missing_reference(missing_file):
+@patch('requests.get')
+def test_resolver_missing_reference(mock_get, missing_file):
+  mock_get.side_effect = mock_get_petstore
+
   import os.path
   res = resolver.RefResolver(missing_file,
       fs.abspath('tests/specs/missing_reference.yaml'))
@@ -82,7 +94,10 @@ def test_resolver_missing_reference(missing_file):
   assert str(exc.value).startswith('Cannot resolve')
 
 
-def test_resolver_recursive_objects(recursive_objs_file):
+@patch('requests.get')
+def test_resolver_recursive_objects(mock_get, recursive_objs_file):
+  mock_get.side_effect = mock_get_petstore
+
   # Recursive references to objects are a problem
   import os.path
   res = resolver.RefResolver(recursive_objs_file,
@@ -93,7 +108,10 @@ def test_resolver_recursive_objects(recursive_objs_file):
   assert str(exc.value).startswith('Recursion reached limit')
 
 
-def test_resolver_recursive_files(recursive_files_file):
+@patch('requests.get')
+def test_resolver_recursive_files(mock_get, recursive_files_file):
+  mock_get.side_effect = mock_get_petstore
+
   # Recursive references to files are not a problem
   import os.path
   res = resolver.RefResolver(recursive_files_file,
@@ -218,7 +236,10 @@ def test_recursion_limit_set_limit_ignore_files(recursion_limit_files_file):
   # But the 'next' field of the 'next' field should not be resolved.
   assert next_field['properties']['next']['schema'] is None
 
-def test_issue_22_empty_path(externals_file):
+@patch('requests.get')
+def test_issue_22_empty_path(mock_get, externals_file):
+  mock_get.side_effect = mock_get_petstore
+
   # The raw externals file must have unresolved data
   assert len(externals_file['paths']['/pets/{petId}']['get']['parameters']) == 1
   param = externals_file['paths']['/pets/{petId}']['get']['parameters'][0]
@@ -260,7 +281,10 @@ def test_issue_38_tilde_one():
   assert 'description' in path['get']
 
 
-def test_issue_23_partial_resolution_all():
+@patch('requests.get')
+def test_issue_23_partial_resolution_all(mock_get):
+  mock_get.side_effect = mock_get_petstore
+
   specs = get_specs('tests/specs/with_externals.yaml')
   res = resolver.RefResolver(specs,
       fs.abspath('tests/specs/with_externals.yaml'))
@@ -348,7 +372,10 @@ def test_issue_23_partial_resolution_files():
   assert '$ref' in val
 
 
-def test_issue_23_partial_resolution_http():
+@patch('requests.get')
+def test_issue_23_partial_resolution_http(mock_get):
+  mock_get.side_effect = mock_get_petstore
+
   specs = get_specs('tests/specs/with_externals.yaml')
   res = resolver.RefResolver(specs,
       fs.abspath('tests/specs/with_externals.yaml'),
