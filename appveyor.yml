@@ -9,13 +9,14 @@ environment:
     # a later point release.
     # See: http://www.appveyor.com/docs/installed-software#python
 
-    - PYTHON: "C:\\Python35"
-      PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python35-x64"
-      PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "64"
+    # XXX 3.5 fails with an internal error
+    #    - PYTHON: "C:\\Python35"
+    #      PYTHON_VERSION: "3.5.x"
+    #      PYTHON_ARCH: "32"
+    #
+    #    - PYTHON: "C:\\Python35-x64"
+    #      PYTHON_VERSION: "3.5.x"
+    #      PYTHON_ARCH: "64"
 
     - PYTHON: "C:\\Python36"
       PYTHON_VERSION: "3.6.x"
@@ -87,4 +88,4 @@ build_script:
 
 test_script:
   # Run the project tests
-  - "python setup.py test"
+  - "python setup.py test --addopts '-m \"not requires_network\"'"
