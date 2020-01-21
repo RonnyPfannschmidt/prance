@@ -1,3 +1,27 @@
+v0.18.0
+-------
+
+Maintenance release, focusing on change requests from users.
+
+* #23: Add support for partial resolution, i.e. resolving only internal references,
+  local files, HTTP URLs, or any combination thereof.
+
+* #36: Improve error handling by mentioning strict mode when openapi-spec-validator
+  raises TypeError with very little context.
+
+* #46: Reduce reliance on network in tests. Tests that require a network connection
+  can now be skipped via "-m 'not requires_network'". Other tests have mocked
+  connections.
+
+* #55: RefResolver could set recursion limits, but the ResolvingParser did not
+  pass related options on to the resolver. Fixed that. Also create & use
+  reference cache in ResolvingParser.
+
+* #60: Improve output when resolving references, by indicating the type of problem
+  (missing key, index out of bounds) in the object or sequence where the error
+  occurred.
+
+
 v0.17.0
 -------
 * #51: Try a lot more bytes when detecting file encoding. The new value is meant to
