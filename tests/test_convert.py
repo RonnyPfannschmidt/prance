@@ -2,11 +2,13 @@
 """Test suite for prance.convert ."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2018 Jens Finkhaeuser'
+__copyright__ = 'Copyright (c) 2018-2020 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 import pytest
+
+from . import none_of
 
 from prance import convert
 
@@ -79,6 +81,7 @@ def test_convert_url():
 
 
 @pytest.mark.requires_network()
+@pytest.mark.xfail()
 def test_convert_spec():
   from prance import BaseParser, ResolvingParser, ValidationError
   parser = BaseParser('tests/specs/petstore.yaml')
@@ -97,6 +100,7 @@ def test_convert_spec():
 
 
 @pytest.mark.requires_network()
+@pytest.mark.xfail()
 def test_convert_parser_lazy_swagger_backend():
   from prance import BaseParser, ResolvingParser, ValidationError
   parser = BaseParser('tests/specs/petstore.yaml')
@@ -114,15 +118,13 @@ def test_convert_parser_lazy_swagger_backend():
   assert isinstance(converted, ResolvingParser)
 
 
-from prance.util import validation_backends
-if 'openapi-spec-validator' in validation_backends():
-  @pytest.mark.requires_network()
-  def test_convert_parser_validated():
-    from prance import BaseParser
-    parser = BaseParser('tests/specs/petstore.yaml', backend = 'openapi-spec-validator')
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing openapi-spec-validator')
+@pytest.mark.requires_network()
+def test_convert_parser_validated():
+  from prance import BaseParser
+  parser = BaseParser('tests/specs/petstore.yaml', backend = 'openapi-spec-validator')
 
-    # Conversion should work: it's the right backend, and it validates.
-    converted = convert.convert_spec(parser)
-    assert isinstance(converted, BaseParser)
-    assert converted.version_parsed[0] == 3
-
+  # Conversion should work: it's the right backend, and it validates.
+  converted = convert.convert_spec(parser)
+  assert isinstance(converted, BaseParser)
+  assert converted.version_parsed[0] == 3
