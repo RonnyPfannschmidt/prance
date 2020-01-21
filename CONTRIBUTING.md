@@ -57,6 +57,13 @@ To run all tests without these spec validation tests, use:
 $ pytest -k 'not test_zzz_specs.py'
 ```
 
+To run all tests requiring/not requiring a network connection, use:
+
+```bash
+$ pytest -m 'requires_network'
+$ pytest -m 'not requires_network'
+```
+
 Run tests on multiple Python versions:
 
 ```bash
