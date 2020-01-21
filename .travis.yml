@@ -1,12 +1,11 @@
 language: python
 dist: bionic
-matrix:
+jobs:
   include:
   # Main development version
   - python: '3.6'
-    env:
-      - REQUIREMENTS=requirements_no_icu.txt
-      - TEST_ARGS="--addopts '-m not\\ requires_network'"
+    env: REQUIREMENTS=requirements_no_icu.txt
+    script: python setup.py test --addopts '-m "not requires_network"'
       #  - python: '3.6'
       #    env:
       #      REQUIREMENTS: requirements.txt
@@ -37,8 +36,8 @@ matrix:
 
 install:
   - pip install -r ${REQUIREMENTS}
-script:
-  - python setup.py test ${EXTRA_STEPS} ${TEST_ARGS}
+    #script:
+    #  - python setup.py test ${EXTRA_STEPS} ${TEST_ARGS}
 after_success:
   - test "${TRAVIS_TAG}" != "" && docs/deploy.sh
 deploy:
