@@ -156,6 +156,7 @@ def test_compile_output(runner):
 
 
 @pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
+@pytest.mark.requires_network()
 def test_convert_defaults(runner):
   from prance import cli
 
@@ -172,6 +173,7 @@ def test_convert_defaults(runner):
 
 
 @pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
+@pytest.mark.requires_network()
 def test_convert_output(runner):
   from prance import cli
 

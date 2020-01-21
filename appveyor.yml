@@ -87,4 +87,4 @@ build_script:
 
 test_script:
   # Run the project tests
-  - "python setup.py test"
+  - python setup.py test --addopts "-m 'not requires_network'"
