@@ -5,9 +5,8 @@ matrix:
   # Main development version
   - python: '3.6'
     env:
-      global:
-        - REQUIREMENTS=requirements_no_icu.txt
-        - TEST_ARGS="--addopts \"-m 'not requires_network'\""
+      - REQUIREMENTS=requirements_no_icu.txt
+      - TEST_ARGS="--addopts \"-m 'not requires_network'\""
       #  - python: '3.6'
       #    env:
       #      REQUIREMENTS: requirements.txt
