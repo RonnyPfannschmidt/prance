@@ -7,11 +7,17 @@ __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 import pytest
+from unittest.mock import patch
 
 from prance import ResolvingParser
 from prance import ValidationError
 
 from . import none_of
+
+def mock_get_petstore(*args, **kwargs):
+  from .mock_response import MockResponse, PETSTORE_YAML
+  return MockResponse(text = PETSTORE_YAML)
+
 
 @pytest.fixture
 def petstore_parser():
@@ -19,7 +25,9 @@ def petstore_parser():
 
 
 @pytest.fixture
-def with_externals_parser():
+@patch('requests.get')
+def with_externals_parser(mock_get):
+  mock_get.side_effect = mock_get_petstore
   return ResolvingParser('tests/specs/with_externals.yaml')
 
 
