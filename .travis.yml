@@ -6,38 +6,30 @@ jobs:
   - python: '3.6'
     env: REQUIREMENTS=requirements_no_icu.txt
     script: python setup.py test --addopts '-m "not requires_network"'
-      #  - python: '3.6'
-      #    env:
-      #      REQUIREMENTS: requirements.txt
-      #      EXTRA_STEPS: flake8 build_sphinx
-      #      DEPLOY: 1
-      #  - python: '3.6'
-      #    env:
-      #      REQUIREMENTS: requirements_flex.txt
-      #      TEST_ARGS: "--addopts \"-m 'not requires_network'\""
-      #
-      #  # Other supported versions
-      #  # FIXME we're disabling pypy builds until
-      #  #       travis supports them.
-      #  #   - python: 'pypy3-7.1.1'  # Try versioning; it sucks, but what are you to do?
-      #  #     env: REQUIREMENTS=requirements_no_icu.txt
-      #  - python: '3.5'
-      #    env:
-      #      REQUIREMENTS: requirements_no_icu.txt
-      #      TEST_ARGS: "--addopts \"-m 'not requires_network'\""
-      #  - python: '3.7'
-      #    env:
-      #      REQUIREMENTS: requirements_no_icu.txt
-      #      TEST_ARGS: "--addopts \"-m 'not requires_network'\""
-      #  - python: '3.8'
-      #    env:
-      #      REQUIREMENTS: requirements_no_icu.txt
-      #      TEST_ARGS: "--addopts \"-m 'not requires_network'\""
+  - python: '3.6'
+    env: REQUIREMENTS=requirements.txt DEPLOY=1
+    script: python setup.py test flake8 build_sphinx
+  - python: '3.6'
+    env: REQUIREMENTS=requirements_flex.txt
+    script: python setup.py test --addopts '-m "not requires_network"'
+
+  # Other supported versions
+  # FIXME we're disabling pypy builds until
+  #       travis supports them.
+  #   - python: 'pypy3-7.1.1'  # Try versioning; it sucks, but what are you to do?
+  #     env: REQUIREMENTS=requirements_no_icu.txt
+  - python: '3.5'
+    env: REQUIREMENTS=requirements_no_icu.txt
+    script: python setup.py test --addopts '-m "not requires_network"'
+  - python: '3.7'
+    env: REQUIREMENTS=requirements_no_icu.txt
+    script: python setup.py test --addopts '-m "not requires_network"'
+  - python: '3.8'
+    env: REQUIREMENTS=requirements_no_icu.txt
+    script: python setup.py test --addopts '-m "not requires_network"'
 
 install:
   - pip install -r ${REQUIREMENTS}
-    #script:
-    #  - python setup.py test ${EXTRA_STEPS} ${TEST_ARGS}
 after_success:
   - test "${TRAVIS_TAG}" != "" && docs/deploy.sh
 deploy:
