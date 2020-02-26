@@ -1,3 +1,10 @@
+v0.18.2
+-------
+
+Bugfix release:
+
+* #65: fix error in resolving files only with ResolvingParser.
+
 v0.18.1
 -------
 
