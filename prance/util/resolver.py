@@ -144,7 +144,12 @@ class RefResolver(object):
       return (self.__resolve_types & RESOLVE_HTTP) == 0
     elif ref_url.scheme == 'file':
       # Internal references
-      if self.url == ref_url.path:
+      from urllib.parse import urlparse, ParseResult
+      parsed_self = self.url
+      if not isinstance(parsed_self, ParseResult):
+        parsed_self = urlparse(self.url)
+      if ((parsed_self.scheme in ('', 'file'))
+            and (parsed_self.path == ref_url.path)):
         return (self.__resolve_types & RESOLVE_INTERNAL) == 0
       # Local files
       return (self.__resolve_types & RESOLVE_FILES) == 0
