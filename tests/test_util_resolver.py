@@ -14,6 +14,7 @@ from prance.util import fs
 from prance.util import resolver
 from prance.util.url import ResolutionError
 
+from . import none_of
 
 def get_specs(fname):
   specs = fs.read_file(fname)
@@ -369,6 +370,37 @@ def test_issue_23_partial_resolution_files():
   assert '$ref' in val
 
   val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', 'default', 'schema'))
+  assert '$ref' in val
+
+
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
+def test_issue_65_partial_resolution_files():
+  specs = '''openapi: "3.0.0"
+info:
+  title: ''
+  version: '1.0.0'
+paths: {}
+components:
+    schemas:
+        SampleArray:
+            type: array
+            items:
+              $ref: '#/components/schemas/ItemType'
+
+        ItemType:
+          type: integer
+'''
+  from prance.util import formats
+  specs = formats.parse_spec(specs, 'issue_65.yaml')
+
+  res = resolver.RefResolver(specs,
+      fs.abspath('issue_65.yaml'),
+      resolve_types = resolver.RESOLVE_FILES
+      )
+  res.resolve_references()
+
+  from prance.util.path import path_get
+  val = path_get(res.specs, ('components', 'schemas', 'SampleArray', 'items'))
   assert '$ref' in val
 
 

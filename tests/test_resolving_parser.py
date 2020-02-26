@@ -132,3 +132,34 @@ def test_issue_51_encoding_error():
   from yaml.reader import ReaderError
   with pytest.raises(ReaderError):
     parser.parse()
+
+
+
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
+def test_issue_65_partial_resolution_files():
+  specs = '''openapi: "3.0.0"
+info:
+  title: ''
+  version: '1.0.0'
+paths: {}
+components:
+    schemas:
+        SampleArray:
+            type: array
+            items:
+              $ref: '#/components/schemas/ItemType'
+
+        ItemType:
+          type: integer
+'''
+
+  from prance.util import resolver
+  parser = ResolvingParser(
+    spec_string = specs,
+    resolve_types = resolver.RESOLVE_FILES
+  )
+
+  from prance.util.path import path_get
+  val = path_get(parser.specification, ('components', 'schemas', 'SampleArray', 'items'))
+  assert '$ref' in val
+

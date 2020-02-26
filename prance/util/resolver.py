@@ -144,7 +144,9 @@ class RefResolver(object):
       return (self.__resolve_types & RESOLVE_HTTP) == 0
     elif ref_url.scheme == 'file':
       # Internal references
-      if self.url == ref_url.path:
+      from prance.util.url import absurl
+      parsed_self = absurl(self.url)
+      if parsed_self.path == ref_url.path:
         return (self.__resolve_types & RESOLVE_INTERNAL) == 0
       # Local files
       return (self.__resolve_types & RESOLVE_FILES) == 0
