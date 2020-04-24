@@ -53,7 +53,7 @@ def test_get_value_no_default():
   result = 666
   with pytest.raises(TypeError):
     result = path_get(value, ('foo', 'bar'))
-  assert result is 666
+  assert result == 666
 
   # However, we can resolve zero length paths
   result = path_get(value, ())
