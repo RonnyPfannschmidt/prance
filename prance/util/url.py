@@ -53,7 +53,11 @@ def absurl(url, relative_to = None):
     if is_pathname_valid(url):
       from . import fs
       url = fs.to_posix(url)
-    parsed = parse.urlparse(url)
+    try:
+      parsed = parse.urlparse(url)
+    except Exception as ex:
+      from .exceptions import raise_from
+      raise_from(ResolutionError, ex, 'Unable to parse url: %s' % (url,))
 
   # Any non-file scheme we just return immediately.
   if parsed.scheme not in (None, '', 'file'):
