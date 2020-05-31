@@ -1,3 +1,13 @@
+v0.18.3
+-------
+
+Bugfix release:
+
+* #67: fix syntax warning.
+
+* #69: when resolving references, if URL parsing fails, provide context on
+  which URL was being parsed in error message.
+
 v0.18.2
 -------
 
