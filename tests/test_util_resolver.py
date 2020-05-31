@@ -444,3 +444,13 @@ def test_issue_23_partial_resolution_invalid_scheme():
 
   with pytest.raises(ValueError):
     res.resolve_references()
+
+def test_issue_69_urlparse_error():
+  specs = {'$ref': "file://a\u2100b/bad/netloc"}
+  res = resolver.RefResolver(specs,
+      fs.abspath('tests/specs/with_externals.yaml'))
+
+  with pytest.raises(ResolutionError) as ex:
+    res.resolve_references()
+
+  assert 'bad/netloc' in str(ex)
