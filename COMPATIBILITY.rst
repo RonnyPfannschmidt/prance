@@ -96,6 +96,6 @@ While OpenAPI specifies that ``$ref`` is only to be interpreted as a
 reference in specific places, the JSON specs say nothing of the sort. Since
 most backends are based on JSON schema validators, prance simply treats all
 occurrences of ``$ref`` as references. This works well with the expecations of
-JSON schema, albeit not OpenAPI's interpretation of them.
+JSON schema/JSON references, albeit not OpenAPI's interpretation of them.
 
 
