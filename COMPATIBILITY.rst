@@ -98,4 +98,10 @@ most backends are based on JSON schema validators, prance simply treats all
 occurrences of ``$ref`` as references. This works well with the expecations of
 JSON schema/JSON references, albeit not OpenAPI's interpretation of them.
 
+This limitation is also not present in OpenAPI 2.0 specs. While those specs
+are older, they're still supported by prance. Compatibility between the
+interpretation of 2.0 vs. 3.0.0 is probably more user friendly than allowing
+`$ref` to be interpreted in different ways in different places, in violation
+of JSON reference specs.
+
 
