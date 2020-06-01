@@ -75,27 +75,27 @@ Since JSON references can reference an object that references the first object,
 we can create recursive references. By default, when a recursion is detected,
 an exception is raised. There are two ways you can modify this behaviour:
 
-1. Increase the `recursion_limit` from it's default value of `1` to some higher
+1. Increase the ``recursion_limit`` from it's default value of ``1`` to some higher
    number. This doesn't actually help much on its own.
 
-2. Set the `recursion_limit_handler` parameter to a callable. It accepts the
+2. Set the ``recursion_limit_handler`` parameter to a callable. It accepts the
    recursion limit, the reference URL of the element being resolved, and the
    currently known recursions.
 
-`prance.util.resolver.default_reclimit_handler` is the default handler, and
+``prance.util.resolver.default_reclimit_handler`` is the default handler, and
 will always raise an exception.
 
 If the handler you set does not raise an exception, its return value is used
 as the "resolved" value. To simply ignore recursions, use a handler that
-returns `None` - this will translate to the null value in the specs.
+returns ``None`` - this will translate to the null value in the specs.
 
 JSON References #3 - What is a Reference?
 -----------------------------------------
 
-While OpenAPI specifies that `$ref` is only to be interpreted as a
+While OpenAPI specifies that ``$ref`` is only to be interpreted as a
 reference in specific places, the JSON specs say nothing of the sort. Since
 most backends are based on JSON schema validators, prance simply treats all
-occurrences of `$ref` as references. This works well with the expecations of
+occurrences of ``$ref`` as references. This works well with the expecations of
 JSON schema, albeit not OpenAPI's interpretation of them.
 
 
