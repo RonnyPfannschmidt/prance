@@ -1,6 +1,7 @@
 include LICENSE.txt
 include README.rst
 include CHANGES.rst
+include COMPATIBILITY.rst
 include requirements.txt
 include tox.ini
 
