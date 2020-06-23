@@ -177,7 +177,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     self.version_name = prefix
     self.version_parsed = version
     import semver
-    self.semver = semver.format_version(*version)
+    self.semver = str(semver.VersionInfo(*version))
 
     stringified = self.semver
     if prefix == BaseParser.SPEC_VERSION_2_PREFIX:
