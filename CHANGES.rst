@@ -1,3 +1,14 @@
+v0.19.0
+-------
+* #72: Fix behaviour when attempting to resolve nonexistent local references: raise
+  ResolutionError instead of what the OS provides.
+
+* #69: Improve documenation with regards to JSON Schema and OpenAPI interoperability;
+  some things are just not very well defined, and we make some strict assumptions
+  in prance.
+
+* Miscellaneous: #71
+
 v0.18.3
 -------
 
