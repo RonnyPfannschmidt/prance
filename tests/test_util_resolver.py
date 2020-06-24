@@ -446,11 +446,26 @@ def test_issue_23_partial_resolution_invalid_scheme():
     res.resolve_references()
 
 def test_issue_69_urlparse_error():
+  # XXX depending on python version, the error may not actually come from
+  #     parsing the URL, but from trying to load a local file that does
+  #     not exist. See test_issue_72_* for a test case that specifically
+  #     tries for a nonexistent file url.
   specs = {'$ref': "file://a\u2100b/bad/netloc"}
   res = resolver.RefResolver(specs,
       fs.abspath('tests/specs/with_externals.yaml'))
 
-  with pytest.raises(ResolutionError) as ex:
+  with pytest.raises(ResolutionError) as exinfo:
     res.resolve_references()
 
-  assert 'bad/netloc' in str(ex)
+  assert 'bad/netloc' in str(exinfo.value)
+
+
+def test_issue_72_nonexistent_file_error():
+  specs = {'$ref': "file://does/not/exist"}
+  res = resolver.RefResolver(specs,
+      fs.abspath('tests/specs/with_externals.yaml'))
+
+  with pytest.raises(ResolutionError) as exinfo:
+    res.resolve_references()
+
+  assert 'not/exist' in str(exinfo.value)

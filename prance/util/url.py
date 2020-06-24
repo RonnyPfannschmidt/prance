@@ -171,8 +171,8 @@ def fetch_url_text(url, cache = {}, encoding = None):
     try:
       content = read_file(from_posix(url.path), encoding)
     except FileNotFoundError as ex:
-      from exceptions import raise_from
-      raise_from(ResolutionError, ex)
+      from .exceptions import raise_from
+      raise_from(ResolutionError, ex, 'File not found: %s' % (url.path,))
   elif url.scheme == 'python':
     # Resolve package path
     package = url.netloc
