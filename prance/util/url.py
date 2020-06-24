@@ -168,7 +168,11 @@ def fetch_url_text(url, cache = {}, encoding = None):
   content_type = None
   if url.scheme in (None, '', 'file'):
     from .fs import read_file, from_posix
-    content = read_file(from_posix(url.path), encoding)
+    try:
+      content = read_file(from_posix(url.path), encoding)
+    except FileNotFoundError as ex:
+      from exceptions import raise_from
+      raise_from(ResolutionError, ex)
   elif url.scheme == 'python':
     # Resolve package path
     package = url.netloc
