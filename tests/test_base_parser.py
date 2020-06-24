@@ -30,7 +30,8 @@ def petstore_parser_from_string():
 
 
 def test_load_fail():
-  with pytest.raises(FileNotFoundError):
+  from prance.util.url import ResolutionError
+  with pytest.raises(ResolutionError):
     BaseParser('tests/specs/missing.yaml')
 
 
