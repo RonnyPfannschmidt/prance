@@ -469,3 +469,28 @@ def test_issue_72_nonexistent_file_error():
     res.resolve_references()
 
   assert 'not/exist' in str(exinfo.value)
+
+
+
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
+def test_issue_78_resolve_internal_bug():
+  specs = ''
+  with open('tests/specs/issue_78/openapi.json', 'r') as fh:
+    specs = fh.read()
+
+  from prance.util import formats
+  specs = formats.parse_spec(specs, 'openapi.json')
+
+  res = resolver.RefResolver(specs,
+      fs.abspath('openapi.json'),
+      resolve_types = resolver.RESOLVE_FILES
+      )
+  res.resolve_references()
+
+  from prance.util.path import path_get
+  val = path_get(res.specs, ('paths', '/endpoint', 'post', 'requestBody', 'content'))
+
+  # Reference to file is resolved
+  assert 'application/json' in val
+  # Internal reference within file is NOT resolved
+  assert '$ref' in val['application/json']
