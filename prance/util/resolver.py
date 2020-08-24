@@ -111,7 +111,7 @@ class RefResolver(object):
       # Split the reference string into parsed URL and object path
       ref_url, obj_path = _url.split_url_reference(base_url, refstring)
 
-      if self._skip_reference(ref_url):
+      if self._skip_reference(base_url, ref_url):
         continue
 
       # The reference path is the url resource and object path
@@ -138,15 +138,13 @@ class RefResolver(object):
       # First yield parent
       yield full_path, ref_value
 
-  def _skip_reference(self, ref_url):
+  def _skip_reference(self, base_url, ref_url):
     """Return whether the URL should not be dereferenced."""
     if ref_url.scheme.startswith('http'):
       return (self.__resolve_types & RESOLVE_HTTP) == 0
     elif ref_url.scheme == 'file':
       # Internal references
-      from prance.util.url import absurl
-      parsed_self = absurl(self.url)
-      if parsed_self.path == ref_url.path:
+      if base_url.path == ref_url.path:
         return (self.__resolve_types & RESOLVE_INTERNAL) == 0
       # Local files
       return (self.__resolve_types & RESOLVE_FILES) == 0
