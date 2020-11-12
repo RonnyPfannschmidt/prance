@@ -90,6 +90,7 @@ class RefResolver(object):
 
     self.__resolve_types = options.get('resolve_types', RESOLVE_ALL)
     self.__encoding = options.get('encoding', None)
+    self.soft_derefence_objs = {}
 
   def resolve_references(self):
     """Resolve JSON pointers/references in the spec."""
@@ -110,6 +111,7 @@ class RefResolver(object):
     for _, refstring, item_path in reference_iterator(partial):
       # Split the reference string into parsed URL and object path
       ref_url, obj_path = _url.split_url_reference(base_url, refstring)
+      # print("ref_url", ref_url.path, "obj_path", obj_path, "ref_string", refstring)
       # if base_url.path != self.parsed_url.path:
       #   print("INTERNAL FILE REF")
       if self._skip_reference(base_url, ref_url):
@@ -138,19 +140,26 @@ class RefResolver(object):
 
       # First yield parent
       if not self.__resolve_types & RESOLVE_INTERNAL and base_url.path != self.parsed_url.path:
-        yield tuple(obj_path), ref_value
+        # dref_url = ref_url.path.split("/")[-1]+"/"+"/".join(obj_path[1:])
+        dref_url = ref_url.path.split("/")[-1]+"_"+"_".join(obj_path[1:])
+        # base_url.path.split("/")[-1]+"#"+"/".join(obj_path)
+        self.soft_derefence_objs[dref_url] = ref_value
+        # print("base_url", "#/"+dref_url, full_path, type(ref_value))
+        yield full_path, {"$ref": "#/components/schemas/"+dref_url}
+        # yield tuple(obj_path), ref_value
       else:
         yield full_path, ref_value
 
   def _skip_reference(self, base_url, ref_url):
     """Return whether the URL should not be dereferenced."""
+    # print("REF URL SCHEME", ref_url.scheme)
     if ref_url.scheme.startswith('http'):
       return (self.__resolve_types & RESOLVE_HTTP) == 0
     elif ref_url.scheme == 'file':
       # Internal references
       # Recursive Object
-      if base_url.fragment == ref_url.fragment:
-        return True
+      # if base_url.fragment == ref_url.fragment:
+      #   return True
       # if base_url.path == ref_url.path:
       #   return (self.__resolve_types & RESOLVE_INTERNAL) == 0
       # Local files
@@ -180,7 +189,7 @@ class RefResolver(object):
     value = contents
     if len(obj_path) != 0:
       from prance.util.path import path_get
-      print("obj_path", obj_path)
+      # print("obj_path", obj_path)
       try:
         value = path_get(value, obj_path)
       except (KeyError, IndexError, TypeError) as ex:
@@ -194,7 +203,7 @@ class RefResolver(object):
     # Now resolve partial specs
     value = self._resolve_partial(ref_url, value, recursions)
     # That's it!
-    print(value)
+    # print(value)
     return value
 
   def _resolve_partial(self, base_url, partial, recursions):
@@ -220,7 +229,7 @@ class RefResolver(object):
       if len(path) == 0:
         partial = value
       else:
-        print("partial_path", path)
+        # print("partial_path", path)
         path_set(partial, list(path), value, create = True)
 
     return partial

@@ -85,4 +85,5 @@ def reference_iterator(specs, path = ()):
       continue
     key = item_path[-1]
     if key == '$ref':
+      # print("key", key, "item", item, "item_path", item_path[:-1])
       yield key, item, item_path[:-1]
