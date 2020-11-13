@@ -282,7 +282,7 @@ class ResolvingParser(BaseParser):
     # We therefore use our own resolver first, and validate later.
     from .util.resolver import RefResolver
     forward_arg_names = ('encoding', 'recursion_limit',
-            'recursion_limit_handler', 'resolve_types')
+            'recursion_limit_handler', 'resolve_types', 'resolve_method')
     forward_args = {
       k: v for (k, v) in self.options.items() if k in forward_arg_names
     }

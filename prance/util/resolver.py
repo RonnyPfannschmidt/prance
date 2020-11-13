@@ -15,6 +15,11 @@ RESOLVE_HTTP = 2 ** 2
 #: Resolve references to local files.
 RESOLVE_FILES = 2 ** 3
 
+#: Copy the schema changing the reference.
+RESOLVE_SOFT = 0
+#: Replace the reference with inlined schema.
+RESOLVE_HARD = 1
+
 #: Default, resole all references.
 RESOLVE_ALL = RESOLVE_INTERNAL | RESOLVE_HTTP | RESOLVE_FILES
 
@@ -89,6 +94,7 @@ class RefResolver(object):
       self.parsed_url = self._url_key = None
 
     self.__resolve_types = options.get('resolve_types', RESOLVE_ALL)
+    self.__resolve_method = options.get('resolve_method', RESOLVE_HARD)
     self.__encoding = options.get('encoding', None)
     self.soft_derefence_objs = {}
 
@@ -137,7 +143,11 @@ class RefResolver(object):
       full_path = path + item_path
 
       # First yield parent
-      if not self.__resolve_types & RESOLVE_INTERNAL and base_url.path != self.parsed_url.path:
+      if (
+        self.__resolve_method == RESOLVE_SOFT and
+        not self.__resolve_types & RESOLVE_INTERNAL and
+        base_url.path != self.parsed_url.path
+      ):
         dref_url = ref_url.path.split("/")[-1]+"_"+"_".join(obj_path[1:])
         self.soft_derefence_objs[dref_url] = ref_value
         yield full_path, {"$ref": "#/components/schemas/"+dref_url}
@@ -153,8 +163,8 @@ class RefResolver(object):
       # Recursive Object
       # if base_url.fragment == ref_url.fragment:
       #   return True
-      # if base_url.path == ref_url.path:
-      #   return (self.__resolve_types & RESOLVE_INTERNAL) == 0
+      if base_url.path == ref_url.path:
+        return (self.__resolve_types & RESOLVE_INTERNAL) == 0
       # Local files
       return (self.__resolve_types & RESOLVE_FILES) == 0
     else:
