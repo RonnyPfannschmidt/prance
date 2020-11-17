@@ -96,11 +96,13 @@ class RefResolver(object):
     self.__resolve_types = options.get('resolve_types', RESOLVE_ALL)
     self.__resolve_method = options.get('resolve_method', RESOLVE_HARD)
     self.__encoding = options.get('encoding', None)
-    self.soft_derefence_objs = {}
+    self.__soft_derefence_objs = {}
 
   def resolve_references(self):
     """Resolve JSON pointers/references in the spec."""
     self.specs = self._resolve_partial(self.parsed_url, self.specs, ())
+    
+    if self.__soft_derefence_objs: self.specs["components"]["schemas"].update(self.__soft_derefence_objs)
 
   def _dereferencing_iterator(self, base_url, partial, path, recursions):
     """
@@ -145,11 +147,10 @@ class RefResolver(object):
       # First yield parent
       if (
         self.__resolve_method == RESOLVE_SOFT and
-        not self.__resolve_types & RESOLVE_INTERNAL and
         base_url.path != self.parsed_url.path
       ):
         dref_url = ref_url.path.split("/")[-1]+"_"+"_".join(obj_path[1:])
-        self.soft_derefence_objs[dref_url] = ref_value
+        self.__soft_derefence_objs[dref_url] = ref_value
         yield full_path, {"$ref": "#/components/schemas/"+dref_url}
       else:
         yield full_path, ref_value
@@ -160,9 +161,6 @@ class RefResolver(object):
       return (self.__resolve_types & RESOLVE_HTTP) == 0
     elif ref_url.scheme == 'file':
       # Internal references
-      # Recursive Object
-      # if base_url.fragment == ref_url.fragment:
-      #   return True
       if base_url.path == ref_url.path:
         return (self.__resolve_types & RESOLVE_INTERNAL) == 0
       # Local files

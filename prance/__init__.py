@@ -293,6 +293,5 @@ class ResolvingParser(BaseParser):
       )
     resolver.resolve_references()
     self.specification = resolver.specs
-    self.specification["components"]["schemas"].update(resolver.soft_derefence_objs)
     # Now validate - the BaseParser knows the specifics
     BaseParser._validate(self)
