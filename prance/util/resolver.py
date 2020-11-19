@@ -102,7 +102,12 @@ class RefResolver(object):
     """Resolve JSON pointers/references in the spec."""
     self.specs = self._resolve_partial(self.parsed_url, self.specs, ())
     
-    if self.__soft_dereference_objs: self.specs["components"]["schemas"].update(self.__soft_dereference_objs)
+    # If there are any objects collected when using RESOLVE_SOFT, add them to components/schemas
+    if self.__soft_dereference_objs:
+      if "components" not in self.specs: self.specs["components"] = dict()
+      if "schemas" not in self.specs["components"]: self.specs["components"].update({"schemas":{}})
+
+      self.specs["components"]["schemas"].update(self.__soft_dereference_objs)
 
   def _dereferencing_iterator(self, base_url, partial, path, recursions):
     """
@@ -145,7 +150,6 @@ class RefResolver(object):
       full_path = path + item_path
 
       # First yield parent
-      # if soft resolve is enabled, add collect those in soft_dereference_objs
       if (
         (self.__resolve_method == RESOLVE_SOFT and
         base_url.path != self.parsed_url.path) or (
@@ -153,12 +157,19 @@ class RefResolver(object):
           base_url.path != ref_url.path
         )
       ):
+        # If RESOLVE_SOFT is enabled and the reference is an external reference, e.g. a file ref
+        # or, if RESOLVE_SOFT is enabled and the reference is in an external object
+        # collect the dereferenced object to add them later in components/schemas
         url = self._collect_soft_refs(ref_url, obj_path, ref_value)
         yield full_path, {"$ref": "#/components/schemas/"+url}
       else:
         yield full_path, ref_value
   
   def _collect_soft_refs(self, ref_url, item_path, value):
+    """
+    Returns a portion of the dereferenced url for RESOLVE_SOFT mode.
+    format - ref-url_obj-path
+    """
     dref_url = ref_url.path.split("/")[-1]+"_"+"_".join(item_path[1:])
     self.__soft_dereference_objs[dref_url] = value
     return dref_url

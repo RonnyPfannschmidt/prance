@@ -293,5 +293,6 @@ class ResolvingParser(BaseParser):
       )
     resolver.resolve_references()
     self.specification = resolver.specs
+    
     # Now validate - the BaseParser knows the specifics
     BaseParser._validate(self)
