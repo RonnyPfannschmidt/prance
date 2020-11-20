@@ -71,6 +71,9 @@ class RefResolver(object):
         detect_encoding is used to determine the encoding.
     :param int resolve_types: [optional] Specify which types of references to
         resolve. Defaults to RESOLVE_ALL.
+    :param int resolve_method: [optional] Specify whether to translate external
+        references in components/schemas or dereference in place. Defaults
+        to TRANSLATE_DEFAULT.
     """
     import copy
     self.specs = copy.deepcopy(specs)
