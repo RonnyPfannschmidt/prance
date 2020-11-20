@@ -16,9 +16,9 @@ RESOLVE_HTTP = 2 ** 2
 RESOLVE_FILES = 2 ** 3
 
 #: Copy the schema changing the reference.
-RESOLVE_SOFT = 0
+TRANSLATE_EXTERNAL = 0
 #: Replace the reference with inlined schema.
-RESOLVE_HARD = 1
+TRANSLATE_DEFAULT = 1
 
 #: Default, resole all references.
 RESOLVE_ALL = RESOLVE_INTERNAL | RESOLVE_HTTP | RESOLVE_FILES
@@ -94,7 +94,7 @@ class RefResolver(object):
       self.parsed_url = self._url_key = None
 
     self.__resolve_types = options.get('resolve_types', RESOLVE_ALL)
-    self.__resolve_method = options.get('resolve_method', RESOLVE_HARD)
+    self.__resolve_method = options.get('resolve_method', TRANSLATE_DEFAULT)
     self.__encoding = options.get('encoding', None)
     self.__soft_dereference_objs = {}
 
@@ -102,7 +102,7 @@ class RefResolver(object):
     """Resolve JSON pointers/references in the spec."""
     self.specs = self._resolve_partial(self.parsed_url, self.specs, ())
     
-    # If there are any objects collected when using RESOLVE_SOFT, add them to components/schemas
+    # If there are any objects collected when using TRANSLATE_EXTERNAL, add them to components/schemas
     if self.__soft_dereference_objs:
       if "components" not in self.specs: self.specs["components"] = dict()
       if "schemas" not in self.specs["components"]: self.specs["components"].update({"schemas":{}})
@@ -124,8 +124,8 @@ class RefResolver(object):
     for _, refstring, item_path in reference_iterator(partial):
       # Split the reference string into parsed URL and object path
       ref_url, obj_path = _url.split_url_reference(base_url, refstring)
-
-      if self._skip_reference(base_url, ref_url):
+      translate = self.__resolve_method == TRANSLATE_EXTERNAL and self.parsed_url.path != ref_url.path
+      if not translate and self._skip_reference(base_url, ref_url):
         continue
 
       # The reference path is the url resource and object path
@@ -150,16 +150,7 @@ class RefResolver(object):
       full_path = path + item_path
 
       # First yield parent
-      if (
-        (self.__resolve_method == RESOLVE_SOFT and
-        base_url.path != self.parsed_url.path) or (
-          self.__resolve_method == RESOLVE_SOFT and
-          base_url.path != ref_url.path
-        )
-      ):
-        # If RESOLVE_SOFT is enabled and the reference is an external reference, e.g. a file ref
-        # or, if RESOLVE_SOFT is enabled and the reference is in an external object
-        # collect the dereferenced object to add them later in components/schemas
+      if translate:
         url = self._collect_soft_refs(ref_url, obj_path, ref_value)
         yield full_path, {"$ref": "#/components/schemas/"+url}
       else:
@@ -167,7 +158,7 @@ class RefResolver(object):
   
   def _collect_soft_refs(self, ref_url, item_path, value):
     """
-    Returns a portion of the dereferenced url for RESOLVE_SOFT mode.
+    Returns a portion of the dereferenced url for TRANSLATE_EXTERNAL mode.
     format - ref-url_obj-path
     """
     dref_url = ref_url.path.split("/")[-1]+"_"+"_".join(item_path[1:])
