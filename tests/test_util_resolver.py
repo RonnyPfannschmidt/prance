@@ -559,3 +559,29 @@ def test_issue_77_translate_external_refs_internal():
   # File reference url is updated as well
   val = path_get(res.specs, ('paths', '/endpoint', 'post', 'requestBody', '$ref'))
   assert val == '#/components/schemas/_schemas.json_Body'
+
+
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
+def test_issue_77_internal_refs_unresolved():
+  specs = ''
+  with open('tests/specs/issue_78/openapi.json', 'r') as fh:
+    specs = fh.read()
+
+  from prance.util import formats
+  specs = formats.parse_spec(specs, 'openapi.json')
+
+  res = resolver.RefResolver(specs,
+      fs.abspath('openapi.json'),
+      resolve_types = resolver.RESOLVE_FILES,
+      resolve_method= resolver.TRANSLATE_EXTERNAL
+      )
+  res.resolve_references()
+
+  from prance.util.path import path_get
+  val = path_get(res.specs, ('components', 'schemas'))
+
+  # File reference resolved
+  assert '_schemas.json_Body' in val
+
+  # Internal file reference not resolved
+  assert '_schemas.json_Something' not in val
