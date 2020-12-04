@@ -127,8 +127,10 @@ class RefResolver(object):
     for _, refstring, item_path in reference_iterator(partial):
       # Split the reference string into parsed URL and object path
       ref_url, obj_path = _url.split_url_reference(base_url, refstring)
+
       translate = self.__resolve_method == TRANSLATE_EXTERNAL and self.parsed_url.path != ref_url.path
-      if not translate and self._skip_reference(base_url, ref_url):
+
+      if self._skip_reference(base_url, ref_url):
         continue
 
       # The reference path is the url resource and object path
