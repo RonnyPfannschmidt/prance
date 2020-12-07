@@ -104,7 +104,7 @@ class RefResolver(object):
   def resolve_references(self):
     """Resolve JSON pointers/references in the spec."""
     self.specs = self._resolve_partial(self.parsed_url, self.specs, ())
-    
+
     # If there are any objects collected when using TRANSLATE_EXTERNAL, add them to components/schemas
     if self.__soft_dereference_objs:
       if "components" not in self.specs: self.specs["components"] = dict()
@@ -160,7 +160,7 @@ class RefResolver(object):
         yield full_path, {"$ref": "#/components/schemas/"+url}
       else:
         yield full_path, ref_value
-  
+
   def _collect_soft_refs(self, ref_url, item_path, value):
     """
     Returns a portion of the dereferenced url for TRANSLATE_EXTERNAL mode.
