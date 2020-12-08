@@ -15,6 +15,11 @@ RESOLVE_HTTP = 2 ** 2
 #: Resolve references to local files.
 RESOLVE_FILES = 2 ** 3
 
+#: Copy the schema changing the reference.
+TRANSLATE_EXTERNAL = 0
+#: Replace the reference with inlined schema.
+TRANSLATE_DEFAULT = 1
+
 #: Default, resole all references.
 RESOLVE_ALL = RESOLVE_INTERNAL | RESOLVE_HTTP | RESOLVE_FILES
 
@@ -66,6 +71,9 @@ class RefResolver(object):
         detect_encoding is used to determine the encoding.
     :param int resolve_types: [optional] Specify which types of references to
         resolve. Defaults to RESOLVE_ALL.
+    :param int resolve_method: [optional] Specify whether to translate external
+        references in components/schemas or dereference in place. Defaults
+        to TRANSLATE_DEFAULT.
     """
     import copy
     self.specs = copy.deepcopy(specs)
@@ -89,11 +97,20 @@ class RefResolver(object):
       self.parsed_url = self._url_key = None
 
     self.__resolve_types = options.get('resolve_types', RESOLVE_ALL)
+    self.__resolve_method = options.get('resolve_method', TRANSLATE_DEFAULT)
     self.__encoding = options.get('encoding', None)
+    self.__soft_dereference_objs = {}
 
   def resolve_references(self):
     """Resolve JSON pointers/references in the spec."""
     self.specs = self._resolve_partial(self.parsed_url, self.specs, ())
+
+    # If there are any objects collected when using TRANSLATE_EXTERNAL, add them to components/schemas
+    if self.__soft_dereference_objs:
+      if "components" not in self.specs: self.specs["components"] = dict()
+      if "schemas" not in self.specs["components"]: self.specs["components"].update({"schemas":{}})
+
+      self.specs["components"]["schemas"].update(self.__soft_dereference_objs)
 
   def _dereferencing_iterator(self, base_url, partial, path, recursions):
     """
@@ -110,6 +127,8 @@ class RefResolver(object):
     for _, refstring, item_path in reference_iterator(partial):
       # Split the reference string into parsed URL and object path
       ref_url, obj_path = _url.split_url_reference(base_url, refstring)
+
+      translate = self.__resolve_method == TRANSLATE_EXTERNAL and self.parsed_url.path != ref_url.path
 
       if self._skip_reference(base_url, ref_url):
         continue
@@ -136,7 +155,20 @@ class RefResolver(object):
       full_path = path + item_path
 
       # First yield parent
-      yield full_path, ref_value
+      if translate:
+        url = self._collect_soft_refs(ref_url, obj_path, ref_value)
+        yield full_path, {"$ref": "#/components/schemas/"+url}
+      else:
+        yield full_path, ref_value
+
+  def _collect_soft_refs(self, ref_url, item_path, value):
+    """
+    Returns a portion of the dereferenced url for TRANSLATE_EXTERNAL mode.
+    format - ref-url_obj-path
+    """
+    dref_url = ref_url.path.split("/")[-1]+"_"+"_".join(item_path[1:])
+    self.__soft_dereference_objs[dref_url] = value
+    return dref_url
 
   def _skip_reference(self, base_url, ref_url):
     """Return whether the URL should not be dereferenced."""
