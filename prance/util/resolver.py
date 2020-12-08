@@ -105,12 +105,15 @@ class RefResolver(object):
     """Resolve JSON pointers/references in the spec."""
     self.specs = self._resolve_partial(self.parsed_url, self.specs, ())
 
-    # If there are any objects collected when using TRANSLATE_EXTERNAL, add them to components/schemas
+    # If there are any objects collected when using TRANSLATE_EXTERNAL, add
+    # them to components/schemas
     if self.__soft_dereference_objs:
-      if "components" not in self.specs: self.specs["components"] = dict()
-      if "schemas" not in self.specs["components"]: self.specs["components"].update({"schemas":{}})
+      if 'components' not in self.specs:
+        self.specs['components'] = {}
+      if 'schemas' not in self.specs['components']:
+        self.specs['components'].update({'schemas': {}})
 
-      self.specs["components"]["schemas"].update(self.__soft_dereference_objs)
+      self.specs['components']['schemas'].update(self.__soft_dereference_objs)
 
   def _dereferencing_iterator(self, base_url, partial, path, recursions):
     """
@@ -128,7 +131,8 @@ class RefResolver(object):
       # Split the reference string into parsed URL and object path
       ref_url, obj_path = _url.split_url_reference(base_url, refstring)
 
-      translate = self.__resolve_method == TRANSLATE_EXTERNAL and self.parsed_url.path != ref_url.path
+      translate = (self.__resolve_method == TRANSLATE_EXTERNAL
+            and self.parsed_url.path != ref_url.path)
 
       if self._skip_reference(base_url, ref_url):
         continue
@@ -157,16 +161,17 @@ class RefResolver(object):
       # First yield parent
       if translate:
         url = self._collect_soft_refs(ref_url, obj_path, ref_value)
-        yield full_path, {"$ref": "#/components/schemas/"+url}
+        yield full_path, {'$ref': '#/components/schemas/' + url}
       else:
         yield full_path, ref_value
 
   def _collect_soft_refs(self, ref_url, item_path, value):
     """
-    Returns a portion of the dereferenced url for TRANSLATE_EXTERNAL mode.
+    Return a portion of the dereferenced url for TRANSLATE_EXTERNAL mode.
+
     format - ref-url_obj-path
     """
-    dref_url = ref_url.path.split("/")[-1]+"_"+"_".join(item_path[1:])
+    dref_url = ref_url.path.split('/')[-1] + '_' + '_'.join(item_path[1:])
     self.__soft_dereference_objs[dref_url] = value
     return dref_url
 
