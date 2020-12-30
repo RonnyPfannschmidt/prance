@@ -290,8 +290,8 @@ Made by `Moreven B <http://morevenb.com/>`__.
    :target: https://travis-ci.org/jfinkhaeuser/prance
 .. |Windows Build Status| image:: https://ci.appveyor.com/api/projects/status/ic7lo8r95mkee7di/branch/master?svg=true
    :target: https://ci.appveyor.com/project/jfinkhaeuser/prance
-.. |Docs| image:: https://readthedocs.org/projects/prance/badge/?version=latest
-   :target: http://prance.readthedocs.io/en/latest/
+.. |Docs| image:: https://img.shields.io/badge/docs-passing-brightgreen.svg
+   :target: https://jfinkhaeuser.github.io/prance/
 .. |License| image:: https://img.shields.io/pypi/l/prance.svg
    :target: https://pypi.python.org/pypi/prance/
 .. |PyPI| image:: https://img.shields.io/pypi/v/prance.svg
