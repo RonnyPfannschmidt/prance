@@ -74,6 +74,8 @@ class RefResolver(object):
     :param int resolve_method: [optional] Specify whether to translate external
         references in components/schemas or dereference in place. Defaults
         to TRANSLATE_DEFAULT.
+    :param bool strict: [optional] Whether to use strict mode or not; in
+        lenient mode, malformed keys will be silently rewritten.
     """
     import copy
     self.specs = copy.deepcopy(specs)
@@ -83,10 +85,14 @@ class RefResolver(object):
     self.__reclimit_handler = options.get('recursion_limit_handler',
             default_reclimit_handler)
     self.__reference_cache = options.get('reference_cache', {})
+    self.__resolve_types = options.get('resolve_types', RESOLVE_ALL)
+    self.__resolve_method = options.get('resolve_method', TRANSLATE_DEFAULT)
+    self.__encoding = options.get('encoding', None)
+    self.__strict = options.get('strict', True)
 
     if self.url:
       self.parsed_url = _url.absurl(self.url)
-      self._url_key = _url.urlresource(self.parsed_url)
+      self._url_key = (_url.urlresource(self.parsed_url), self.__strict)
 
       # If we have a url, we want to add ourselves to the reference cache
       # - that creates a reference loop, but prevents child resolvers from
@@ -96,9 +102,6 @@ class RefResolver(object):
     else:
       self.parsed_url = self._url_key = None
 
-    self.__resolve_types = options.get('resolve_types', RESOLVE_ALL)
-    self.__resolve_method = options.get('resolve_method', TRANSLATE_DEFAULT)
-    self.__encoding = options.get('encoding', None)
     self.__soft_dereference_objs = {}
 
   def resolve_references(self):
@@ -204,7 +207,8 @@ class RefResolver(object):
     """
     # In order to start dereferencing anything in the referenced URL, we have
     # to read and parse it, of course.
-    contents = _url.fetch_url(ref_url, self.__reference_cache, self.__encoding)
+    contents = _url.fetch_url(ref_url, self.__reference_cache, self.__encoding,
+            self.__strict)
 
     # In this inner parser's specification, we can now look for the referenced
     # object.

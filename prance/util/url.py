@@ -198,7 +198,7 @@ def fetch_url_text(url, cache = {}, encoding = None):
   return content, content_type
 
 
-def fetch_url(url, cache = {}, encoding = None):
+def fetch_url(url, cache = {}, encoding = None, strict = True):
   """
   Fetch the URL and parse the contents.
 
@@ -214,7 +214,7 @@ def fetch_url(url, cache = {}, encoding = None):
   :rtype: dict
   """
   # Return from cache, if parsed result is already present.
-  url_key = urlresource(url)
+  url_key = (urlresource(url), strict)
   entry = cache.get(url_key, None)
   if entry is not None:
     return entry.copy()
@@ -222,8 +222,15 @@ def fetch_url(url, cache = {}, encoding = None):
   # Fetch URL text
   content, content_type = fetch_url_text(url, cache, encoding = encoding)
 
-  # Now return the parsed results
+  # Parse the result
   from .formats import parse_spec
   result = parse_spec(content, url.path, content_type = content_type)
+
+  # Perform some sanitization in lenient mode.
+  if not strict:
+    from . import stringify_keys
+    result = stringify_keys(result)
+
+  # Cache and return result
   cache[url_key] = result
   return result.copy()

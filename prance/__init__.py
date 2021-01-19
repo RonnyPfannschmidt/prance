@@ -114,21 +114,19 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     multiple files by setting its url property and then invoking this
     function.
     """
+    strict = self.options.get('strict', True)
+
     # If we have a file name, we need to read that in.
     if self.url and self.url != _PLACEHOLDER_URL:
       from .util.url import fetch_url
       encoding = self.options.get('encoding', None)
-      self.specification = fetch_url(self.url, encoding = encoding)
+      self.specification = fetch_url(self.url, encoding = encoding,
+              strict = strict)
 
     # If we have a spec string, try to parse it.
     if self._spec_string:
       from .util.formats import parse_spec
       self.specification = parse_spec(self._spec_string, self.url)
-
-    # Perform some sanitization in lenient mode.
-    if not self.options.get('strict', True):
-      from .util import stringify_keys
-      self.specification = stringify_keys(self.specification)
 
     # If we have a parsed spec, convert it to JSON. Then we can validate
     # the JSON. At this point, we *require* a parsed specification to exist,
@@ -282,7 +280,8 @@ class ResolvingParser(BaseParser):
     # We therefore use our own resolver first, and validate later.
     from .util.resolver import RefResolver
     forward_arg_names = ('encoding', 'recursion_limit',
-            'recursion_limit_handler', 'resolve_types', 'resolve_method')
+            'recursion_limit_handler', 'resolve_types', 'resolve_method',
+            'strict')
     forward_args = {
       k: v for (k, v) in self.options.items() if k in forward_arg_names
     }
