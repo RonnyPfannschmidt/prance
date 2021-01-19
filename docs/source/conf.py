@@ -74,7 +74,7 @@ author = 'Jens Finkhaeuser'
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-release = '0.20.1'
+release = '0.20.2'
 
 # The short X.Y version.
 import re
