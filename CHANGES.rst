@@ -1,7 +1,11 @@
-vv0.20.1
+v0.20.1
 --------
-* Miscellaneous: #86
 
+Bugfix release:
+
+* #85: Update dependencies, in particular chardet
+
+* Miscellaneous: #86
 
 v0.20.0
 -------
@@ -10,7 +14,6 @@ v0.20.0
   specification.
 
 * #78: Fix issue in RESOLVE_INTERNAL handling
-
 
 v0.19.0
 -------
