@@ -14,15 +14,15 @@ if __name__ == '__main__':
     from distutils.core import setup, find_packages
 
   dev_require = [
-    'tox>=3.14',
-    'bumpversion>=0.5',
-    'pytest>=5.3,!=5.3.4',
-    'pytest-cov>=2.8',
-    'flake8>=3.7',
-    'pep8-naming>=0.9',
-    'flake8-quotes>=2.1',
+    'tox>=3.21',
+    'bumpversion>=0.6',
+    'pytest>=6.2',
+    'pytest-cov>=2.11',
+    'flake8>=3.8',
+    'pep8-naming>=0.11',
+    'flake8-quotes>=3.2',
     'flake8_docstrings>=1.5',
-    'sphinx>=2.3',
+    'sphinx>=3.4',
     'towncrier>=19.2',
   ]
 
@@ -77,11 +77,11 @@ if __name__ == '__main__':
       packages = find_packages(exclude = ['ez_setup', 'examples', 'tests']),
       include_package_data = True,
       install_requires = [
-        'chardet~=3.0',
+        'chardet~=4.0',
         'PyYAML~=5.3',
-        'requests~=2.22',
-        'six~=1.14',
-        'semver~=2.9',
+        'requests~=2.25',
+        'six~=1.15',
+        'semver~=2.13',
       ],
       extras_require = {
         'dev': dev_require,
