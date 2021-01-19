@@ -1,3 +1,12 @@
+v0.20.0
+-------
+
+* #77: Translate local references in external files by injecting them into the main
+  specification.
+
+* #78: Fix issue in RESOLVE_INTERNAL handling
+
+
 v0.19.0
 -------
 * #72: Fix behaviour when attempting to resolve nonexistent local references: raise
