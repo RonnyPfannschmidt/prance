@@ -1,1 +1,0 @@
-Properly propagate strict mode down to nested resolvers.

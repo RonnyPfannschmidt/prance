@@ -1,3 +1,8 @@
+v0.20.2
+-------
+
+* #83: Properly propagate strict mode down to nested resolvers.
+
 v0.20.1
 --------
 
