@@ -163,3 +163,20 @@ components:
   val = path_get(parser.specification, ('components', 'schemas', 'SampleArray', 'items'))
   assert '$ref' in val
 
+
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
+def test_issue_83_skip_propagation():
+  # Throw with strict parsing
+  parser = ResolvingParser('tests/specs/issue_83/bad_spec.yml',
+          lazy = True, backend = 'openapi-spec-validator',
+          strict = True)
+
+  with pytest.raises(ValidationError):
+    parser.parse()
+
+  # Do not throw with non-strict parsing
+  parser = ResolvingParser('tests/specs/issue_83/bad_spec.yml',
+          lazy = True, backend = 'openapi-spec-validator',
+          strict = False)
+
+  parser.parse()
