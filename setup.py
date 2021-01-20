@@ -16,7 +16,7 @@ if __name__ == '__main__':
   dev_require = [
     'tox>=3.21',
     'bumpversion>=0.6',
-    'pytest>=6.2',
+    'pytest>=6.1',
     'pytest-cov>=2.11',
     'flake8>=3.8',
     'pep8-naming>=0.11',
