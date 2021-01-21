@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prance.convert &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/prance.html">prance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/prance.convert.html">prance.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/prance.util.fs.html">prance.util.fs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/prance.util.iterators.html">prance.util.iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/prance.util.resolver.html">prance.util.resolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../prance.html">prance</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for prance.convert</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functionality for converting from Swagger/OpenAPI 2.0 to OpenAPI 3.0.0.</span>
+
+<span class="sd">The functions use https://mermade.org.uk/ APIs for conversion.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jens Finkhaeuser&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s1">&#39;Copyright (c) 2018 Jens Finkhaeuser&#39;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s1">&#39;MIT +no-false-attribs&#39;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">()</span>
+
+
+<div class="viewcode-block" id="ConversionError"><a class="viewcode-back" href="../../api/prance.convert.html#prance.convert.ConversionError">[docs]</a><span class="k">class</span> <span class="nc">ConversionError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+  <span class="k">pass</span>  <span class="c1"># pragma: nocover</span></div>
+
+
+<div class="viewcode-block" id="convert_str"><a class="viewcode-back" href="../../api/prance.convert.html#prance.convert.convert_str">[docs]</a><span class="k">def</span> <span class="nf">convert_str</span><span class="p">(</span><span class="n">spec_str</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Convert the serialized spec.</span>
+
+<span class="sd">  We parse the spec first to ensure there is no parse error, then</span>
+<span class="sd">  send it off to the API for conversion.</span>
+
+<span class="sd">  :param str spec_str: The specifications as string.</span>
+<span class="sd">  :param str filename: [optional] Filename to determine the format from.</span>
+<span class="sd">  :param str content_type: [optional] Content type to determine the format</span>
+<span class="sd">      from.</span>
+<span class="sd">  :return: The converted spec and content type.</span>
+<span class="sd">  :rtype: tuple</span>
+<span class="sd">  :raises ParseError: when parsing fails.</span>
+<span class="sd">  :raises ConversionError: when conversion fails.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Parse, but discard the results. The function raises parse error.</span>
+  <span class="kn">from</span> <span class="nn">.util.formats</span> <span class="kn">import</span> <span class="n">parse_spec_details</span>
+  <span class="n">spec</span><span class="p">,</span> <span class="n">content_type</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">parse_spec_details</span><span class="p">(</span><span class="n">spec_str</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+  <span class="c1"># Ok, parsing went fine, so let&#39;s convert.</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">spec_str</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;openapi</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">extension</span><span class="p">,)</span>
+
+  <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">; charset=utf-8&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">content_type</span><span class="p">,)</span>
+  <span class="p">}</span>
+
+  <span class="c1"># Convert via API</span>
+  <span class="kn">import</span> <span class="nn">requests</span>
+  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;https://mermade.org.uk/api/v1/convert&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span>
+      <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>  <span class="c1"># pragma: nocover</span>
+    <span class="k">raise</span> <span class="n">ConversionError</span><span class="p">(</span><span class="s1">&#39;Could not convert spec: </span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">reason</span><span class="p">))</span>
+
+  <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">; </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;content-type&#39;</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">apparent_encoding</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_url"><a class="viewcode-back" href="../../api/prance.convert.html#prance.convert.convert_url">[docs]</a><span class="k">def</span> <span class="nf">convert_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="p">{}):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Fetch a URL, and try to convert it to OpenAPI 3.x.y.</span>
+
+<span class="sd">  :param str url: The URL to fetch.</span>
+<span class="sd">  :return: The converted spec and content type.</span>
+<span class="sd">  :rtype: tuple</span>
+<span class="sd">  :raises ParseError: when parsing fails.</span>
+<span class="sd">  :raises ConversionError: when conversion fails.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Fetch URL contents</span>
+  <span class="kn">from</span> <span class="nn">.util.url</span> <span class="kn">import</span> <span class="n">fetch_url_text</span>
+  <span class="n">content</span><span class="p">,</span> <span class="n">content_type</span> <span class="o">=</span> <span class="n">fetch_url_text</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>
+
+  <span class="c1"># Try converting</span>
+  <span class="k">return</span> <span class="n">convert_str</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">content_type</span> <span class="o">=</span> <span class="n">content_type</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_spec"><a class="viewcode-back" href="../../api/prance.convert.html#prance.convert.convert_spec">[docs]</a><span class="k">def</span> <span class="nf">convert_spec</span><span class="p">(</span><span class="n">parser_or_spec</span><span class="p">,</span> <span class="n">parser_klass</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Convert an already parsed spec to OpenAPI 3.x.y.</span>
+
+<span class="sd">  Returns a new parser instance with the parsed specs, if possible.</span>
+
+<span class="sd">  The first parameter is either a parsed OpenAPI 2.0 spec, or a parser</span>
+<span class="sd">  instance, i.e. something derived from prance.BaseParser. If a parser,</span>
+<span class="sd">  the returned parser&#39;s options are taken from this source parser.</span>
+
+<span class="sd">  If the first parameter is a parsed spec, you must specify the class</span>
+<span class="sd">  of parser to instanciate. You can specify other options as key word</span>
+<span class="sd">  arguments. See the parser klass for details.</span>
+
+<span class="sd">  Any key word arguments specified here also override options from a</span>
+<span class="sd">  source parser.</span>
+
+<span class="sd">  This parametrization may seem a little convoluted. What it does, though,</span>
+<span class="sd">  is allow maximum flexibility. You can create parsed (but unvalidated)</span>
+<span class="sd">  OpenAPI 3.0 specs even if you only have backends that support vresion 2.0.</span>
+<span class="sd">  You can pass the source parser, and the lazy flag, and that&#39;s it. If your</span>
+<span class="sd">  version 2.0 specs were valid, there&#39;s a good chance your converted 3.0</span>
+<span class="sd">  specs are also valid.</span>
+
+<span class="sd">  :param mixed parser_or_spec: A dict (spec) or an instance of BaseParser</span>
+<span class="sd">  :param type parser_klass: [optional] A parser class to instanciate for</span>
+<span class="sd">    the result.</span>
+<span class="sd">  :return: A parser instance.</span>
+<span class="sd">  :rtype: BaseParser or derived.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Figure out exact configuration to use</span>
+  <span class="n">klass</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">options</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">spec</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BaseParser</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parser_or_spec</span><span class="p">,</span> <span class="n">BaseParser</span><span class="p">):</span>
+    <span class="c1"># We have a parser instance</span>
+    <span class="n">klass</span> <span class="o">=</span> <span class="n">parser_klass</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">parser_or_spec</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">parser_or_spec</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">parser_or_spec</span><span class="o">.</span><span class="n">specification</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="c1"># We must assume a specification</span>
+    <span class="n">klass</span> <span class="o">=</span> <span class="n">parser_klass</span> <span class="ow">or</span> <span class="n">BaseParser</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">parser_or_spec</span>
+
+  <span class="c1"># print(&#39;Class&#39;, klass)</span>
+  <span class="c1"># print(&#39;Options&#39;, options)</span>
+  <span class="c1"># print(&#39;Spec&#39;, spec)</span>
+
+  <span class="c1"># We have to serialize the specs in order to convert them. Let&#39;s use</span>
+  <span class="c1"># YAML.</span>
+  <span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">formats</span>
+  <span class="n">serialized</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">serialize_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">content_type</span> <span class="o">=</span> <span class="s1">&#39;text/yaml&#39;</span><span class="p">)</span>
+
+  <span class="c1"># Convert serialized</span>
+  <span class="n">converted</span><span class="p">,</span> <span class="n">ctype</span> <span class="o">=</span> <span class="n">convert_str</span><span class="p">(</span><span class="n">serialized</span><span class="p">,</span> <span class="n">content_type</span> <span class="o">=</span> <span class="s1">&#39;text/yaml&#39;</span><span class="p">)</span>
+
+  <span class="c1"># Create parser with options</span>
+  <span class="n">result</span> <span class="o">=</span> <span class="n">klass</span><span class="p">(</span><span class="n">spec_string</span> <span class="o">=</span> <span class="n">converted</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">result</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prance.util.resolver &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="prance.util.url" href="prance.util.url.html" />
+    <link rel="prev" title="prance.util.iterators" href="prance.util.iterators.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="prance.html">prance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.convert.html">prance.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.fs.html">prance.util.fs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.iterators.html">prance.util.iterators</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">prance.util.resolver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="prance.util.iterators.html" title="previous chapter">prance.util.iterators</a></li>
+      <li>Next: <a href="prance.util.url.html" title="next chapter">prance.util.url</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="prance-util-resolver">
+<h1>prance.util.resolver<a class="headerlink" href="#prance-util-resolver" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-prance.util.resolver"></span><p>This submodule contains a JSON reference resolver.</p>
+<dl class="py class">
+<dt id="prance.util.resolver.RefResolver">
+<em class="property">class </em><code class="sig-prename descclassname">prance.util.resolver.</code><code class="sig-name descname">RefResolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">specs</span></em>, <em class="sig-param"><span class="n">url</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">options</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/resolver.html#RefResolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.resolver.RefResolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Resolve JSON pointers/references in a spec.</p>
+<dl class="py method">
+<dt id="prance.util.resolver.RefResolver.resolve_references">
+<code class="sig-name descname">resolve_references</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/resolver.html#RefResolver.resolve_references"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.resolver.RefResolver.resolve_references" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve JSON pointers/references in the spec.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.util.resolver.default_reclimit_handler">
+<code class="sig-prename descclassname">prance.util.resolver.</code><code class="sig-name descname">default_reclimit_handler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">limit</span></em>, <em class="sig-param"><span class="n">parsed_url</span></em>, <em class="sig-param"><span class="n">recursions</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/resolver.html#default_reclimit_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.resolver.default_reclimit_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise prance.util.url.ResolutionError.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="prance.util.resolver.RESOLVE_ALL">
+<code class="sig-prename descclassname">prance.util.resolver.</code><code class="sig-name descname">RESOLVE_ALL</code><em class="property"> = 14</em><a class="headerlink" href="#prance.util.resolver.RESOLVE_ALL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default, resole all references.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="prance.util.resolver.RESOLVE_FILES">
+<code class="sig-prename descclassname">prance.util.resolver.</code><code class="sig-name descname">RESOLVE_FILES</code><em class="property"> = 8</em><a class="headerlink" href="#prance.util.resolver.RESOLVE_FILES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve references to local files.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="prance.util.resolver.RESOLVE_HTTP">
+<code class="sig-prename descclassname">prance.util.resolver.</code><code class="sig-name descname">RESOLVE_HTTP</code><em class="property"> = 4</em><a class="headerlink" href="#prance.util.resolver.RESOLVE_HTTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve references to HTTP external files.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="prance.util.resolver.RESOLVE_INTERNAL">
+<code class="sig-prename descclassname">prance.util.resolver.</code><code class="sig-name descname">RESOLVE_INTERNAL</code><em class="property"> = 2</em><a class="headerlink" href="#prance.util.resolver.RESOLVE_INTERNAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve internal references</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="prance.util.resolver.TRANSLATE_DEFAULT">
+<code class="sig-prename descclassname">prance.util.resolver.</code><code class="sig-name descname">TRANSLATE_DEFAULT</code><em class="property"> = 1</em><a class="headerlink" href="#prance.util.resolver.TRANSLATE_DEFAULT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace the reference with inlined schema.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="prance.util.resolver.TRANSLATE_EXTERNAL">
+<code class="sig-prename descclassname">prance.util.resolver.</code><code class="sig-name descname">TRANSLATE_EXTERNAL</code><em class="property"> = 0</em><a class="headerlink" href="#prance.util.resolver.TRANSLATE_EXTERNAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy the schema changing the reference.</p>
+</dd></dl>
+
+<div class="section" id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="id0">
+<em class="property">class </em><code class="sig-prename descclassname">prance.util.resolver.</code><code class="sig-name descname">RefResolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">specs</span></em>, <em class="sig-param"><span class="n">url</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">options</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/resolver.html#RefResolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Resolve JSON pointers/references in a spec.</p>
+<dl class="py method">
+<dt id="id1">
+<code class="sig-name descname">resolve_references</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/resolver.html#RefResolver.resolve_references"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve JSON pointers/references in the spec.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="id2">
+<code class="sig-prename descclassname">prance.util.resolver.</code><code class="sig-name descname">default_reclimit_handler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">limit</span></em>, <em class="sig-param"><span class="n">parsed_url</span></em>, <em class="sig-param"><span class="n">recursions</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/resolver.html#default_reclimit_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise prance.util.url.ResolutionError.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

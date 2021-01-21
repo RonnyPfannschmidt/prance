@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prance &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="prance.mixins" href="prance.mixins.html" />
+    <link rel="prev" title="Documentation of prance 0.20.2" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">prance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.convert.html">prance.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.fs.html">prance.util.fs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.iterators.html">prance.util.iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.resolver.html">prance.util.resolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">Documentation of prance 0.20.2</a></li>
+      <li>Next: <a href="prance.mixins.html" title="next chapter">prance.mixins</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="prance">
+<h1>prance<a class="headerlink" href="#prance" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-prance"></span><p>Prance implements parsers for Swagger/OpenAPI 2.0 and 3.0.0 API specs.</p>
+<p>See <a class="reference external" href="https://openapis.org/">https://openapis.org/</a> for details on the specification.</p>
+<p>Included is a BaseParser that reads and validates swagger specs, and a
+ResolvingParser that additionally resolves any $ref references.</p>
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt id="prance.ValidationError">
+<em class="property">exception </em><code class="sig-prename descclassname">prance.</code><code class="sig-name descname">ValidationError</code><a class="reference internal" href="../_modules/prance.html#ValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.ValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<dl class="py method">
+<dt id="prance.ValidationError.with_traceback">
+<code class="sig-name descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prance.ValidationError.with_traceback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="prance.BaseParser">
+<em class="property">class </em><code class="sig-prename descclassname">prance.</code><code class="sig-name descname">BaseParser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">spec_string</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lazy</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance.html#BaseParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.BaseParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="prance.mixins.html#id5" title="prance.mixins.YAMLMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">prance.mixins.YAMLMixin</span></code></a>, <a class="reference internal" href="prance.mixins.html#id2" title="prance.mixins.JSONMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">prance.mixins.JSONMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The BaseParser loads, parses and validates OpenAPI 2.0 and 3.0.0 specs.</p>
+<p>Uses <code class="xref py py-class docutils literal notranslate"><span class="pre">YAMLMixin</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">JSONMixin</span></code> for additional
+functionality.</p>
+<dl class="py method">
+<dt id="prance.BaseParser.json">
+<code class="sig-name descname">json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prance.BaseParser.json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a JSON representation of the specifications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>JSON representation.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="prance.BaseParser.parse">
+<code class="sig-name descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance.html#BaseParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.BaseParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>When the BaseParser was lazily created, load and parse now.</p>
+<p>You can use this function to re-use an existing parser for parsing
+multiple files by setting its url property and then invoking this
+function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="prance.BaseParser.specs_updated">
+<code class="sig-name descname">specs_updated</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prance.BaseParser.specs_updated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if self.specficiation changed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Whether the specs changed.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="prance.BaseParser.yaml">
+<code class="sig-name descname">yaml</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prance.BaseParser.yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a YAML representation of the specifications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>YAML representation.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="prance.BaseParser.BACKENDS">
+<code class="sig-name descname">BACKENDS</code><em class="property"> = {'flex': ((2,), '_validate_flex'), 'openapi-spec-validator': ((2, 3), '_validate_openapi_spec_validator'), 'swagger-spec-validator': ((2,), '_validate_swagger_spec_validator')}</em><a class="headerlink" href="#prance.BaseParser.BACKENDS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="prance.BaseParser.SPEC_VERSION_2_PREFIX">
+<code class="sig-name descname">SPEC_VERSION_2_PREFIX</code><em class="property"> = 'Swagger/OpenAPI'</em><a class="headerlink" href="#prance.BaseParser.SPEC_VERSION_2_PREFIX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="prance.BaseParser.SPEC_VERSION_3_PREFIX">
+<code class="sig-name descname">SPEC_VERSION_3_PREFIX</code><em class="property"> = 'OpenAPI'</em><a class="headerlink" href="#prance.BaseParser.SPEC_VERSION_3_PREFIX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="prance.ResolvingParser">
+<em class="property">class </em><code class="sig-prename descclassname">prance.</code><code class="sig-name descname">ResolvingParser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">spec_string</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lazy</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance.html#ResolvingParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.ResolvingParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#prance.BaseParser" title="prance.BaseParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">prance.BaseParser</span></code></a></p>
+<p>The ResolvingParser extends BaseParser with resolving references.</p>
+<dl class="py method">
+<dt id="prance.ResolvingParser.json">
+<code class="sig-name descname">json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prance.ResolvingParser.json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a JSON representation of the specifications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>JSON representation.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="prance.ResolvingParser.parse">
+<code class="sig-name descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prance.ResolvingParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>When the BaseParser was lazily created, load and parse now.</p>
+<p>You can use this function to re-use an existing parser for parsing
+multiple files by setting its url property and then invoking this
+function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="prance.ResolvingParser.specs_updated">
+<code class="sig-name descname">specs_updated</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prance.ResolvingParser.specs_updated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if self.specficiation changed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Whether the specs changed.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="prance.ResolvingParser.yaml">
+<code class="sig-name descname">yaml</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prance.ResolvingParser.yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a YAML representation of the specifications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>YAML representation.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="prance.ResolvingParser.BACKENDS">
+<code class="sig-name descname">BACKENDS</code><em class="property"> = {'flex': ((2,), '_validate_flex'), 'openapi-spec-validator': ((2, 3), '_validate_openapi_spec_validator'), 'swagger-spec-validator': ((2,), '_validate_swagger_spec_validator')}</em><a class="headerlink" href="#prance.ResolvingParser.BACKENDS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="prance.ResolvingParser.SPEC_VERSION_2_PREFIX">
+<code class="sig-name descname">SPEC_VERSION_2_PREFIX</code><em class="property"> = 'Swagger/OpenAPI'</em><a class="headerlink" href="#prance.ResolvingParser.SPEC_VERSION_2_PREFIX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="prance.ResolvingParser.SPEC_VERSION_3_PREFIX">
+<code class="sig-name descname">SPEC_VERSION_3_PREFIX</code><em class="property"> = 'OpenAPI'</em><a class="headerlink" href="#prance.ResolvingParser.SPEC_VERSION_3_PREFIX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

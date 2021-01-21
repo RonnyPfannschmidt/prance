@@ -1,0 +1,520 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentation of prance 0.20.2 &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="prance" href="api/prance.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/prance.html">prance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/prance.convert.html">prance.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/prance.util.fs.html">prance.util.fs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/prance.util.iterators.html">prance.util.iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/prance.util.resolver.html">prance.util.resolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="api/prance.html" title="next chapter">prance</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="documentation-of-prance-release">
+<h1>Documentation of prance 0.20.2<a class="headerlink" href="#documentation-of-prance-release" title="Permalink to this headline">¶</a></h1>
+<p>Swagger/OpenAPI 2.0 Parser for Python</p>
+<p><a class="reference external" href="https://travis-ci.org/jfinkhaeuser/prance"><img alt="Posix Build Status" src="https://travis-ci.org/jfinkhaeuser/prance.svg?branch=master" /></a> <a class="reference external" href="https://ci.appveyor.com/project/jfinkhaeuser/prance"><img alt="Windows Build Status" src="https://ci.appveyor.com/api/projects/status/ic7lo8r95mkee7di/branch/master?svg=true" /></a> <a class="reference external" href="https://jfinkhaeuser.github.io/prance/"><img alt="Docs" src="https://img.shields.io/badge/docs-passing-brightgreen.svg" /></a> <a class="reference external" href="https://pypi.python.org/pypi/prance/"><img alt="License" src="https://img.shields.io/pypi/l/prance.svg" /></a>
+<a class="reference external" href="https://pypi.python.org/pypi/prance/"><img alt="PyPI" src="https://img.shields.io/pypi/v/prance.svg" /></a> <a class="reference external" href="https://pypi.python.org/pypi/prance/"><img alt="Python Versions" src="https://img.shields.io/pypi/pyversions/prance.svg" /></a> <a class="reference external" href="https://pypi.python.org/pypi/prance/"><img alt="Package Format" src="https://img.shields.io/pypi/format/prance.svg" /></a> <a class="reference external" href="https://pypi.python.org/pypi/prance/"><img alt="Package Status" src="https://img.shields.io/pypi/status/prance.svg" /></a> <a class="reference external" href="https://app.fossa.io/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance?ref=badge_shield"><img alt="FOSSA Status" src="https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance.svg?type=shield" /></a> <a class="reference external" href="https://liberapay.com/jfinkhaeuser/donate"><img alt="Liberapay" src="http://img.shields.io/liberapay/receives/jfinkhaeuser.svg?logo=liberapay" /></a></p>
+<p><img alt="Logo" src="https://raw.githubusercontent.com/jfinkhaeuser/prance/master/docs/images/prance_logo_256.png" /></p>
+<p>Prance provides parsers for <a class="reference external" href="http://swagger.io/specification/">Swagger/OpenAPI
+2.0 and 3.0</a> API specifications in Python.
+It uses <a class="reference external" href="https://github.com/p1c2u/openapi-spec-validator">openapi_spec_validator</a>,
+<a class="reference external" href="https://github.com/Yelp/swagger_spec_validator">swagger_spec_validator</a> or
+<a class="reference external" href="https://github.com/pipermerriam/flex">flex</a>
+to validate specifications, but additionally resolves <a class="reference external" href="https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03">JSON
+references</a>
+in accordance with the OpenAPI spec.</p>
+<p>Mostly the latter involves handling non-URI references; OpenAPI is fine
+with providing relative file paths, whereas JSON references require URIs
+at this point in time.</p>
+</div>
+<div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Prance is available from PyPI, and can be installed via pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install prance
+</pre></div>
+</div>
+<p>Note that this will install the code, but additional subpackages must be specified
+to unlock various pieces of functionality. At minimum, a parsing backend must be
+installed. For the CLI functionality, you need further dependencies.</p>
+<p>The recommended installation installs the CLI, uses ICU and installs one validation
+backend:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install prance<span class="o">[</span>osv,icu,cli<span class="o">]</span>
+</pre></div>
+</div>
+<p>Make sure you have <a class="reference external" href="http://site.icu-project.org/home">ICU Unicode Library</a> installed,
+as well as Python dev library before running the commands above. If not, use the
+following commands:</p>
+<p><strong>Ubuntu</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo apt-get install libicu-dev
+$ sudo apt-get install python3-dev
+</pre></div>
+</div>
+</div>
+<div class="section" id="command-line-interface">
+<h2>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h2>
+<p>After installing prance, a CLI is available for validating (and resolving
+external references in) specs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Validates with resolving</span>
+$ prance validate path/to/swagger.yml
+
+<span class="c1"># Validates without resolving</span>
+$ prance validate --no-resolve path/to/swagger.yml
+
+<span class="c1"># Fetch URL, validate and resolve.</span>
+$ prance validate http://petstore.swagger.io/v2/swagger.json
+Processing <span class="s2">&quot;http://petstore.swagger.io/v2/swagger.json&quot;</span>...
+ -&gt; Resolving external references.
+Validates OK as Swagger/OpenAPI <span class="m">2</span>.0!
+</pre></div>
+</div>
+<p>Validation is not the only feature of prance. One of the side effects of
+resolving is that from a spec with references, one can create a fully resolved
+output spec. In the past, this was done via options to the <code class="docutils literal notranslate"><span class="pre">validate</span></code> command,
+but now there’s a specific command just for this purpose:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compile spec</span>
+$ prance compile path/to/input.yml path/to/output.yml
+</pre></div>
+</div>
+<p>Lastly, with the arrival of OpenAPI 3.0.0, it becomes useful for tooling to
+convert older specs to the new standard. Instead of re-inventing the wheel,
+prance just provides a CLI command for passing specs to the web API of
+<a class="reference external" href="https://github.com/Mermade/swagger2openapi">swagger2openapi</a> - a working
+internet connection is therefore required for this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convert spec</span>
+$ prance convert path/to/swagger.yml path/to/openapi.yml
+</pre></div>
+</div>
+</div>
+<div class="section" id="code">
+<h2>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
+<p>Most likely you have spec file and want to parse it:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">prance</span> <span class="kn">import</span> <span class="n">ResolvingParser</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">ResolvingParser</span><span class="p">(</span><span class="s1">&#39;path/to/my/swagger.yaml&#39;</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">specification</span>  <span class="c1"># contains fully resolved specs as a dict</span>
+</pre></div>
+</div>
+<p>Prance also includes a non-resolving parser that does not follow JSON
+references, in case you prefer that.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">prance</span> <span class="kn">import</span> <span class="n">BaseParser</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">BaseParser</span><span class="p">(</span><span class="s1">&#39;path/to/my/swagger.yaml&#39;</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">specification</span>  <span class="c1"># contains specs as a dict still containing JSON references</span>
+</pre></div>
+</div>
+<p>On Windows, the code reacts correctly if you pass posix-like paths
+(<code class="docutils literal notranslate"><span class="pre">/c:/swagger</span></code>) or if the path is relative.  If you pass absolute
+windows path (like <code class="docutils literal notranslate"><span class="pre">c:\swagger.yaml</span></code>), you can use
+<code class="docutils literal notranslate"><span class="pre">prance.util.fs.abspath</span></code> to convert them.</p>
+<p>URLs can also be parsed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">ResolvingParser</span><span class="p">(</span><span class="s1">&#39;http://petstore.swagger.io/v2/swagger.json&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Largely, that’s it. There is a whole slew of utility code that you may
+or may not find useful, too. Look at the <a class="reference external" href="https://jfinkhaeuser.github.io/prance/#api-modules">full documentation</a> for details.</p>
+</div>
+<div class="section" id="compatibility">
+<h2>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
+<p><em>Python Versions</em></p>
+<p>Version 0.16.2 is the last version supporting Python 2. It was released on
+Nov 12th, 2019. Python 2 reaches end of life at the end of 2019. If you wish
+for updates to the Python 2 supported packages, please contact the maintainer
+directly.</p>
+<p>Until fairly recently, we also tested with <a class="reference external" href="https://www.pypy.org/">PyPy</a>.
+Unfortunately, Travis isn’t very good at supporting this. So in the absence
+of spare time, they’re disabled. <a class="reference external" href="https://github.com/jfinkhaeuser/prance/issues/50">Issue 50</a>
+tracks progress on that.</p>
+<p>Similarly, but less critically, Python 3.4 is no longer receiving a lot of
+love from CI vendors, so automated builds on that version are no longer
+supported.</p>
+<p><em>Backends</em></p>
+<p>Different validation backends support different features.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 7%" />
+<col style="width: 8%" />
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 7%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Backend</p></th>
+<th class="head"><p>Python Version</p></th>
+<th class="head"><p>OpenAPI Version</p></th>
+<th class="head"><p>Strict Mode</p></th>
+<th class="head"><p>Notes</p></th>
+<th class="head"><p>Available From</p></th>
+<th class="head"><p>Link</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>swagger-spec-validator</p></td>
+<td><p>2 and 3</p></td>
+<td><p>2.0 only</p></td>
+<td><p>yes</p></td>
+<td><p>Slow; does not accept integer keys (see strict mode).</p></td>
+<td><p>prance 0.1</p></td>
+<td><p><a class="reference external" href="https://github.com/Yelp/swagger_spec_validator">swagger_spec_validator</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>flex</p></td>
+<td><p>2 and 3</p></td>
+<td><p>2.0 only</p></td>
+<td><p>n/a</p></td>
+<td><p>Fastest; unfortunately deprecated.</p></td>
+<td><p>prance 0.8</p></td>
+<td><p><a class="reference external" href="https://github.com/pipermerriam/flex">flex</a></p></td>
+</tr>
+<tr class="row-even"><td><p>openapi-spec-validator</p></td>
+<td><p>2 and 3</p></td>
+<td><p>2.0 and 3.0</p></td>
+<td><p>yes</p></td>
+<td><p>Slow; does not accept integer keys (see strict mode).</p></td>
+<td><p>prance 0.11</p></td>
+<td><p><a class="reference external" href="https://github.com/p1c2u/openapi-spec-validator">openapi_spec_validator</a></p></td>
+</tr>
+</tbody>
+</table>
+<p>You can select the backend in the constructor of the parser(s):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">ResolvingParser</span><span class="p">(</span><span class="s1">&#39;http://petstore.swagger.io/v2/swagger.json&#39;</span><span class="p">,</span> <span class="n">backend</span> <span class="o">=</span> <span class="s1">&#39;openapi-spec-validator&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>No backend is included in the dependencies; they are detected at run-time. If you install them,
+they can be used:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install openapi-spec-validator
+$ pip install prance
+$ prance validate --backend<span class="o">=</span>openapi-spec-validator path/to/spec.yml
+</pre></div>
+</div>
+<p><em>A note on flex usage:</em> While flex is the fastest validation backend, unfortunately it is no longer
+maintained and there are issues with its dependencies. For one thing, it depends on a version of <cite>PyYAML</cite>
+that contains security flaws. For another, it depends explicitly on older versions of <cite>click</cite>.</p>
+<p>If you use the flex subpackage, therefore, you do so at your own risk.</p>
+<p><em>Compatibility</em></p>
+<p>See <a class="reference external" href="https://github.com/jfinkhaeuser/prance/blob/master/COMPATIBILITY.rst">COMPATIBILITY.rst</a>
+for a list of known issues.</p>
+</div>
+<div class="section" id="partial-reference-resolution">
+<h2>Partial Reference Resolution<a class="headerlink" href="#partial-reference-resolution" title="Permalink to this headline">¶</a></h2>
+<p>It’s possible to instruct the parser to only resolve some kinds of references.
+This allows e.g. resolving references from external URLs, whilst keeping local
+references (i.e. to local files, or file internal) intact.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">prance</span> <span class="kn">import</span> <span class="n">ResolvingParser</span>
+<span class="kn">from</span> <span class="nn">prance.util.resolver</span> <span class="kn">import</span> <span class="n">RESOLVE_HTTP</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">ResolvingParser</span><span class="p">(</span><span class="s1">&#39;/path/to/spec&#39;</span><span class="p">,</span> <span class="n">resolve_types</span> <span class="o">=</span> <span class="n">RESOLVE_HTTP</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Multiple types can be specified by OR-ing constants together:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">prance</span> <span class="kn">import</span> <span class="n">ResolvingParser</span>
+<span class="kn">from</span> <span class="nn">prance.util.resolver</span> <span class="kn">import</span> <span class="n">RESOLVE_HTTP</span><span class="p">,</span> <span class="n">RESOLVE_FILES</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">ResolvingParser</span><span class="p">(</span><span class="s1">&#39;/path/to/spec&#39;</span><span class="p">,</span> <span class="n">resolve_types</span> <span class="o">=</span> <span class="n">RESOLVE_HTTP</span> <span class="o">|</span> <span class="n">RESOLVE_FILES</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="extensions">
+<h2>Extensions<a class="headerlink" href="#extensions" title="Permalink to this headline">¶</a></h2>
+<p>Prance includes the ability to reference outside swagger definitions
+in outside Python packages. Such a package must already be importable
+(i.e. installed), and be accessible via the
+<a class="reference external" href="https://setuptools.readthedocs.io/en/latest/pkg_resources.html#resourcemanager-api">ResourceManager API</a>
+(some more info <a class="reference external" href="https://setuptools.readthedocs.io/en/latest/setuptools.html#including-data-files">here</a>).</p>
+<p>For example, you might create a package <code class="docutils literal notranslate"><span class="pre">common_swag</span></code> with the file
+<code class="docutils literal notranslate"><span class="pre">base.yaml</span></code> containing the definition</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">definitions</span><span class="p">:</span>
+  <span class="nt">Severity</span><span class="p">:</span>
+    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">string</span>
+    <span class="nt">enum</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">INFO</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">WARN</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ERROR</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">FATAL</span>
+</pre></div>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> for <code class="docutils literal notranslate"><span class="pre">common_swag</span></code> you would add lines such as</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">packages</span><span class="o">=</span><span class="n">find_packages</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">),</span>
+<span class="n">package_dir</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="s1">&#39;src&#39;</span><span class="p">},</span>
+<span class="n">package_data</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="s1">&#39;*.yaml&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Then, having installed <code class="docutils literal notranslate"><span class="pre">common_swag</span></code> into some application, you could
+now write</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">definitions</span><span class="p">:</span>
+  <span class="nt">Message</span><span class="p">:</span>
+    <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">object</span>
+    <span class="nt">properties</span><span class="p">:</span>
+      <span class="nt">severity</span><span class="p">:</span>
+        <span class="nt">$ref</span><span class="p">:</span> <span class="s">&#39;python://common_swag/base.yaml#/definitions/Severity&#39;</span>
+      <span class="nt">code</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">string</span>
+      <span class="nt">summary</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">string</span>
+      <span class="nt">description</span><span class="p">:</span>
+        <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">string</span>
+    <span class="nt">required</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">severity</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">summary</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<p>See <a class="reference external" href="https://github.com/jfinkhaeuser/prance/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a> for details.</p>
+<p>Professional support is available through <a class="reference external" href="https://finkhaeuser.de">finkhaeuser consulting</a>.</p>
+</div>
+<div class="section" id="license">
+<h1>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
+<p>Licensed under MITNFA (MIT +no-false-attribs) License. See the
+<a class="reference external" href="https://github.com/jfinkhaeuser/prance/blob/master/LICENSE.txt">LICENSE.txt</a> file for details.</p>
+<p>“Prancing unicorn” logo image Copyright (c) Jens Finkhaeuser. All rights reserved.
+Made by <a class="reference external" href="http://morevenb.com/">Moreven B</a>.</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="api-modules">
+<h1>API/Modules<a class="headerlink" href="#api-modules" title="Permalink to this headline">¶</a></h1>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/prance.html#module-prance" title="prance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prance</span></code></a></p></td>
+<td><p>Prance implements parsers for Swagger/OpenAPI 2.0 and 3.0.0 API specs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/prance.mixins.html#module-prance.mixins" title="prance.mixins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prance.mixins</span></code></a></p></td>
+<td><p>Defines Mixins for parsers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/prance.convert.html#module-prance.convert" title="prance.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prance.convert</span></code></a></p></td>
+<td><p>Functionality for converting from Swagger/OpenAPI 2.0 to OpenAPI 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/prance.util.formats.html#module-prance.util.formats" title="prance.util.formats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prance.util.formats</span></code></a></p></td>
+<td><p>This submodule contains file format related utility code for Prance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/prance.util.fs.html#module-prance.util.fs" title="prance.util.fs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prance.util.fs</span></code></a></p></td>
+<td><p>This submodule contains file system utilities for Prance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/prance.util.iterators.html#module-prance.util.iterators" title="prance.util.iterators"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prance.util.iterators</span></code></a></p></td>
+<td><p>This submodule contains specialty iterators over specs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/prance.util.resolver.html#module-prance.util.resolver" title="prance.util.resolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prance.util.resolver</span></code></a></p></td>
+<td><p>This submodule contains a JSON reference resolver.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/prance.util.url.html#module-prance.util.url" title="prance.util.url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prance.util.url</span></code></a></p></td>
+<td><p>This submodule contains code for fetching/parsing URLs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/prance.util.exceptions.html#module-prance.util.exceptions" title="prance.util.exceptions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prance.util.exceptions</span></code></a></p></td>
+<td><p>This submodule contains helpers for exception handling.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/prance.util.path.html#module-prance.util.path" title="prance.util.path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prance.util.path</span></code></a></p></td>
+<td><p>This module contains code for accessing values in nested data structures.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="changes">
+<h1>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="v0-20-2">
+<h2>v0.20.2<a class="headerlink" href="#v0-20-2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>#83: Properly propagate strict mode down to nested resolvers.</p></li>
+</ul>
+</div>
+<div class="section" id="v0-20-1">
+<h2>v0.20.1<a class="headerlink" href="#v0-20-1" title="Permalink to this headline">¶</a></h2>
+<p>Bugfix release:</p>
+<ul class="simple">
+<li><p>#85: Update dependencies, in particular chardet</p></li>
+<li><p>Miscellaneous: #86</p></li>
+</ul>
+</div>
+<div class="section" id="v0-20-0">
+<h2>v0.20.0<a class="headerlink" href="#v0-20-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>#77: Translate local references in external files by injecting them into the main
+specification.</p></li>
+<li><p>#78: Fix issue in RESOLVE_INTERNAL handling</p></li>
+</ul>
+</div>
+<div class="section" id="v0-19-0">
+<h2>v0.19.0<a class="headerlink" href="#v0-19-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>#72: Fix behaviour when attempting to resolve nonexistent local references: raise
+ResolutionError instead of what the OS provides.</p></li>
+<li><p>#69: Improve documenation with regards to JSON Schema and OpenAPI interoperability;
+some things are just not very well defined, and we make some strict assumptions
+in prance.</p></li>
+<li><p>Miscellaneous: #71</p></li>
+</ul>
+</div>
+<div class="section" id="v0-18-3">
+<h2>v0.18.3<a class="headerlink" href="#v0-18-3" title="Permalink to this headline">¶</a></h2>
+<p>Bugfix release:</p>
+<ul class="simple">
+<li><p>#67: fix syntax warning.</p></li>
+<li><p>#69: when resolving references, if URL parsing fails, provide context on
+which URL was being parsed in error message.</p></li>
+</ul>
+</div>
+<div class="section" id="v0-18-2">
+<h2>v0.18.2<a class="headerlink" href="#v0-18-2" title="Permalink to this headline">¶</a></h2>
+<p>Bugfix release:</p>
+<ul class="simple">
+<li><p>#65: fix error in resolving files only with ResolvingParser.</p></li>
+</ul>
+</div>
+<div class="section" id="v0-18-1">
+<h2>v0.18.1<a class="headerlink" href="#v0-18-1" title="Permalink to this headline">¶</a></h2>
+<p>Maintenance release, focusing on change requests from users.</p>
+<ul class="simple">
+<li><p>#23: Add support for partial resolution, i.e. resolving only internal references,
+local files, HTTP URLs, or any combination thereof.</p></li>
+<li><p>#36: Improve error handling by mentioning strict mode when openapi-spec-validator
+raises TypeError with very little context.</p></li>
+<li><p>#46: Reduce reliance on network in tests. Tests that require a network connection
+can now be skipped via “-m ‘not requires_network’”. Other tests have mocked
+connections.</p></li>
+<li><p>#55: RefResolver could set recursion limits, but the ResolvingParser did not
+pass related options on to the resolver. Fixed that. Also create &amp; use
+reference cache in ResolvingParser.</p></li>
+<li><p>#60: Improve output when resolving references, by indicating the type of problem
+(missing key, index out of bounds) in the object or sequence where the error
+occurred.</p></li>
+</ul>
+</div>
+<div class="section" id="v0-17-0">
+<h2>v0.17.0<a class="headerlink" href="#v0-17-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>#51: Try a lot more bytes when detecting file encoding. The new value is meant to
+be a multiple of sector/cluster size that’s still reasonable on most OSes and
+volumes.</p></li>
+<li><p>#49: Remove Python 2.7 from supported/built versions. The CI vendors also don’t love
+3.4 any longer. Instead, we’ve added 3.7 and 3.8 where available.</p></li>
+<li><p>Miscellaneous: #53</p></li>
+</ul>
+</div>
+<div class="section" id="v0-16-2">
+<h2>v0.16.2<a class="headerlink" href="#v0-16-2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>#47: Fix deprecation warning by always preferring collections.abc over collections.</p></li>
+</ul>
+</div>
+<div class="section" id="v0-16-1">
+<h2>v0.16.1<a class="headerlink" href="#v0-16-1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>#44: Add changelog generation via <a class="reference external" href="https://town-crier.readthedocs.io/en/latest/">towncrier</a></p></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

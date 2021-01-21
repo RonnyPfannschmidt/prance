@@ -1,0 +1,30 @@
+﻿prance.util.exceptions
+======================
+
+.. toctree::
+
+.. automodule:: prance.util.exceptions
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+
+
+
+
+
+
+
+
+
+
+
+Functions
+---------
+
+
+.. autofunction:: raise_from
+
+
+

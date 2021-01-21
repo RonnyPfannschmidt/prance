@@ -1,0 +1,46 @@
+﻿prance.convert
+==============
+
+.. toctree::
+
+.. automodule:: prance.convert
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+
+
+
+Exceptions
+----------
+
+
+.. autoexception:: ConversionError
+   :members:
+   :inherited-members:
+   :show-inheritance:
+
+
+
+
+
+
+
+
+
+
+
+
+Functions
+---------
+
+
+.. autofunction:: convert_spec
+
+.. autofunction:: convert_str
+
+.. autofunction:: convert_url
+
+
+

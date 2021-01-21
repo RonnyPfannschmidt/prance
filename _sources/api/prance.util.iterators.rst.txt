@@ -1,0 +1,32 @@
+﻿prance.util.iterators
+=====================
+
+.. toctree::
+
+.. automodule:: prance.util.iterators
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+
+
+
+
+
+
+
+
+
+
+
+Functions
+---------
+
+
+.. autofunction:: item_iterator
+
+.. autofunction:: reference_iterator
+
+
+

@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prance.util.path &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.html">prance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.convert.html">prance.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.fs.html">prance.util.fs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.iterators.html">prance.util.iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.resolver.html">prance.util.resolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../prance.html">prance</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for prance.util.path</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;This module contains code for accessing values in nested data structures.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jens Finkhaeuser&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s1">&#39;Copyright (c) 2018 Jens Finkhaeuser&#39;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s1">&#39;MIT +no-false-attribs&#39;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_json_ref_escape</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;JSON-reference escape object path.&quot;&quot;&quot;</span>
+  <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>  <span class="c1"># Could be an int, etc.</span>
+  <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">,</span> <span class="s1">&#39;~0&#39;</span><span class="p">)</span>
+  <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;~1&#39;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">path</span>
+
+
+<span class="k">def</span> <span class="nf">_str_path</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Stringify object path.&quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">_json_ref_escape</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">path</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="path_get"><a class="viewcode-back" href="../../../api/prance.util.path.html#prance.util.path.path_get">[docs]</a><span class="k">def</span> <span class="nf">path_get</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">defaultvalue</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">path_of_obj</span> <span class="o">=</span> <span class="p">()):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Retrieve the value from obj indicated by path.</span>
+
+<span class="sd">  Like dict.get(), except:</span>
+
+<span class="sd">    - Any Mapping or Sequence is supported.</span>
+<span class="sd">    - Path is itself a Sequence; the first part is applied to the passed</span>
+<span class="sd">      object, the second part to the value returned from this operation, and</span>
+<span class="sd">      so forth recursively.</span>
+
+<span class="sd">  :param mixed obj: The Sequence or Mapping from which to retrieve values.</span>
+<span class="sd">  :param Sequence path: A Sequence of zero or more key/index elements.</span>
+<span class="sd">  :param mixed defaultvalue: If the value at the path does not exist and this</span>
+<span class="sd">    parameter is not None, it is returned. Otherwise an error is raised.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
+
+  <span class="c1"># For error reporting.</span>
+  <span class="n">path_of_obj_str</span> <span class="o">=</span> <span class="n">_str_path</span><span class="p">(</span><span class="n">path_of_obj</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Path is a </span><span class="si">%s</span><span class="s1">, but must be None or a Collection!&#39;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">),))</span>
+
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">obj</span> <span class="ow">or</span> <span class="n">defaultvalue</span>
+
+    <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Object at &quot;</span><span class="si">%s</span><span class="s1">&quot; does not contain key: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+          <span class="n">path_of_obj_str</span><span class="p">,</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">],))</span>
+
+    <span class="k">return</span> <span class="n">path_get</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">defaultvalue</span><span class="p">,</span>
+              <span class="n">path_of_obj</span> <span class="o">=</span> <span class="n">path_of_obj</span> <span class="o">+</span> <span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">],))</span>
+
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">obj</span> <span class="ow">or</span> <span class="n">defaultvalue</span>
+
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Sequence at &quot;</span><span class="si">%s</span><span class="s1">&quot; needs integer indices only, but got: &#39;</span>
+          <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path_of_obj_str</span><span class="p">,</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">],))</span>
+
+    <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Index out of bounds for sequence at &quot;</span><span class="si">%s</span><span class="s1">&quot;: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+          <span class="n">path_of_obj_str</span><span class="p">,</span> <span class="n">idx</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">path_get</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">defaultvalue</span><span class="p">,</span>
+           <span class="n">path_of_obj</span> <span class="o">=</span> <span class="n">path_of_obj</span> <span class="o">+</span> <span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">],))</span>
+
+  <span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Path must be empty.</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Cannot get anything from type </span><span class="si">%s</span><span class="s1">!&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">),))</span>
+    <span class="k">return</span> <span class="n">obj</span> <span class="ow">or</span> <span class="n">defaultvalue</span></div>
+
+
+<div class="viewcode-block" id="path_set"><a class="viewcode-back" href="../../../api/prance.util.path.html#prance.util.path.path_set">[docs]</a><span class="k">def</span> <span class="nf">path_set</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Set the value in obj indicated by path.</span>
+
+<span class="sd">  Setter anologous to path_get() above.</span>
+
+<span class="sd">  As setting values is a write operation, this function optionally creates</span>
+<span class="sd">  intermediate objects to ensure all elements of path can be dereferenced.</span>
+
+<span class="sd">  :param mixed obj: The Sequence or Mapping from which to retrieve values.</span>
+<span class="sd">  :param Sequence path: A Sequence of zero or more key/index elements.</span>
+<span class="sd">  :param mixed value: The value to set.</span>
+<span class="sd">  :param bool create: [optional] Flag indicating whether to create</span>
+<span class="sd">    intermediate values or not. Defaults to False.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Retrieve options</span>
+  <span class="n">create</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;create&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">fill_sequence</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value_index_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fill the sequence seq with elements until index can be accessed.</span>
+
+<span class="sd">    Fills with None except for the indexed element. That is either a dict or</span>
+<span class="sd">    a list, depending on the value_index_type. If the latter is an int, a</span>
+<span class="sd">    list is added. If the latter is None (unknown), None is added. Otherwise</span>
+<span class="sd">    a dict is added.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">index</span><span class="p">:</span>
+      <span class="k">return</span>
+
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">index</span><span class="p">:</span>
+      <span class="n">seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">value_index_type</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+      <span class="n">seq</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+    <span class="k">elif</span> <span class="n">value_index_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">seq</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
+
+  <span class="k">def</span> <span class="nf">safe_idx</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Safely index a sequence.</span>
+
+<span class="sd">    Much like dict.get with default value, except returns None instead of</span>
+<span class="sd">    raising IndexError.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+
+  <span class="c1"># print(&#39;obj&#39;, obj, type(obj))</span>
+  <span class="c1"># print(&#39;path&#39;, path)</span>
+  <span class="c1"># print(&#39;value&#39;, value)</span>
+
+  <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Sequence</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span>
+      <span class="n">MutableMapping</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Path is a </span><span class="si">%s</span><span class="s1">, but must be None or a Collection!&#39;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">),))</span>
+
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Cannot set with an empty path!&#39;</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+    <span class="c1"># If we don&#39;t have a mutable mapping, we should raise a TypeError</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">):</span>  <span class="c1"># pragma: nocover</span>
+      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Mapping is not mutable: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">),))</span>
+
+    <span class="c1"># If the path has only one element, we just overwrite the element at the</span>
+    <span class="c1"># given key. Otherwise we recurse.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">create</span> <span class="ow">and</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
+        <span class="c1"># dicts would normally silently create, but we have to make it</span>
+        <span class="c1"># explicit to fulfil our contract.</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Key &quot;</span><span class="si">%s</span><span class="s1">&quot; not in Mapping!&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">],))</span>
+      <span class="n">obj</span><span class="p">[</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">create</span> <span class="ow">and</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+          <span class="n">obj</span><span class="p">[</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">obj</span><span class="p">[</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+      <span class="n">path_set</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">value</span><span class="p">,</span> <span class="n">create</span> <span class="o">=</span> <span class="n">create</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">obj</span>
+
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># If we don&#39;t have a mutable sequence, we should raise a TypeError</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Sequence is not mutable: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">),))</span>
+
+    <span class="c1"># Ensure integer indices</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Sequences need integer indices only.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If we&#39;re supposed to create and the index at path[0] doesn&#39;t exist,</span>
+    <span class="c1"># then we need to push some dummy objects.</span>
+    <span class="k">if</span> <span class="n">create</span><span class="p">:</span>
+      <span class="n">fill_sequence</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">safe_idx</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># If the path has only one element, we just overwrite the element at the</span>
+    <span class="c1"># given index. Otherwise we recurse.</span>
+    <span class="c1"># print(&#39;pl&#39;, len(path))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">obj</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">path_set</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">value</span><span class="p">,</span> <span class="n">create</span> <span class="o">=</span> <span class="n">create</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">obj</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Cannot set anything on type </span><span class="si">%s</span><span class="s1">!&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">),))</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

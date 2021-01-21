@@ -1,0 +1,435 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prance.util.fs &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.html">prance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.convert.html">prance.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.fs.html">prance.util.fs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.iterators.html">prance.util.iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.resolver.html">prance.util.resolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../prance.html">prance</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for prance.util.fs</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;This submodule contains file system utilities for Prance.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jens Finkhaeuser&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s1">&#39;Copyright (c) 2016-2019 Jens Finkhaeuser&#39;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s1">&#39;MIT +no-false-attribs&#39;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">()</span>
+
+
+<span class="c1"># Re-define an error for backwards compatibility</span>
+<span class="ne">FileNotFoundError</span> <span class="o">=</span> <span class="ne">FileNotFoundError</span>  <span class="c1"># pragma: no cover</span>
+
+
+<span class="c1"># The following constant and function are taken from</span>
+<span class="c1"># https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta</span>
+
+<span class="c1"># Sadly, Python fails to provide the following magic number for us.</span>
+<span class="n">_ERROR_INVALID_NAME</span> <span class="o">=</span> <span class="mi">123</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Windows-specific error code indicating an invalid pathname.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">----------</span>
+<span class="sd">https://msdn.microsoft.com/en-us/library/windows/desktop/ms681382%28v=vs.85%29.aspx</span>
+<span class="sd">    Official listing of all such codes.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1"># Following Microsoft documentation, set the default read size for detecting</span>
+<span class="c1"># a file encoding to a multiple of 4k that seems to work well on various OSes</span>
+<span class="c1"># and volume sizes.</span>
+<span class="c1"># https://support.microsoft.com/en-us/help/140365/default-cluster-size-for-ntfs-fat-and-exfat</span>
+<span class="n">_READ_CHUNK_SIZE</span> <span class="o">=</span> <span class="mi">64</span> <span class="o">*</span> <span class="mi">1024</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Default read size for detecting file encoding.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="is_pathname_valid"><a class="viewcode-back" href="../../../api/prance.util.fs.html#prance.util.fs.is_pathname_valid">[docs]</a><span class="k">def</span> <span class="nf">is_pathname_valid</span><span class="p">(</span><span class="n">pathname</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Test whether a path name is valid.</span>
+
+<span class="sd">  :return: True if the passed pathname is valid on the current OS, False</span>
+<span class="sd">      otherwise.</span>
+<span class="sd">  :rtype: bool</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="kn">import</span> <span class="nn">errno</span><span class="o">,</span> <span class="nn">os</span>
+  <span class="c1"># If this pathname is either not a string or is but is empty, this pathname</span>
+  <span class="c1"># is invalid.</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">pathname</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Strip this pathname&#39;s Windows-specific drive specifier (e.g., `C:\`)</span>
+    <span class="c1"># if any. Since Windows prohibits path components from containing `:`</span>
+    <span class="c1"># characters, failing to strip this `:`-suffixed prefix would</span>
+    <span class="c1"># erroneously invalidate all valid absolute Windows pathnames.</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">pathname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitdrive</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+
+    <span class="c1"># Directory guaranteed to exist. If the current OS is Windows, this is</span>
+    <span class="c1"># the drive to which Windows was installed (e.g., the &quot;%HOMEDRIVE%&quot;</span>
+    <span class="c1"># environment variable); else, the typical root directory.</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+    <span class="n">root_dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HOMEDRIVE&#39;</span><span class="p">,</span> <span class="s1">&#39;C:&#39;</span><span class="p">)</span> \
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;win32&#39;</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">root_dirname</span><span class="p">)</span>   <span class="c1"># ...Murphy and her ironclad Law</span>
+
+    <span class="c1"># Append a path separator to this directory if needed.</span>
+    <span class="n">root_dirname</span> <span class="o">=</span> <span class="n">root_dirname</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
+
+    <span class="c1"># Test whether each path component split from this pathname is valid or</span>
+    <span class="c1"># not, ignoring non-existent and non-readable path components.</span>
+    <span class="k">for</span> <span class="n">pathname_part</span> <span class="ow">in</span> <span class="n">pathname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">lstat</span><span class="p">(</span><span class="n">root_dirname</span> <span class="o">+</span> <span class="n">pathname_part</span><span class="p">)</span>
+      <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="c1"># If an OS-specific exception is raised, its error code</span>
+        <span class="c1"># indicates whether this pathname is valid or not. Unless this</span>
+        <span class="c1"># is the case, this exception implies an ignorable kernel or</span>
+        <span class="c1"># filesystem complaint (e.g., path not found or inaccessible).</span>
+        <span class="c1">#</span>
+        <span class="c1"># Only the following exceptions indicate invalid pathnames:</span>
+        <span class="c1">#</span>
+        <span class="c1"># * Instances of the Windows-specific &quot;WindowsError&quot; class</span>
+        <span class="c1">#   defining the &quot;winerror&quot; attribute whose value is</span>
+        <span class="c1">#   &quot;_ERROR_INVALID_NAME&quot;. Under Windows, &quot;winerror&quot; is more</span>
+        <span class="c1">#   fine-grained and hence useful than the generic &quot;errno&quot;</span>
+        <span class="c1">#   attribute. When a too-long pathname is passed, for example,</span>
+        <span class="c1">#   &quot;errno&quot; is &quot;ENOENT&quot; (i.e., no such file or directory) rather</span>
+        <span class="c1">#   than &quot;ENAMETOOLONG&quot; (i.e., file name too long).</span>
+        <span class="c1"># * Instances of the cross-platform &quot;OSError&quot; class defining the</span>
+        <span class="c1">#   generic &quot;errno&quot; attribute whose value is either:</span>
+        <span class="c1">#   * Under most POSIX-compatible OSes, &quot;ENAMETOOLONG&quot;.</span>
+        <span class="c1">#   * Under some edge-case OSes (e.g., SunOS, *BSD), &quot;ERANGE&quot;.</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="s1">&#39;winerror&#39;</span><span class="p">):</span>  <span class="c1"># pragma: nocover</span>
+          <span class="k">if</span> <span class="n">exc</span><span class="o">.</span><span class="n">winerror</span> <span class="o">==</span> <span class="n">_ERROR_INVALID_NAME</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">exc</span><span class="o">.</span><span class="n">errno</span> <span class="ow">in</span> <span class="p">{</span><span class="n">errno</span><span class="o">.</span><span class="n">ENAMETOOLONG</span><span class="p">,</span> <span class="n">errno</span><span class="o">.</span><span class="n">ERANGE</span><span class="p">}:</span>
+          <span class="k">return</span> <span class="kc">False</span>
+  <span class="c1"># If a &quot;TypeError&quot; exception was raised, it almost certainly has the</span>
+  <span class="c1"># error message &quot;embedded NUL character&quot; indicating an invalid pathname.</span>
+  <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># pragma: nocover</span>
+    <span class="k">return</span> <span class="kc">False</span>
+  <span class="c1"># Null-bytes may also cause this, and they are invalid.</span>
+  <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">False</span>
+  <span class="c1"># If no exception was raised, all path components and hence this</span>
+  <span class="c1"># pathname itself are valid. (Praise be to the curmudgeonly python.)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+  <span class="c1"># If any other exception was raised, this is an unrelated fatal issue</span>
+  <span class="c1"># (e.g., a bug). Permit this exception to unwind the call stack.</span>
+  <span class="c1">#</span>
+  <span class="c1"># Did we mention this should be shipped with Python already?</span>
+
+
+<div class="viewcode-block" id="from_posix"><a class="viewcode-back" href="../../../api/prance.util.fs.html#prance.util.fs.from_posix">[docs]</a><span class="k">def</span> <span class="nf">from_posix</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Convert a path from posix-like, to the platform format.</span>
+
+<span class="sd">  :param str fname: The filename in posix-like format.</span>
+<span class="sd">  :return: The filename in the format of the platform.</span>
+<span class="sd">  :rtype: str</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="kn">import</span> <span class="nn">sys</span>
+  <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;win32&#39;</span><span class="p">:</span>  <span class="c1"># pragma: nocover</span>
+    <span class="k">if</span> <span class="n">fname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span><span class="p">:</span>
+      <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">fname</span></div>
+
+
+<div class="viewcode-block" id="to_posix"><a class="viewcode-back" href="../../../api/prance.util.fs.html#prance.util.fs.to_posix">[docs]</a><span class="k">def</span> <span class="nf">to_posix</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Convert a path to posix-like format.</span>
+
+<span class="sd">  :param str fname: The filename to convert to posix format.</span>
+<span class="sd">  :return: The filename in posix-like format.</span>
+<span class="sd">  :rtype: str</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="kn">import</span> <span class="nn">sys</span>
+  <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;win32&#39;</span><span class="p">:</span>  <span class="c1"># pragma: nocover</span>
+    <span class="kn">import</span> <span class="nn">os.path</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+      <span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">fname</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">fname</span></div>
+
+
+<div class="viewcode-block" id="abspath"><a class="viewcode-back" href="../../../api/prance.util.fs.html#prance.util.fs.abspath">[docs]</a><span class="k">def</span> <span class="nf">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">relative_to</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Return the absolute path of a file relative to a reference file.</span>
+
+<span class="sd">  If no reference file is given, this function works identical to</span>
+<span class="sd">  `canonical_filename`.</span>
+
+<span class="sd">  :param str filename: The filename to make absolute.</span>
+<span class="sd">  :param str relative_to: [optional] the reference file name.</span>
+<span class="sd">  :return: The absolute path</span>
+<span class="sd">  :rtype: str</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Create filename relative to the reference, if it exists.</span>
+  <span class="kn">import</span> <span class="nn">os.path</span>
+  <span class="n">fname</span> <span class="o">=</span> <span class="n">from_posix</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">relative_to</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="n">relative_to</span> <span class="o">=</span> <span class="n">from_posix</span><span class="p">(</span><span class="n">relative_to</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">relative_to</span><span class="p">):</span>
+      <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">relative_to</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">relative_to</span><span class="p">),</span> <span class="n">fname</span><span class="p">)</span>
+
+  <span class="c1"># Make the result canonical</span>
+  <span class="n">fname</span> <span class="o">=</span> <span class="n">canonical_filename</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">to_posix</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="canonical_filename"><a class="viewcode-back" href="../../../api/prance.util.fs.html#prance.util.fs.canonical_filename">[docs]</a><span class="k">def</span> <span class="nf">canonical_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Return the canonical version of a file name.</span>
+
+<span class="sd">  The canonical version is defined as the absolute path, and all file system</span>
+<span class="sd">  links dereferenced.</span>
+
+<span class="sd">  :param str filename: The filename to make canonical.</span>
+<span class="sd">  :return: The canonical filename.</span>
+<span class="sd">  :rtype: str</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">os.path</span>
+
+  <span class="n">path</span> <span class="o">=</span> <span class="n">from_posix</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+  <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+      <span class="c1"># os.readlink doesn&#39;t exist in windows python2.7</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">deref_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">readlink</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+      <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">return</span> <span class="n">path</span>
+      <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">deref_path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="detect_encoding"><a class="viewcode-back" href="../../../api/prance.util.fs.html#prance.util.fs.detect_encoding">[docs]</a><span class="k">def</span> <span class="nf">detect_encoding</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">default_to_utf8</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Detect the named file&#39;s character encoding.</span>
+
+<span class="sd">  If the first parts of the file appear to be ASCII, this function returns</span>
+<span class="sd">  &#39;UTF-8&#39;, as that&#39;s a safe superset of ASCII. This can be switched off by</span>
+<span class="sd">  changing the `default_to_utf8` parameter.</span>
+
+<span class="sd">  :param str filename: The name of the file to detect the encoding of.</span>
+<span class="sd">  :param bool default_to_utf8: Defaults to True. Set to False to disable</span>
+<span class="sd">      treating ASCII files as UTF-8.</span>
+<span class="sd">  :param bool read_all: Keyword argument; if True, reads the entire file</span>
+<span class="sd">      for encoding detection.</span>
+<span class="sd">  :return: The file encoding.</span>
+<span class="sd">  :rtype: str</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Read some of the file</span>
+  <span class="kn">import</span> <span class="nn">os.path</span>
+  <span class="n">filename</span> <span class="o">=</span> <span class="n">from_posix</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+  <span class="n">file_len</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+  <span class="n">read_len</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">_READ_CHUNK_SIZE</span><span class="p">,</span> <span class="n">file_len</span><span class="p">)</span>
+
+  <span class="c1"># ... unless we&#39;re supposed to!</span>
+  <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;read_all&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="n">read_len</span> <span class="o">=</span> <span class="n">file_len</span>
+
+  <span class="c1"># Read the first read_len bytes raw, so we can detect the encoding</span>
+  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">raw_handle</span><span class="p">:</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">raw_handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">read_len</span><span class="p">)</span>
+
+  <span class="c1"># Detect the encoding the file specfies, if any.</span>
+  <span class="kn">import</span> <span class="nn">codecs</span>
+  <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">codecs</span><span class="o">.</span><span class="n">BOM_UTF8</span><span class="p">):</span>
+    <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;utf-8-sig&#39;</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Detect encoding using the best detector available</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="c1"># First try ICU. ICU will report ASCII in the first 32 Bytes as</span>
+      <span class="c1"># ISO-8859-1, which isn&#39;t exactly wrong, but maybe optimistic.</span>
+      <span class="kn">import</span> <span class="nn">icu</span>
+      <span class="n">encoding</span> <span class="o">=</span> <span class="n">icu</span><span class="o">.</span><span class="n">CharsetDetector</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span><span class="o">.</span><span class="n">detect</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: nocover</span>
+      <span class="c1"># If that doesn&#39;t work, try chardet - it&#39;s not got native components,</span>
+      <span class="c1"># which is a bonus in some environments, but it&#39;s not as precise.</span>
+      <span class="kn">import</span> <span class="nn">chardet</span>
+      <span class="n">encoding</span> <span class="o">=</span> <span class="n">chardet</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">raw</span><span class="p">)[</span><span class="s1">&#39;encoding&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+      <span class="c1"># Chardet is more brutal in that it reports ASCII if none of the first</span>
+      <span class="c1"># Bytes contain high bits. To emulate ICU, we just bump up the detected</span>
+      <span class="c1"># encoding.</span>
+      <span class="k">if</span> <span class="n">encoding</span> <span class="o">==</span> <span class="s1">&#39;ascii&#39;</span><span class="p">:</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;iso-8859-1&#39;</span>
+
+    <span class="c1"># Both chardet and ICU may detect ISO-8859-x, which may not be possible</span>
+    <span class="c1"># to decode as UTF-8. So whatever they report, we&#39;ll try decoding as</span>
+    <span class="c1"># UTF-8 before reporting it.</span>
+    <span class="k">if</span> <span class="n">default_to_utf8</span> <span class="ow">and</span> <span class="n">encoding</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="s1">&#39;iso-8859-1&#39;</span><span class="p">,</span> <span class="s1">&#39;windows-1252&#39;</span><span class="p">):</span>
+      <span class="c1"># Try decoding as utf-8</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">raw</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="c1"># If this worked... well there&#39;s no guarantee it&#39;s utf-8, to be</span>
+        <span class="c1"># honest.</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span>
+      <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
+        <span class="c1"># Decoding as utf-8 failed, so we can&#39;t default to it.</span>
+        <span class="k">pass</span>
+
+  <span class="k">return</span> <span class="n">encoding</span></div>
+
+
+<div class="viewcode-block" id="read_file"><a class="viewcode-back" href="../../../api/prance.util.fs.html#prance.util.fs.read_file">[docs]</a><span class="k">def</span> <span class="nf">read_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Read and decode a file, taking BOMs into account.</span>
+
+<span class="sd">  :param str filename: The name of the file to read.</span>
+<span class="sd">  :param str encoding: The encoding to use. If not given, detect_encoding is</span>
+<span class="sd">      used to determine the encoding.</span>
+<span class="sd">  :return: The file contents.</span>
+<span class="sd">  :rtype: unicode string</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">filename</span> <span class="o">=</span> <span class="n">from_posix</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">encoding</span><span class="p">:</span>
+    <span class="c1"># Detect encoding</span>
+    <span class="n">encoding</span> <span class="o">=</span> <span class="n">detect_encoding</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+  <span class="c1"># Finally, read the file in the detected encoding</span>
+  <span class="kn">import</span> <span class="nn">io</span>
+  <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="write_file"><a class="viewcode-back" href="../../../api/prance.util.fs.html#prance.util.fs.write_file">[docs]</a><span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Write a file with the given encoding.</span>
+
+<span class="sd">  The default encoding is &#39;utf-8&#39;. It&#39;s recommended not to change that for</span>
+<span class="sd">  JSON or YAML output.</span>
+
+<span class="sd">  :param str filename: The name of the file to read.</span>
+<span class="sd">  :param str contents: The file contents to write.</span>
+<span class="sd">  :param str encoding: The encoding to use. If not given, detect_encoding is</span>
+<span class="sd">      used to determine the encoding.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">encoding</span><span class="p">:</span>
+    <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span>
+
+  <span class="kn">import</span> <span class="nn">io</span>
+  <span class="n">fname</span> <span class="o">=</span> <span class="n">from_posix</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+  <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+    <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

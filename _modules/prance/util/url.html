@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prance.util.url &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.html">prance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.convert.html">prance.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.fs.html">prance.util.fs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.iterators.html">prance.util.iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.resolver.html">prance.util.resolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../prance.html">prance</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for prance.util.url</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;This submodule contains code for fetching/parsing URLs.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jens Finkhaeuser&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s1">&#39;Copyright (c) 2016-2018 Jens Finkhaeuser&#39;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s1">&#39;MIT +no-false-attribs&#39;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">()</span>
+
+
+<span class="kn">import</span> <span class="nn">six.moves.urllib.parse</span> <span class="k">as</span> <span class="nn">parse</span>
+
+
+<div class="viewcode-block" id="ResolutionError"><a class="viewcode-back" href="../../../api/prance.util.url.html#prance.util.url.ResolutionError">[docs]</a><span class="k">class</span> <span class="nc">ResolutionError</span><span class="p">(</span><span class="ne">LookupError</span><span class="p">):</span>
+  <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="urlresource"><a class="viewcode-back" href="../../../api/prance.util.url.html#prance.util.url.urlresource">[docs]</a><span class="k">def</span> <span class="nf">urlresource</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Return the resource part of a parsed URL.</span>
+
+<span class="sd">  The resource part is defined as the part without query, parameters or</span>
+<span class="sd">  fragment. Just the scheme, netloc and path remains.</span>
+
+<span class="sd">  :param tuple url: A parsed URL</span>
+<span class="sd">  :return: The resource part of the URL</span>
+<span class="sd">  :rtype: str</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">res_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">url</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">parse</span><span class="o">.</span><span class="n">ParseResult</span><span class="p">(</span><span class="o">*</span><span class="n">res_list</span><span class="p">)</span><span class="o">.</span><span class="n">geturl</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="absurl"><a class="viewcode-back" href="../../../api/prance.util.url.html#prance.util.url.absurl">[docs]</a><span class="k">def</span> <span class="nf">absurl</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">relative_to</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Turn relative file URLs into absolute file URLs.</span>
+
+<span class="sd">  This is necessary, because while JSON pointers do not allow relative file</span>
+<span class="sd">  URLs, Swagger/OpenAPI explicitly does. We need to make relative paths</span>
+<span class="sd">  absolute before passing them off to jsonschema for verification.</span>
+
+<span class="sd">  Non-file URLs are left untouched. URLs without scheme are assumed to be file</span>
+<span class="sd">  URLs.</span>
+
+<span class="sd">  :param str/tuple url: The input URL.</span>
+<span class="sd">  :param str/tuple relative_to: [optional] The URL to which the input URL is</span>
+<span class="sd">      relative.</span>
+<span class="sd">  :return: The output URL, parsed into components.</span>
+<span class="sd">  :rtype: tuple</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Parse input URL, if necessary</span>
+  <span class="n">parsed</span> <span class="o">=</span> <span class="n">url</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">.fs</span> <span class="kn">import</span> <span class="n">is_pathname_valid</span>
+    <span class="k">if</span> <span class="n">is_pathname_valid</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+      <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">fs</span>
+      <span class="n">url</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">to_posix</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">parsed</span> <span class="o">=</span> <span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+      <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">raise_from</span>
+      <span class="n">raise_from</span><span class="p">(</span><span class="n">ResolutionError</span><span class="p">,</span> <span class="n">ex</span><span class="p">,</span> <span class="s1">&#39;Unable to parse url: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,))</span>
+
+  <span class="c1"># Any non-file scheme we just return immediately.</span>
+  <span class="k">if</span> <span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">parsed</span>
+
+  <span class="c1"># Parse up the reference URL</span>
+  <span class="n">reference</span> <span class="o">=</span> <span class="n">relative_to</span>
+  <span class="k">if</span> <span class="n">reference</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">.fs</span> <span class="kn">import</span> <span class="n">is_pathname_valid</span>
+    <span class="k">if</span> <span class="n">is_pathname_valid</span><span class="p">(</span><span class="n">reference</span><span class="p">):</span>
+      <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">fs</span>
+      <span class="n">reference</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">to_posix</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+
+  <span class="c1"># If the input URL has no path, we assume only its fragment matters.</span>
+  <span class="c1"># That is, we&#39;ll have to set the fragment of the reference URL to that</span>
+  <span class="c1"># of the input URL, and return the result.</span>
+  <span class="kn">import</span> <span class="nn">os.path</span>
+  <span class="kn">from</span> <span class="nn">.fs</span> <span class="kn">import</span> <span class="n">from_posix</span><span class="p">,</span> <span class="n">abspath</span>
+  <span class="n">result_list</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">parsed</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reference</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">reference</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="n">ResolutionError</span><span class="p">(</span><span class="s1">&#39;Cannot build an absolute file URL from a fragment&#39;</span>
+          <span class="s1">&#39; without a reference with path!&#39;</span><span class="p">)</span>
+    <span class="n">result_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+    <span class="n">result_list</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">fragment</span>
+  <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">from_posix</span><span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">path</span><span class="p">)):</span>
+    <span class="c1"># We have an absolute path, so we can ignore the reference entirely!</span>
+    <span class="n">result_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
+    <span class="n">result_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;file&#39;</span>  <span class="c1"># in case it was empty</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="c1"># If we have a relative path, we require a reference.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reference</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="n">ResolutionError</span><span class="p">(</span><span class="s1">&#39;Cannot build an absolute file URL from a relative&#39;</span>
+          <span class="s1">&#39; path without a reference!&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reference</span><span class="o">.</span><span class="n">scheme</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="n">ResolutionError</span><span class="p">(</span><span class="s1">&#39;Cannot build an absolute file URL with a non-file&#39;</span>
+          <span class="s1">&#39; reference!&#39;</span><span class="p">)</span>
+
+    <span class="n">result_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">parsed</span><span class="p">)</span>
+    <span class="n">result_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;file&#39;</span>  <span class="c1"># in case it was empty</span>
+    <span class="n">result_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">from_posix</span><span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">path</span><span class="p">),</span>
+            <span class="n">from_posix</span><span class="p">(</span><span class="n">reference</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+
+  <span class="c1"># Reassemble the result and return it</span>
+  <span class="n">result</span> <span class="o">=</span> <span class="n">parse</span><span class="o">.</span><span class="n">ParseResult</span><span class="p">(</span><span class="o">*</span><span class="n">result_list</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="split_url_reference"><a class="viewcode-back" href="../../../api/prance.util.url.html#prance.util.url.split_url_reference">[docs]</a><span class="k">def</span> <span class="nf">split_url_reference</span><span class="p">(</span><span class="n">base_url</span><span class="p">,</span> <span class="n">reference</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Return a normalized, parsed URL and object path.</span>
+
+<span class="sd">  The reference string is a JSON reference, i.e. a URL with a fragment that</span>
+<span class="sd">  contains an object path into the referenced resource.</span>
+
+<span class="sd">  The base URL is used as a reference point for relative references.</span>
+
+<span class="sd">  :param mixed base_url: A parsed URL.</span>
+<span class="sd">  :param str reference: A JSON reference string.</span>
+<span class="sd">  :return: The parsed absolute URL of the reference and the object path.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Parse URL</span>
+  <span class="n">parsed_url</span> <span class="o">=</span> <span class="n">absurl</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">base_url</span><span class="p">)</span>
+
+  <span class="c1"># Grab object path</span>
+  <span class="n">obj_path</span> <span class="o">=</span> <span class="n">parsed_url</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+  <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj_path</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">obj_path</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+    <span class="n">obj_path</span> <span class="o">=</span> <span class="n">obj_path</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+  <span class="c1"># Normalize the object path by substituting ~1 and ~0 respectively.</span>
+  <span class="k">def</span> <span class="nf">_normalize</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;~1&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;~0&#39;</span><span class="p">,</span> <span class="s1">&#39;~&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">path</span>
+  <span class="n">obj_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">_normalize</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">obj_path</span><span class="p">]</span>
+
+  <span class="k">return</span> <span class="n">parsed_url</span><span class="p">,</span> <span class="n">obj_path</span></div>
+
+
+<div class="viewcode-block" id="fetch_url_text"><a class="viewcode-back" href="../../../api/prance.util.url.html#prance.util.url.fetch_url_text">[docs]</a><span class="k">def</span> <span class="nf">fetch_url_text</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">encoding</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Fetch the URL.</span>
+
+<span class="sd">  If the URL is a file URL, the format used for parsing depends on the file</span>
+<span class="sd">  extension. Otherwise, YAML is assumed.</span>
+
+<span class="sd">  The URL may also use the `python` scheme. In this scheme, the netloc part</span>
+<span class="sd">  refers to an importable python package, and the path part to a path relative</span>
+<span class="sd">  to the package path, e.g. `python://some_package/path/to/file.yaml`.</span>
+
+<span class="sd">  :param tuple url: The url, parsed as returned by `absurl` above.</span>
+<span class="sd">  :param Mapping cache: An optional cache. If the URL can be found in the</span>
+<span class="sd">    cache, return the cache contents.</span>
+<span class="sd">  :param str encoding: Provide an encoding for local URLs to override</span>
+<span class="sd">    encoding detection, if desired. Defaults to None.</span>
+<span class="sd">  :return: The resource text of the URL, and the content type.</span>
+<span class="sd">  :rtype: tuple</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">url_key</span> <span class="o">=</span> <span class="s1">&#39;text_&#39;</span> <span class="o">+</span> <span class="n">urlresource</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+  <span class="n">entry</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">entry</span>
+
+  <span class="c1"># Fetch contents according to scheme. We assume requests can handle all the</span>
+  <span class="c1"># non-file schemes, or throw otherwise.</span>
+  <span class="n">content</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">content_type</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">scheme</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">.fs</span> <span class="kn">import</span> <span class="n">read_file</span><span class="p">,</span> <span class="n">from_posix</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">content</span> <span class="o">=</span> <span class="n">read_file</span><span class="p">(</span><span class="n">from_posix</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">),</span> <span class="n">encoding</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+      <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">raise_from</span>
+      <span class="n">raise_from</span><span class="p">(</span><span class="n">ResolutionError</span><span class="p">,</span> <span class="n">ex</span><span class="p">,</span> <span class="s1">&#39;File not found: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">,))</span>
+  <span class="k">elif</span> <span class="n">url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s1">&#39;python&#39;</span><span class="p">:</span>
+    <span class="c1"># Resolve package path</span>
+    <span class="n">package</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">netloc</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span>
+    <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span><span class="p">:</span>
+      <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="kn">import</span> <span class="nn">pkg_resources</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="kn">from</span> <span class="nn">.fs</span> <span class="kn">import</span> <span class="n">read_file</span><span class="p">,</span> <span class="n">from_posix</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">read_file</span><span class="p">(</span><span class="n">from_posix</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">encoding</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">requests</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">geturl</span><span class="p">())</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>  <span class="c1"># pragma: nocover</span>
+      <span class="k">raise</span> <span class="n">ResolutionError</span><span class="p">(</span><span class="s1">&#39;Cannot fetch URL &quot;</span><span class="si">%s</span><span class="s1">&quot;: </span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">url</span><span class="o">.</span><span class="n">geturl</span><span class="p">(),</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">reason</span><span class="p">))</span>
+    <span class="n">content_type</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;content-type&#39;</span><span class="p">,</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+
+  <span class="n">cache</span><span class="p">[</span><span class="n">url_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">content_type</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">content</span><span class="p">,</span> <span class="n">content_type</span></div>
+
+
+<div class="viewcode-block" id="fetch_url"><a class="viewcode-back" href="../../../api/prance.util.url.html#prance.util.url.fetch_url">[docs]</a><span class="k">def</span> <span class="nf">fetch_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">encoding</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">strict</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Fetch the URL and parse the contents.</span>
+
+<span class="sd">  Same as fetch_url_text(), but also parses the content and only</span>
+<span class="sd">  returns the parse results.</span>
+
+<span class="sd">  :param tuple url: The url, parsed as returned by `absurl` above.</span>
+<span class="sd">  :param Mapping cache: An optional cache. If the URL can be found in the</span>
+<span class="sd">    cache, return the cache contents.</span>
+<span class="sd">  :param str encoding: Provide an encoding for local URLs to override</span>
+<span class="sd">    encoding detection, if desired. Defaults to None.</span>
+<span class="sd">  :return: The parsed file.</span>
+<span class="sd">  :rtype: dict</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Return from cache, if parsed result is already present.</span>
+  <span class="n">url_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">urlresource</span><span class="p">(</span><span class="n">url</span><span class="p">),</span> <span class="n">strict</span><span class="p">)</span>
+  <span class="n">entry</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+  <span class="c1"># Fetch URL text</span>
+  <span class="n">content</span><span class="p">,</span> <span class="n">content_type</span> <span class="o">=</span> <span class="n">fetch_url_text</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span><span class="p">)</span>
+
+  <span class="c1"># Parse the result</span>
+  <span class="kn">from</span> <span class="nn">.formats</span> <span class="kn">import</span> <span class="n">parse_spec</span>
+  <span class="n">result</span> <span class="o">=</span> <span class="n">parse_spec</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">content_type</span> <span class="o">=</span> <span class="n">content_type</span><span class="p">)</span>
+
+  <span class="c1"># Perform some sanitization in lenient mode.</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">strict</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">stringify_keys</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">stringify_keys</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+  <span class="c1"># Cache and return result</span>
+  <span class="n">cache</span><span class="p">[</span><span class="n">url_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+  <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

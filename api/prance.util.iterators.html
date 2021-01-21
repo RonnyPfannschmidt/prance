@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prance.util.iterators &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="prance.util.resolver" href="prance.util.resolver.html" />
+    <link rel="prev" title="prance.util.fs" href="prance.util.fs.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="prance.html">prance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.convert.html">prance.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.fs.html">prance.util.fs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">prance.util.iterators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.resolver.html">prance.util.resolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="prance.util.fs.html" title="previous chapter">prance.util.fs</a></li>
+      <li>Next: <a href="prance.util.resolver.html" title="next chapter">prance.util.resolver</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="prance-util-iterators">
+<h1>prance.util.iterators<a class="headerlink" href="#prance-util-iterators" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-prance.util.iterators"></span><p>This submodule contains specialty iterators over specs.</p>
+<dl class="py function">
+<dt id="prance.util.iterators.item_iterator">
+<code class="sig-prename descclassname">prance.util.iterators.</code><code class="sig-name descname">item_iterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/iterators.html#item_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.iterators.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return item iterator over the a nested dict- or list-like object.</p>
+<p>Returns each item value as the second item to unpack, and a tuple path to the
+item as the first value - in that, it behaves much like viewitems(). For list
+like values, the path is made up of numeric indices.</p>
+<p>Given a spec such as this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spec</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+  <span class="s1">&#39;bar&#39;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;some&#39;</span><span class="p">:</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="s1">&#39;baz&#39;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="mi">1</span><span class="p">:</span> <span class="mi">2</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">4</span> <span class="p">},</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here, (parts of) the yielded values would be:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 62%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>item</p></th>
+<th class="head"><p>path</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>[…]</p></td>
+<td><p>(‘baz’,)</p></td>
+</tr>
+<tr class="row-odd"><td><p>{ 1: 2 }</p></td>
+<td><p>(‘baz’, 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>(‘baz’, 0, 1)</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>dict/list</em>) – The specifications to iterate over.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An iterator over all items in the value.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>iterator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.util.iterators.reference_iterator">
+<code class="sig-prename descclassname">prance.util.iterators.</code><code class="sig-name descname">reference_iterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">specs</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/iterators.html#reference_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.iterators.reference_iterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate through the given specs, returning only references.</p>
+<dl class="simple">
+<dt>The iterator returns three values:</dt><dd><ul class="simple">
+<li><p>The key, mimicking the behaviour of other iterators, although
+it will always equal ‘$ref’</p></li>
+<li><p>The value</p></li>
+<li><p>The path to the item. This is a tuple of all the item’s ancestors,
+in sequence, so that you can reasonably easily find the containing
+item. It does not include the final ‘$ref’ key.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>specs</strong> (<em>dict</em>) – The specifications to iterate over.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An iterator over all references in the specs.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>iterator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="id0">
+<code class="sig-prename descclassname">prance.util.iterators.</code><code class="sig-name descname">item_iterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/iterators.html#item_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return item iterator over the a nested dict- or list-like object.</p>
+<p>Returns each item value as the second item to unpack, and a tuple path to the
+item as the first value - in that, it behaves much like viewitems(). For list
+like values, the path is made up of numeric indices.</p>
+<p>Given a spec such as this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spec</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+  <span class="s1">&#39;bar&#39;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;some&#39;</span><span class="p">:</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="s1">&#39;baz&#39;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="mi">1</span><span class="p">:</span> <span class="mi">2</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">4</span> <span class="p">},</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here, (parts of) the yielded values would be:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 62%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>item</p></th>
+<th class="head"><p>path</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>[…]</p></td>
+<td><p>(‘baz’,)</p></td>
+</tr>
+<tr class="row-odd"><td><p>{ 1: 2 }</p></td>
+<td><p>(‘baz’, 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>(‘baz’, 0, 1)</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>dict/list</em>) – The specifications to iterate over.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An iterator over all items in the value.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>iterator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="id1">
+<code class="sig-prename descclassname">prance.util.iterators.</code><code class="sig-name descname">reference_iterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">specs</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/iterators.html#reference_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate through the given specs, returning only references.</p>
+<dl class="simple">
+<dt>The iterator returns three values:</dt><dd><ul class="simple">
+<li><p>The key, mimicking the behaviour of other iterators, although
+it will always equal ‘$ref’</p></li>
+<li><p>The value</p></li>
+<li><p>The path to the item. This is a tuple of all the item’s ancestors,
+in sequence, so that you can reasonably easily find the containing
+item. It does not include the final ‘$ref’ key.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>specs</strong> (<em>dict</em>) – The specifications to iterate over.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An iterator over all references in the specs.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>iterator</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

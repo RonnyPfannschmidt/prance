@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prance.convert &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="prance.util.formats" href="prance.util.formats.html" />
+    <link rel="prev" title="prance.mixins" href="prance.mixins.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="prance.html">prance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">prance.convert</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.fs.html">prance.util.fs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.iterators.html">prance.util.iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.resolver.html">prance.util.resolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="prance.mixins.html" title="previous chapter">prance.mixins</a></li>
+      <li>Next: <a href="prance.util.formats.html" title="next chapter">prance.util.formats</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="prance-convert">
+<h1>prance.convert<a class="headerlink" href="#prance-convert" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-prance.convert"></span><p>Functionality for converting from Swagger/OpenAPI 2.0 to OpenAPI 3.0.0.</p>
+<p>The functions use <a class="reference external" href="https://mermade.org.uk/">https://mermade.org.uk/</a> APIs for conversion.</p>
+<dl class="py exception">
+<dt id="prance.convert.ConversionError">
+<em class="property">exception </em><code class="sig-prename descclassname">prance.convert.</code><code class="sig-name descname">ConversionError</code><a class="reference internal" href="../_modules/prance/convert.html#ConversionError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.convert.ConversionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></p>
+<dl class="py method">
+<dt id="prance.convert.ConversionError.with_traceback">
+<code class="sig-name descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#prance.convert.ConversionError.with_traceback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="prance.convert.ConversionError.args">
+<code class="sig-name descname">args</code><a class="headerlink" href="#prance.convert.ConversionError.args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.convert.convert_spec">
+<code class="sig-prename descclassname">prance.convert.</code><code class="sig-name descname">convert_spec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parser_or_spec</span></em>, <em class="sig-param"><span class="n">parser_klass</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/convert.html#convert_spec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.convert.convert_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an already parsed spec to OpenAPI 3.x.y.</p>
+<p>Returns a new parser instance with the parsed specs, if possible.</p>
+<p>The first parameter is either a parsed OpenAPI 2.0 spec, or a parser
+instance, i.e. something derived from prance.BaseParser. If a parser,
+the returned parser’s options are taken from this source parser.</p>
+<p>If the first parameter is a parsed spec, you must specify the class
+of parser to instanciate. You can specify other options as key word
+arguments. See the parser klass for details.</p>
+<p>Any key word arguments specified here also override options from a
+source parser.</p>
+<p>This parametrization may seem a little convoluted. What it does, though,
+is allow maximum flexibility. You can create parsed (but unvalidated)
+OpenAPI 3.0 specs even if you only have backends that support vresion 2.0.
+You can pass the source parser, and the lazy flag, and that’s it. If your
+version 2.0 specs were valid, there’s a good chance your converted 3.0
+specs are also valid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parser_or_spec</strong> (<em>mixed</em>) – A dict (spec) or an instance of BaseParser</p></li>
+<li><p><strong>parser_klass</strong> (<em>type</em>) – [optional] A parser class to instanciate for
+the result.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A parser instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="prance.html#prance.BaseParser" title="prance.BaseParser">BaseParser</a> or derived.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.convert.convert_str">
+<code class="sig-prename descclassname">prance.convert.</code><code class="sig-name descname">convert_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spec_str</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/convert.html#convert_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.convert.convert_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the serialized spec.</p>
+<p>We parse the spec first to ensure there is no parse error, then
+send it off to the API for conversion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec_str</strong> (<em>str</em>) – The specifications as string.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – [optional] Filename to determine the format from.</p></li>
+<li><p><strong>content_type</strong> (<em>str</em>) – [optional] Content type to determine the format
+from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The converted spec and content type.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="prance.util.formats.html#id0" title="prance.util.formats.ParseError"><strong>ParseError</strong></a> – when parsing fails.</p></li>
+<li><p><a class="reference internal" href="#id0" title="prance.convert.ConversionError"><strong>ConversionError</strong></a> – when conversion fails.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.convert.convert_url">
+<code class="sig-prename descclassname">prance.convert.</code><code class="sig-name descname">convert_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">cache</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/convert.html#convert_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.convert.convert_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch a URL, and try to convert it to OpenAPI 3.x.y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – The URL to fetch.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The converted spec and content type.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="prance.util.formats.html#id0" title="prance.util.formats.ParseError"><strong>ParseError</strong></a> – when parsing fails.</p></li>
+<li><p><a class="reference internal" href="#id0" title="prance.convert.ConversionError"><strong>ConversionError</strong></a> – when conversion fails.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt id="id0">
+<em class="property">exception </em><code class="sig-prename descclassname">prance.convert.</code><code class="sig-name descname">ConversionError</code><a class="reference internal" href="../_modules/prance/convert.html#ConversionError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></p>
+<dl class="py method">
+<dt id="id1">
+<code class="sig-name descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="id2">
+<code class="sig-prename descclassname">prance.convert.</code><code class="sig-name descname">convert_spec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parser_or_spec</span></em>, <em class="sig-param"><span class="n">parser_klass</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/convert.html#convert_spec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an already parsed spec to OpenAPI 3.x.y.</p>
+<p>Returns a new parser instance with the parsed specs, if possible.</p>
+<p>The first parameter is either a parsed OpenAPI 2.0 spec, or a parser
+instance, i.e. something derived from prance.BaseParser. If a parser,
+the returned parser’s options are taken from this source parser.</p>
+<p>If the first parameter is a parsed spec, you must specify the class
+of parser to instanciate. You can specify other options as key word
+arguments. See the parser klass for details.</p>
+<p>Any key word arguments specified here also override options from a
+source parser.</p>
+<p>This parametrization may seem a little convoluted. What it does, though,
+is allow maximum flexibility. You can create parsed (but unvalidated)
+OpenAPI 3.0 specs even if you only have backends that support vresion 2.0.
+You can pass the source parser, and the lazy flag, and that’s it. If your
+version 2.0 specs were valid, there’s a good chance your converted 3.0
+specs are also valid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parser_or_spec</strong> (<em>mixed</em>) – A dict (spec) or an instance of BaseParser</p></li>
+<li><p><strong>parser_klass</strong> (<em>type</em>) – [optional] A parser class to instanciate for
+the result.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A parser instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="prance.html#prance.BaseParser" title="prance.BaseParser">BaseParser</a> or derived.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="id3">
+<code class="sig-prename descclassname">prance.convert.</code><code class="sig-name descname">convert_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spec_str</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/convert.html#convert_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the serialized spec.</p>
+<p>We parse the spec first to ensure there is no parse error, then
+send it off to the API for conversion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec_str</strong> (<em>str</em>) – The specifications as string.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – [optional] Filename to determine the format from.</p></li>
+<li><p><strong>content_type</strong> (<em>str</em>) – [optional] Content type to determine the format
+from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The converted spec and content type.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="prance.util.formats.html#id0" title="prance.util.formats.ParseError"><strong>ParseError</strong></a> – when parsing fails.</p></li>
+<li><p><a class="reference internal" href="#id0" title="prance.convert.ConversionError"><strong>ConversionError</strong></a> – when conversion fails.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="id4">
+<code class="sig-prename descclassname">prance.convert.</code><code class="sig-name descname">convert_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">cache</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/convert.html#convert_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch a URL, and try to convert it to OpenAPI 3.x.y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – The URL to fetch.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The converted spec and content type.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="prance.util.formats.html#id0" title="prance.util.formats.ParseError"><strong>ParseError</strong></a> – when parsing fails.</p></li>
+<li><p><a class="reference internal" href="#id0" title="prance.convert.ConversionError"><strong>ConversionError</strong></a> – when conversion fails.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

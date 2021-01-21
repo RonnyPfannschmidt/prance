@@ -1,0 +1,46 @@
+﻿prance.mixins
+=============
+
+.. toctree::
+
+.. automodule:: prance.mixins
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+
+
+
+
+
+
+
+Classes
+-------
+
+
+.. autoclass:: CacheSpecsMixin
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+.. autoclass:: JSONMixin
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+.. autoclass:: YAMLMixin
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+
+
+
+
+
+

@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prance.util.formats &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.html">prance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.convert.html">prance.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.fs.html">prance.util.fs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.iterators.html">prance.util.iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.resolver.html">prance.util.resolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../prance.html">prance</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for prance.util.formats</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;This submodule contains file format related utility code for Prance.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jens Finkhaeuser&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s1">&#39;Copyright (c) 2016-2018 Jens Finkhaeuser&#39;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s1">&#39;MIT +no-false-attribs&#39;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">()</span>
+
+
+<div class="viewcode-block" id="ParseError"><a class="viewcode-back" href="../../../api/prance.util.formats.html#prance.util.formats.ParseError">[docs]</a><span class="k">class</span> <span class="nc">ParseError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+  <span class="k">pass</span>  <span class="c1"># pragma: nocover</span></div>
+
+
+<span class="k">def</span> <span class="nf">__format_preferences</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">content_type</span><span class="p">):</span>  <span class="c1"># noqa: N802</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Detect the format based on file name and content type.</span>
+
+<span class="sd">  Each parameter may be None, so a heuristic can be used in the end.</span>
+
+<span class="sd">  :return: A tuple of format strings, in the optimal order to try.</span>
+<span class="sd">  :rtype: tuple</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Select the correct format.</span>
+  <span class="c1"># 1) If there is neither file name nor content type, use a heuristic.</span>
+  <span class="c1"># 2) If there is a file name but no content type, use the file extension.</span>
+  <span class="c1"># 3) If there is no file name, but a content type, use the content type.</span>
+  <span class="c1"># 4) If both are present, prefer the content type.</span>
+  <span class="c1"># 5) use a heuristic either way to catch bad content types, file names,</span>
+  <span class="c1">#    etc. The selection process above is just the most likely match!</span>
+  <span class="n">best</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="k">if</span> <span class="n">filename</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">content_type</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">splitext</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">extensions</span> <span class="ow">in</span> <span class="n">__EXT_TO_FORMAT</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">extensions</span><span class="p">:</span>
+        <span class="n">best</span> <span class="o">=</span> <span class="n">__EXT_TO_FORMAT</span><span class="p">[</span><span class="n">extensions</span><span class="p">]</span>
+
+  <span class="k">elif</span> <span class="n">content_type</span><span class="p">:</span>
+    <span class="c1"># Split off the first part of the content type; for us, that&#39;s enough.</span>
+    <span class="n">content_type</span> <span class="o">=</span> <span class="n">content_type</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">ctypes</span> <span class="ow">in</span> <span class="n">__MIME_TO_FORMAT</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">content_type</span> <span class="ow">in</span> <span class="n">ctypes</span><span class="p">:</span>
+        <span class="n">best</span> <span class="o">=</span> <span class="n">__MIME_TO_FORMAT</span><span class="p">[</span><span class="n">ctypes</span><span class="p">]</span>
+
+  <span class="c1"># If we have no best format yet, we need to use a heuristic. This is tricky;</span>
+  <span class="c1"># Swagger is largely YAML-based, but JSON is used for remote references. In</span>
+  <span class="c1"># the end, JSON is probably more likely to match.</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">best</span><span class="p">:</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="s1">&#39;JSON&#39;</span>
+
+  <span class="c1"># Now assemble an ordered list of formats to return, with the best format</span>
+  <span class="c1"># first.</span>
+  <span class="n">formats</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">__EXT_TO_FORMAT</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+  <span class="n">formats</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">best</span><span class="p">)</span>
+  <span class="n">formats</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">best</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">formats</span><span class="p">)</span>
+
+
+<span class="c1"># Basic parse functions</span>
+<span class="k">def</span> <span class="nf">__parse_yaml</span><span class="p">(</span><span class="n">spec_str</span><span class="p">):</span>  <span class="c1"># noqa: N802</span>
+  <span class="kn">import</span> <span class="nn">yaml</span><span class="o">,</span> <span class="nn">yaml.parser</span><span class="o">,</span> <span class="nn">six</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">(</span><span class="n">spec_str</span><span class="p">))</span>
+  <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">ParserError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">__parse_json</span><span class="p">(</span><span class="n">spec_str</span><span class="p">):</span>  <span class="c1"># noqa: N802</span>
+  <span class="kn">import</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">six</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">(</span><span class="n">spec_str</span><span class="p">))</span>
+  <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+
+
+<span class="c1"># Basic serialization functions</span>
+<span class="k">def</span> <span class="nf">__serialize_yaml</span><span class="p">(</span><span class="n">specs</span><span class="p">):</span>  <span class="c1"># noqa: N802</span>
+  <span class="c1"># I don&#39;t know what the PyYAML authors smoked, but in order for it to parse</span>
+  <span class="c1"># unicode specs and not mess encoding up, you need to allow_unicode and</span>
+  <span class="c1"># explicitly set the encoding to None.</span>
+  <span class="kn">import</span> <span class="nn">yaml</span>
+  <span class="n">utf</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span>
+                  <span class="n">allow_unicode</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="n">encoding</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">default_flow_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+
+  <span class="kn">import</span> <span class="nn">six</span>
+  <span class="k">return</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">(</span><span class="n">utf</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">__serialize_json</span><span class="p">(</span><span class="n">specs</span><span class="p">):</span>  <span class="c1"># noqa: N802</span>
+  <span class="c1"># The default encoding is utf-8, no need to specify it. But we need to switch</span>
+  <span class="c1"># off ensure_ascii, otherwise we do not get a unicode string back.</span>
+  <span class="kn">import</span> <span class="nn">json</span>
+  <span class="n">utf</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="n">ensure_ascii</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+
+  <span class="kn">import</span> <span class="nn">six</span>
+  <span class="k">return</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">(</span><span class="n">utf</span><span class="p">)</span>
+
+
+<span class="c1"># Map file name extensions to parse/serialize functions</span>
+<span class="n">__EXT_TO_FORMAT</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">(</span><span class="s1">&#39;.yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;.yml&#39;</span><span class="p">):</span> <span class="s1">&#39;YAML&#39;</span><span class="p">,</span>
+  <span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="s1">&#39;.js&#39;</span><span class="p">):</span> <span class="s1">&#39;JSON&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">__MIME_TO_FORMAT</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">(</span><span class="s1">&#39;application/json&#39;</span><span class="p">,</span> <span class="s1">&#39;application/javascript&#39;</span><span class="p">):</span> <span class="s1">&#39;JSON&#39;</span><span class="p">,</span>
+  <span class="p">(</span><span class="s1">&#39;application/x-yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;text/yaml&#39;</span><span class="p">):</span> <span class="s1">&#39;YAML&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="n">__FORMAT_TO_PARSER</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">&#39;YAML&#39;</span><span class="p">:</span> <span class="n">__parse_yaml</span><span class="p">,</span>
+  <span class="s1">&#39;JSON&#39;</span><span class="p">:</span> <span class="n">__parse_json</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">__FORMAT_TO_SERIALIZER</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">&#39;YAML&#39;</span><span class="p">:</span> <span class="n">__serialize_yaml</span><span class="p">,</span>
+  <span class="s1">&#39;JSON&#39;</span><span class="p">:</span> <span class="n">__serialize_json</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="format_info"><a class="viewcode-back" href="../../../api/prance.util.formats.html#prance.util.formats.format_info">[docs]</a><span class="k">def</span> <span class="nf">format_info</span><span class="p">(</span><span class="n">format_name</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Return content type and extension for a supported format.</span>
+
+<span class="sd">  Valid formats are `YAML` or `JSON`.</span>
+
+<span class="sd">  :param str format_name: The name of the format.</span>
+<span class="sd">  :return: The preferred content type and file name extension, or</span>
+<span class="sd">      (None, None) if the format name is not supported.</span>
+<span class="sd">  :rtype: tuple</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">format_name</span> <span class="o">=</span> <span class="n">format_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+  <span class="n">content_type</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="k">for</span> <span class="n">content_types</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">__MIME_TO_FORMAT</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">format_name</span><span class="p">:</span>
+      <span class="n">content_type</span> <span class="o">=</span> <span class="n">content_types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+  <span class="n">extension</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="k">for</span> <span class="n">extensions</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">__EXT_TO_FORMAT</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">format_name</span><span class="p">:</span>
+       <span class="n">extension</span> <span class="o">=</span> <span class="n">extensions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+  <span class="k">return</span> <span class="n">content_type</span><span class="p">,</span> <span class="n">extension</span></div>
+
+
+<div class="viewcode-block" id="parse_spec_details"><a class="viewcode-back" href="../../../api/prance.util.formats.html#prance.util.formats.parse_spec_details">[docs]</a><span class="k">def</span> <span class="nf">parse_spec_details</span><span class="p">(</span><span class="n">spec_str</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Return a parsed dict of the given spec string.</span>
+
+<span class="sd">  Also returned are the detected mime type and file name extension.</span>
+
+<span class="sd">  The default format is assumed to be JSON, but if you provide a filename,</span>
+<span class="sd">  its extension is used to determine whether YAML or JSON should be</span>
+<span class="sd">  parsed.</span>
+
+<span class="sd">  :param str spec_str: The specifications as string.</span>
+<span class="sd">  :param str filename: [optional] Filename to determine the format from.</span>
+<span class="sd">  :param str content_type: [optional] Content type to determine the format</span>
+<span class="sd">      from.</span>
+<span class="sd">  :return: The specifications, mime type, and extension.</span>
+<span class="sd">  :rtype: tuple</span>
+<span class="sd">  :raises ParseError: when parsing fails.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Fetch optional content type &amp; determine formats</span>
+  <span class="n">content_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;content_type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+  <span class="n">formats</span> <span class="o">=</span> <span class="n">__format_preferences</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">content_type</span><span class="p">)</span>
+
+  <span class="c1"># Try parsing each format in order</span>
+  <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">formats</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">__FORMAT_TO_PARSER</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="n">parser</span><span class="p">(</span><span class="n">spec_str</span><span class="p">)</span>
+      <span class="n">ctype</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">format_info</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">ctype</span><span class="p">,</span> <span class="n">ext</span>
+    <span class="k">except</span> <span class="n">ParseError</span><span class="p">:</span>
+      <span class="k">pass</span>
+
+  <span class="c1"># All failed!</span>
+  <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="s1">&#39;Could not detect format of spec string!&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parse_spec"><a class="viewcode-back" href="../../../api/prance.util.formats.html#prance.util.formats.parse_spec">[docs]</a><span class="k">def</span> <span class="nf">parse_spec</span><span class="p">(</span><span class="n">spec_str</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Return a parsed dict of the given spec string.</span>
+
+<span class="sd">  The function exists for legacy reasons and just wraps parse_spec_details,</span>
+<span class="sd">  returning only the parsed specs.</span>
+
+<span class="sd">  :param str spec_str: The specifications as string.</span>
+<span class="sd">  :param str filename: [optional] Filename to determine the format from.</span>
+<span class="sd">  :param str content_type: [optional] Content type to determine the format</span>
+<span class="sd">      from.</span>
+<span class="sd">  :return: The specifications.</span>
+<span class="sd">  :rtype: dict</span>
+<span class="sd">  :raises ParseError: when parsing fails.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">result</span><span class="p">,</span> <span class="n">ctype</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">parse_spec_details</span><span class="p">(</span><span class="n">spec_str</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="serialize_spec"><a class="viewcode-back" href="../../../api/prance.util.formats.html#prance.util.formats.serialize_spec">[docs]</a><span class="k">def</span> <span class="nf">serialize_spec</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Return a serialized version of the given spec.</span>
+
+<span class="sd">  The default format is assumed to be JSON, but if you provide a filename,</span>
+<span class="sd">  its extension is used to determine whether YAML or JSON should be</span>
+<span class="sd">  parsed.</span>
+
+<span class="sd">  :param dict specs: The specifications as dict.</span>
+<span class="sd">  :param str filename: [optional] Filename to determine the format from.</span>
+<span class="sd">  :param str content_type: [optional] Content type to determine the format</span>
+<span class="sd">      from.</span>
+<span class="sd">  :return: The serialized specifications.</span>
+<span class="sd">  :rtype: str</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Fetch optional content type &amp; determine formats</span>
+  <span class="n">content_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;content_type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+  <span class="n">formats</span> <span class="o">=</span> <span class="n">__format_preferences</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">content_type</span><span class="p">)</span>
+
+  <span class="c1"># Instead of trying to parse various formats, we only serialize to the first</span>
+  <span class="c1"># one in the list - nothing else makes much sense.</span>
+  <span class="n">serializer</span> <span class="o">=</span> <span class="n">__FORMAT_TO_SERIALIZER</span><span class="p">[</span><span class="n">formats</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+  <span class="k">return</span> <span class="n">serializer</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

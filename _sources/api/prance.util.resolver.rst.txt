@@ -1,0 +1,43 @@
+﻿prance.util.resolver
+====================
+
+.. toctree::
+
+.. automodule:: prance.util.resolver
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+
+
+
+
+
+
+
+Classes
+-------
+
+
+.. autoclass:: RefResolver
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+
+
+
+
+
+
+
+Functions
+---------
+
+
+.. autofunction:: default_reclimit_handler
+
+
+

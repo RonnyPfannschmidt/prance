@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prance.util.iterators &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.html">prance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.convert.html">prance.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.fs.html">prance.util.fs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.iterators.html">prance.util.iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.resolver.html">prance.util.resolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../prance.html">prance</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for prance.util.iterators</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;This submodule contains specialty iterators over specs.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jens Finkhaeuser&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s1">&#39;Copyright (c) 2016-2018 Jens Finkhaeuser&#39;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s1">&#39;MIT +no-false-attribs&#39;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">()</span>
+
+
+<div class="viewcode-block" id="item_iterator"><a class="viewcode-back" href="../../../api/prance.util.iterators.html#prance.util.iterators.item_iterator">[docs]</a><span class="k">def</span> <span class="nf">item_iterator</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="p">()):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Return item iterator over the a nested dict- or list-like object.</span>
+
+<span class="sd">  Returns each item value as the second item to unpack, and a tuple path to the</span>
+<span class="sd">  item as the first value - in that, it behaves much like viewitems(). For list</span>
+<span class="sd">  like values, the path is made up of numeric indices.</span>
+
+<span class="sd">  Given a spec such as this::</span>
+
+<span class="sd">    spec = {</span>
+<span class="sd">      &#39;foo&#39;: 42,</span>
+<span class="sd">      &#39;bar&#39;: {</span>
+<span class="sd">        &#39;some&#39;: &#39;dict&#39;,</span>
+<span class="sd">      },</span>
+<span class="sd">      &#39;baz&#39;: [</span>
+<span class="sd">        { 1: 2 },</span>
+<span class="sd">        { 3: 4 },</span>
+<span class="sd">      ]</span>
+<span class="sd">    }</span>
+
+<span class="sd">  Here, (parts of) the yielded values would be:</span>
+
+<span class="sd">    ======== =============</span>
+<span class="sd">    item     path</span>
+<span class="sd">    ======== =============</span>
+<span class="sd">    [...]    (&#39;baz&#39;,)</span>
+<span class="sd">    { 1: 2 } (&#39;baz&#39;, 0)</span>
+<span class="sd">    2        (&#39;baz&#39;, 0, 1)</span>
+<span class="sd">    ======== =============</span>
+
+<span class="sd">  :param dict/list value: The specifications to iterate over.</span>
+<span class="sd">  :return: An iterator over all items in the value.</span>
+<span class="sd">  :rtype: iterator</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Yield the top-level object, always</span>
+  <span class="k">yield</span> <span class="n">path</span><span class="p">,</span> <span class="n">value</span>
+
+  <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
+
+  <span class="c1"># For dict and list like objects, we also need to yield each item</span>
+  <span class="c1"># recursively.</span>
+  <span class="kn">import</span> <span class="nn">six</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">viewitems</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">inner_path</span><span class="p">,</span> <span class="n">inner</span> <span class="ow">in</span> <span class="n">item_iterator</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="p">(</span><span class="n">key</span><span class="p">,)):</span>
+        <span class="k">yield</span> <span class="n">inner_path</span><span class="p">,</span> <span class="n">inner</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span>
+         <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">inner_path</span><span class="p">,</span> <span class="n">inner</span> <span class="ow">in</span> <span class="n">item_iterator</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="p">(</span><span class="n">idx</span><span class="p">,)):</span>
+        <span class="k">yield</span> <span class="n">inner_path</span><span class="p">,</span> <span class="n">inner</span></div>
+
+
+<div class="viewcode-block" id="reference_iterator"><a class="viewcode-back" href="../../../api/prance.util.iterators.html#prance.util.iterators.reference_iterator">[docs]</a><span class="k">def</span> <span class="nf">reference_iterator</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="p">()):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Iterate through the given specs, returning only references.</span>
+
+<span class="sd">  The iterator returns three values:</span>
+<span class="sd">    - The key, mimicking the behaviour of other iterators, although</span>
+<span class="sd">      it will always equal &#39;$ref&#39;</span>
+<span class="sd">    - The value</span>
+<span class="sd">    - The path to the item. This is a tuple of all the item&#39;s ancestors,</span>
+<span class="sd">      in sequence, so that you can reasonably easily find the containing</span>
+<span class="sd">      item. It does not include the final &#39;$ref&#39; key.</span>
+
+<span class="sd">  :param dict specs: The specifications to iterate over.</span>
+<span class="sd">  :return: An iterator over all references in the specs.</span>
+<span class="sd">  :rtype: iterator</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># We need to iterate through the nested specification dict, so let&#39;s</span>
+  <span class="c1"># start with an appropriate iterator. We can immediately optimize it by</span>
+  <span class="c1"># only returning &#39;$ref&#39; items.</span>
+  <span class="k">for</span> <span class="n">item_path</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">item_iterator</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_path</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">continue</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">item_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;$ref&#39;</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">item_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

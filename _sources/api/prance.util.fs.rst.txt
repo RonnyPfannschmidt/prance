@@ -1,0 +1,44 @@
+﻿prance.util.fs
+==============
+
+.. toctree::
+
+.. automodule:: prance.util.fs
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+
+
+
+
+
+
+
+
+
+
+
+Functions
+---------
+
+
+.. autofunction:: abspath
+
+.. autofunction:: canonical_filename
+
+.. autofunction:: detect_encoding
+
+.. autofunction:: from_posix
+
+.. autofunction:: is_pathname_valid
+
+.. autofunction:: read_file
+
+.. autofunction:: to_posix
+
+.. autofunction:: write_file
+
+
+

@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prance.util.fs &#8212; prance 0.20.2 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="prance.util.iterators" href="prance.util.iterators.html" />
+    <link rel="prev" title="prance.util.formats" href="prance.util.formats.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">prance</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jfinkhaeuser&repo=prance&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="prance.html">prance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.mixins.html">prance.mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.convert.html">prance.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.formats.html">prance.util.formats</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">prance.util.fs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.iterators.html">prance.util.iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.resolver.html">prance.util.resolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.url.html">prance.util.url</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.exceptions.html">prance.util.exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prance.util.path.html">prance.util.path</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="prance.util.formats.html" title="previous chapter">prance.util.formats</a></li>
+      <li>Next: <a href="prance.util.iterators.html" title="next chapter">prance.util.iterators</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="prance-util-fs">
+<h1>prance.util.fs<a class="headerlink" href="#prance-util-fs" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-prance.util.fs"></span><p>This submodule contains file system utilities for Prance.</p>
+<dl class="py function">
+<dt id="prance.util.fs.abspath">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">abspath</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">relative_to</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#abspath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.fs.abspath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the absolute path of a file relative to a reference file.</p>
+<p>If no reference file is given, this function works identical to
+<cite>canonical_filename</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – The filename to make absolute.</p></li>
+<li><p><strong>relative_to</strong> (<em>str</em>) – [optional] the reference file name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The absolute path</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.util.fs.canonical_filename">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">canonical_filename</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#canonical_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.fs.canonical_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the canonical version of a file name.</p>
+<p>The canonical version is defined as the absolute path, and all file system
+links dereferenced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – The filename to make canonical.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The canonical filename.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.util.fs.detect_encoding">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">detect_encoding</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">default_to_utf8</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#detect_encoding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.fs.detect_encoding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detect the named file’s character encoding.</p>
+<p>If the first parts of the file appear to be ASCII, this function returns
+‘UTF-8’, as that’s a safe superset of ASCII. This can be switched off by
+changing the <cite>default_to_utf8</cite> parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – The name of the file to detect the encoding of.</p></li>
+<li><p><strong>default_to_utf8</strong> (<em>bool</em>) – Defaults to True. Set to False to disable
+treating ASCII files as UTF-8.</p></li>
+<li><p><strong>read_all</strong> (<em>bool</em>) – Keyword argument; if True, reads the entire file
+for encoding detection.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The file encoding.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.util.fs.from_posix">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">from_posix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#from_posix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.fs.from_posix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a path from posix-like, to the platform format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fname</strong> (<em>str</em>) – The filename in posix-like format.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The filename in the format of the platform.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.util.fs.is_pathname_valid">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">is_pathname_valid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pathname</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#is_pathname_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.fs.is_pathname_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether a path name is valid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the passed pathname is valid on the current OS, False
+otherwise.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.util.fs.read_file">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">read_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">encoding</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#read_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.fs.read_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and decode a file, taking BOMs into account.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – The name of the file to read.</p></li>
+<li><p><strong>encoding</strong> (<em>str</em>) – The encoding to use. If not given, detect_encoding is
+used to determine the encoding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The file contents.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>unicode string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.util.fs.to_posix">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">to_posix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#to_posix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.fs.to_posix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a path to posix-like format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fname</strong> (<em>str</em>) – The filename to convert to posix format.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The filename in posix-like format.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="prance.util.fs.write_file">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">write_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">contents</span></em>, <em class="sig-param"><span class="n">encoding</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#prance.util.fs.write_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a file with the given encoding.</p>
+<p>The default encoding is ‘utf-8’. It’s recommended not to change that for
+JSON or YAML output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – The name of the file to read.</p></li>
+<li><p><strong>contents</strong> (<em>str</em>) – The file contents to write.</p></li>
+<li><p><strong>encoding</strong> (<em>str</em>) – The encoding to use. If not given, detect_encoding is
+used to determine the encoding.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="id0">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">abspath</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">relative_to</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#abspath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the absolute path of a file relative to a reference file.</p>
+<p>If no reference file is given, this function works identical to
+<cite>canonical_filename</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – The filename to make absolute.</p></li>
+<li><p><strong>relative_to</strong> (<em>str</em>) – [optional] the reference file name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The absolute path</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="id1">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">canonical_filename</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#canonical_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the canonical version of a file name.</p>
+<p>The canonical version is defined as the absolute path, and all file system
+links dereferenced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – The filename to make canonical.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The canonical filename.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="id2">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">detect_encoding</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">default_to_utf8</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#detect_encoding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detect the named file’s character encoding.</p>
+<p>If the first parts of the file appear to be ASCII, this function returns
+‘UTF-8’, as that’s a safe superset of ASCII. This can be switched off by
+changing the <cite>default_to_utf8</cite> parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – The name of the file to detect the encoding of.</p></li>
+<li><p><strong>default_to_utf8</strong> (<em>bool</em>) – Defaults to True. Set to False to disable
+treating ASCII files as UTF-8.</p></li>
+<li><p><strong>read_all</strong> (<em>bool</em>) – Keyword argument; if True, reads the entire file
+for encoding detection.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The file encoding.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="id3">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">from_posix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#from_posix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a path from posix-like, to the platform format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fname</strong> (<em>str</em>) – The filename in posix-like format.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The filename in the format of the platform.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="id4">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">is_pathname_valid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pathname</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#is_pathname_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether a path name is valid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the passed pathname is valid on the current OS, False
+otherwise.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="id5">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">read_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">encoding</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#read_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and decode a file, taking BOMs into account.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – The name of the file to read.</p></li>
+<li><p><strong>encoding</strong> (<em>str</em>) – The encoding to use. If not given, detect_encoding is
+used to determine the encoding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The file contents.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>unicode string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="id6">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">to_posix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#to_posix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id6" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a path to posix-like format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fname</strong> (<em>str</em>) – The filename to convert to posix format.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The filename in posix-like format.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="id7">
+<code class="sig-prename descclassname">prance.util.fs.</code><code class="sig-name descname">write_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">contents</span></em>, <em class="sig-param"><span class="n">encoding</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/prance/util/fs.html#write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id7" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a file with the given encoding.</p>
+<p>The default encoding is ‘utf-8’. It’s recommended not to change that for
+JSON or YAML output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – The name of the file to read.</p></li>
+<li><p><strong>contents</strong> (<em>str</em>) – The file contents to write.</p></li>
+<li><p><strong>encoding</strong> (<em>str</em>) – The encoding to use. If not given, detect_encoding is
+used to determine the encoding.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2016-2017, Jens Finkhaeuser.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jfinkhaeuser/prance" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
