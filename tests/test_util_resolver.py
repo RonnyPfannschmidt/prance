@@ -585,3 +585,21 @@ def test_issue_77_internal_refs_unresolved():
 
   # Internal file reference not resolved
   assert '_schemas.json_Something' not in val
+
+
+def test_issue_205_swagger_resolution_failure():
+  specs = ''
+  with open('tests/specs/kubernetes_api_docs.json', 'r') as fh:
+    specs = fh.read()
+
+  from prance.util import formats
+  specs = formats.parse_spec(specs, 'kubernetes_api_docs.json')
+
+  res = resolver.RefResolver(specs,
+    fs.abspath('kubernetes_api_docs.json'),
+    resolve_types = resolver.RESOLVE_FILES,
+    resolve_method= resolver.TRANSLATE_EXTERNAL
+  )
+  # test will raise an exception
+  res.resolve_references()
+

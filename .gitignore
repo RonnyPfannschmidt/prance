@@ -107,3 +107,4 @@ pyvenv.cfg
 
 # Editor swap files
 .*.sw*
+.idea
