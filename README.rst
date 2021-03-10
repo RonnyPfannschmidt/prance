@@ -16,6 +16,8 @@ Mostly the latter involves handling non-URI references; OpenAPI is fine
 with providing relative file paths, whereas JSON references require URIs
 at this point in time.
 
+Prance is `up for adoption <https://github.com/jfinkhaeuser/prance/issues/91>`__.
+
 Usage
 =====
 
