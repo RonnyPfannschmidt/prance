@@ -45,12 +45,10 @@ Make sure you have `ICU Unicode Library <http://site.icu-project.org/home>`__ in
 as well as Python dev library before running the commands above. If not, use the
 following commands:
 
-**Ubuntu**
-
 .. code:: bash
 
-    $ sudo apt-get install libicu-dev
-    $ sudo apt-get install python3-dev
+    $ sudo apt-get install libicu-dev python3-dev # Ubuntu/Debian
+    $ sudo dnf install libicu-devel python3-devel # Fedora
 
 
 Command Line Interface
