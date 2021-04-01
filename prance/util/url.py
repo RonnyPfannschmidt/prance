@@ -7,7 +7,7 @@ __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 
-import six.moves.urllib.parse as parse
+from urllib import parse
 
 
 class ResolutionError(LookupError):
@@ -57,7 +57,7 @@ def absurl(url, relative_to = None):
       parsed = parse.urlparse(url)
     except Exception as ex:
       from .exceptions import raise_from
-      raise_from(ResolutionError, ex, 'Unable to parse url: %s' % (url,))
+      raise_from(ResolutionError, ex, f'Unable to parse url: {url}')
 
   # Any non-file scheme we just return immediately.
   if parsed.scheme not in (None, '', 'file'):
@@ -172,7 +172,7 @@ def fetch_url_text(url, cache = {}, encoding = None):
       content = read_file(from_posix(url.path), encoding)
     except FileNotFoundError as ex:
       from .exceptions import raise_from
-      raise_from(ResolutionError, ex, 'File not found: %s' % (url.path,))
+      raise_from(ResolutionError, ex, f'File not found: {url.path}')
   elif url.scheme == 'python':
     # Resolve package path
     package = url.netloc

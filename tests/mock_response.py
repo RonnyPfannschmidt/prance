@@ -8,7 +8,7 @@ __all__ = ()
 
 import pytest
 
-class MockResponse(object):
+class MockResponse:
   """
   Minimally imitate a response object from the requests library.
 
@@ -124,4 +124,3 @@ definitions:
       message:
         type: string
 '''
-

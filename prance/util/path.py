@@ -50,8 +50,8 @@ def path_get(obj, path, defaultvalue = None, path_of_obj = ()):
       return obj or defaultvalue
 
     if path[0] not in obj:
-      raise KeyError('Object at "%s" does not contain key: %s' % (
-          path_of_obj_str, path[0],))
+      raise KeyError('Object at "{}" does not contain key: {}'.format(
+          path_of_obj_str, path[0]))
 
     return path_get(obj[path[0]], path[1:], defaultvalue,
               path_of_obj = path_of_obj + (path[0],))
@@ -76,7 +76,7 @@ def path_get(obj, path, defaultvalue = None, path_of_obj = ()):
   else:
     # Path must be empty.
     if path is not None and len(path) > 0:
-      raise TypeError('Cannot get anything from type %s!' % (type(obj),))
+      raise TypeError('Cannot get anything from type {}!'.format(type(obj)))
     return obj or defaultvalue
 
 
@@ -149,7 +149,7 @@ def path_set(obj, path, value, **options):
   if isinstance(obj, Mapping):
     # If we don't have a mutable mapping, we should raise a TypeError
     if not isinstance(obj, MutableMapping):  # pragma: nocover
-      raise TypeError('Mapping is not mutable: %s' % (type(obj),))
+      raise TypeError('Mapping is not mutable: {}'.format(type(obj)))
 
     # If the path has only one element, we just overwrite the element at the
     # given key. Otherwise we recurse.
@@ -157,7 +157,7 @@ def path_set(obj, path, value, **options):
       if not create and path[0] not in obj:
         # dicts would normally silently create, but we have to make it
         # explicit to fulfil our contract.
-        raise KeyError('Key "%s" not in Mapping!' % (path[0],))
+        raise KeyError('Key "{}" not in Mapping!'.format(path[0]))
       obj[path[0]] = value
     else:
       if create and path[0] not in obj:
@@ -174,7 +174,7 @@ def path_set(obj, path, value, **options):
 
     # If we don't have a mutable sequence, we should raise a TypeError
     if not isinstance(obj, MutableSequence):
-      raise TypeError('Sequence is not mutable: %s' % (type(obj),))
+      raise TypeError('Sequence is not mutable: {}'.format(type(obj)))
 
     # Ensure integer indices
     try:
@@ -197,4 +197,4 @@ def path_set(obj, path, value, **options):
 
     return obj
   else:
-    raise TypeError('Cannot set anything on type %s!' % (type(obj),))
+    raise TypeError('Cannot set anything on type {}!'.format(type(obj)))

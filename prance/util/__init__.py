@@ -20,9 +20,8 @@ def stringify_keys(data):
   assert isinstance(data, Mapping)
 
   ret = type(data)()
-  import six
-  for key, value in six.iteritems(data):
-    if not isinstance(key, six.string_types):
+  for key, value in data.items():
+    if not isinstance(key, str):
       key = str(key)
     if isinstance(value, Mapping):
       value = stringify_keys(value)

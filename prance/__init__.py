@@ -31,7 +31,7 @@ else:
   _PLACEHOLDER_URL = 'file:///__placeholder_url__.yaml'
 
 
-class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
+class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
   """
   The BaseParser loads, parses and validates OpenAPI 2.0 and 3.0.0 specs.
 
@@ -180,7 +180,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     stringified = self.semver
     if prefix == BaseParser.SPEC_VERSION_2_PREFIX:
       stringified = '%d.%d' % (version[0], version[1])
-    self.version = '%s %s' % (self.version_name, stringified)
+    self.version = f'{self.version_name} {stringified}'
 
   def _validate_flex(self, spec_version):  # pragma: nocover
     # Set the version independently of whether validation succeeds

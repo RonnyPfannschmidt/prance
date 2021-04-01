@@ -11,7 +11,7 @@ __license__ = 'MIT +no-false-attribs'
 __all__ = ()
 
 
-class CacheSpecsMixin(object):
+class CacheSpecsMixin:
   """
   CacheSpecsMixin helps determine if self.specification changed.
 

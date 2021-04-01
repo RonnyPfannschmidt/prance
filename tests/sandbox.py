@@ -8,7 +8,7 @@ __all__ = ()
 
 import pytest
 
-class Sandboxer(object):
+class Sandboxer:
   """
   Given a sandbox template path, uses pytest to create a temporary directory,
   then copies the template's contents there, and changes to the directory.

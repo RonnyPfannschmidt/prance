@@ -43,10 +43,10 @@ def convert_str(spec_str, filename = None, **kwargs):
   if filename is not None:
     data['filename'] = filename
   else:
-    data['filename'] = 'openapi%s' % (extension,)
+    data['filename'] = f'openapi{extension}'
 
   headers = {
-    'accept': '%s; charset=utf-8' % (content_type,)
+    'accept': f'{content_type}; charset=utf-8'
   }
 
   # Convert via API
@@ -57,7 +57,7 @@ def convert_str(spec_str, filename = None, **kwargs):
     raise ConversionError('Could not convert spec: %d %s' % (
         r.status_code, r.reason))
 
-  return r.text, '%s; %s' % (r.headers['content-type'], r.apparent_encoding)
+  return r.text, '{}; {}'.format(r.headers['content-type'], r.apparent_encoding)
 
 
 def convert_url(url, cache = {}):

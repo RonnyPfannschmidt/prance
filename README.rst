@@ -308,4 +308,3 @@ the `Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International lic
 .. |Liberapay| image:: http://img.shields.io/liberapay/receives/jfinkhaeuser.svg?logo=liberapay
    :target: https://liberapay.com/jfinkhaeuser/donate
 .. |Logo| image:: https://raw.githubusercontent.com/jfinkhaeuser/prance/master/docs/images/prance_logo_256.png
-

@@ -68,4 +68,3 @@ def test_reraise_with_empty_value_string_extra_message():
   # known attributes
   assert caught.type == ValidationError
   assert str(caught.value) == 'asdf'
-

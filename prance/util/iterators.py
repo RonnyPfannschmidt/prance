@@ -49,16 +49,13 @@ def item_iterator(value, path = ()):
 
   # For dict and list like objects, we also need to yield each item
   # recursively.
-  import six
   if isinstance(value, Mapping):
-    for key, item in six.viewitems(value):
-      for inner_path, inner in item_iterator(item, path + (key,)):
-        yield inner_path, inner
+    for key, item in value.items():
+      yield from item_iterator(item, path + (key,))
   elif isinstance(value, Sequence) and not isinstance(value,
-         six.string_types):
+         str):
     for idx, item in enumerate(value):
-      for inner_path, inner in item_iterator(item, path + (idx,)):
-        yield inner_path, inner
+      yield from item_iterator(item, path + (idx,))
 
 
 def reference_iterator(specs, path = ()):

@@ -28,14 +28,14 @@ def default_reclimit_handler(limit, parsed_url, recursions = ()):
   """Raise prance.util.url.ResolutionError."""
   path = []
   for rc in recursions:
-    path.append('%s#/%s' % (rc[0], '/'.join(rc[1])))
+    path.append('{}#/{}'.format(rc[0], '/'.join(rc[1])))
   path = '\n'.join(path)
 
   raise _url.ResolutionError('Recursion reached limit of %d trying to '
         'resolve "%s"!\n%s' % (limit, parsed_url.geturl(), path))
 
 
-class RefResolver(object):
+class RefResolver:
   """Resolve JSON pointers/references in a spec."""
 
   def __init__(self, specs, url = None, **options):
@@ -190,7 +190,7 @@ class RefResolver(object):
       return (self.__resolve_types & RESOLVE_FILES) == 0
     else:
       from urllib.parse import urlunparse
-      raise ValueError('Scheme "%s" is not recognized in reference URL: %s' % (
+      raise ValueError('Scheme {!r} is not recognized in reference URL: {}'.format(
           ref_url.scheme, urlunparse(ref_url)))
 
   def _dereference(self, ref_url, obj_path, recursions):
