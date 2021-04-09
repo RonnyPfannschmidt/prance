@@ -586,7 +586,7 @@ def test_issue_77_internal_refs_unresolved():
   # Internal file reference not resolved
   assert '_schemas.json_Something' not in val
 
-
+@pytest.mark.xfail(reason="https://github.com/RonnyPfannschmidt/prance/issues/87")
 def test_issue_205_swagger_resolution_failure():
   specs = ''
   with open('tests/specs/kubernetes_api_docs.json', 'r') as fh:
