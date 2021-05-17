@@ -140,7 +140,7 @@ html_theme = 'alabaster'
 # documentation.
 #
 html_theme_options = {
-  'github_user': 'jfinkhaeuser',
+  'github_user': 'RonnyPfannschmidt',
   'github_repo': 'prance',
   'github_banner': True,
   'show_related': True,

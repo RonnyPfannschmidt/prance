@@ -11,5 +11,3 @@
 - Python version:
 - Swagger/OpenAPI version used:
 - Backend: (flex, swagger-spec-validator or openapi-spec-validator)
-
-@jfinkhaeuser
