@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Functionality for converting from Swagger/OpenAPI 2.0 to OpenAPI 3.0.0.
 
@@ -7,7 +6,7 @@ The functions use https://mermade.org.uk/ APIs for conversion.
 
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2018 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__license__ = 'MIT'
 __all__ = ()
 
 
@@ -43,10 +42,10 @@ def convert_str(spec_str, filename = None, **kwargs):
   if filename is not None:
     data['filename'] = filename
   else:
-    data['filename'] = 'openapi%s' % (extension,)
+    data['filename'] = f'openapi{extension}'
 
   headers = {
-    'accept': '%s; charset=utf-8' % (content_type,)
+    'accept': f'{content_type}; charset=utf-8'
   }
 
   # Convert via API
@@ -57,7 +56,7 @@ def convert_str(spec_str, filename = None, **kwargs):
     raise ConversionError('Could not convert spec: %d %s' % (
         r.status_code, r.reason))
 
-  return r.text, '%s; %s' % (r.headers['content-type'], r.apparent_encoding)
+  return r.text, '{}; {}'.format(r.headers['content-type'], r.apparent_encoding)
 
 
 def convert_url(url, cache = {}):

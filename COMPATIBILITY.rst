@@ -103,5 +103,3 @@ are older, they're still supported by prance. Compatibility between the
 interpretation of 2.0 vs. 3.0.0 is probably more user friendly than allowing
 `$ref` to be interpreted in different ways in different places, in violation
 of JSON reference specs.
-
-

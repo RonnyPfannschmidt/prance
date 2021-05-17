@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """This submodule contains file format related utility code for Prance."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__copyright__ = 'Copyright (c) 2016-2021 Jens Finkhaeuser'
+__license__ = 'MIT'
 __all__ = ()
 
 
@@ -62,17 +61,17 @@ def __format_preferences(filename, content_type):  # noqa: N802
 
 # Basic parse functions
 def __parse_yaml(spec_str):  # noqa: N802
-  import yaml, yaml.parser, six
+  import yaml, yaml.parser
   try:
-    return yaml.safe_load(six.text_type(spec_str))
+    return yaml.safe_load(str(spec_str))
   except yaml.parser.ParserError as err:
     raise ParseError(str(err))
 
 
 def __parse_json(spec_str):  # noqa: N802
-  import json, six
+  import json
   try:
-    return json.loads(six.text_type(spec_str))
+    return json.loads(str(spec_str))
   except ValueError as err:
     raise ParseError(str(err))
 
@@ -88,8 +87,7 @@ def __serialize_yaml(specs):  # noqa: N802
                   encoding = None,
                   default_flow_style = False)
 
-  import six
-  return six.text_type(utf)
+  return str(utf)
 
 
 def __serialize_json(specs):  # noqa: N802
@@ -98,8 +96,7 @@ def __serialize_json(specs):  # noqa: N802
   import json
   utf = json.dumps(specs, ensure_ascii = False, indent = 2)
 
-  import six
-  return six.text_type(utf)
+  return str(utf)
 
 
 # Map file name extensions to parse/serialize functions

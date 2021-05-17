@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """Test suite for prance.util.fs ."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__copyright__ = 'Copyright (c) 2016-2021 Jens Finkhaeuser'
+__license__ = 'MIT'
 __all__ = ()
 
 
@@ -137,12 +136,12 @@ def test_issue_51_detect_encoding():
 
 def test_load_nobom():
   contents = fs.read_file('tests/specs/petstore.yaml')
-  assert contents.index(u'Swagger Petstore') >= 0, 'File reading failed!'
+  assert contents.index('Swagger Petstore') >= 0, 'File reading failed!'
 
 
 def test_load_utf8bom():
   contents = fs.read_file('tests/specs/utf8bom.yaml')
-  assert contents.index(u'söme välüe') >= 0, 'UTF-8 BOM handling failed!'
+  assert contents.index('söme välüe') >= 0, 'UTF-8 BOM handling failed!'
 
 
 def test_load_utf8bom_override():
@@ -152,7 +151,7 @@ def test_load_utf8bom_override():
 
 def test_write_file(tmpdir):
   with sandbox.sandbox(tmpdir):
-    test_text = u'söme täxt'
+    test_text = 'söme täxt'
     fs.write_file('test.out', test_text)
 
     # File must have been written
@@ -166,7 +165,7 @@ def test_write_file(tmpdir):
 
 def test_write_file_bom(tmpdir):
   with sandbox.sandbox(tmpdir):
-    test_text = u'söme täxt'
+    test_text = 'söme täxt'
     fs.write_file('test.out', test_text, 'utf-8-sig')
 
     # File must have been written

@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """CLI for prance."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__copyright__ = 'Copyright (c) 2016-2021 Jens Finkhaeuser'
+__license__ = 'MIT'
 __all__ = ()
 
 
@@ -27,7 +26,7 @@ def __parser_for_url(url, resolve, backend, strict, encoding):  # noqa: N802
   """Return a parser instance for the URL and the given parameters."""
   # Try the URL
   formatted = click.format_filename(url)
-  click.echo('Processing "%s"...' % (formatted, ))
+  click.echo(f'Processing "{formatted}"...')
 
   from prance.util import fs
   fsurl = fs.abspath(url)
@@ -58,14 +57,14 @@ def __validate(parser, name):  # noqa: N802
   try:
     parser.parse()
   except (ResolutionError, ValidationError) as err:
-    msg = 'ERROR in "%s" [%s]: %s' % (name, type(err).__name__,
+    msg = 'ERROR in "{}" [{}]: {}'.format(name, type(err).__name__,
         str(err))
     click.secho(msg, err = True, fg = 'red')
     import sys
     sys.exit(1)
 
   # All good, next file.
-  click.echo('Validates OK as %s!' % (parser.version,))
+  click.echo(f'Validates OK as {parser.version}!')
 
 
 @click.group()
@@ -239,7 +238,7 @@ def compile(ctx, url_or_path, output_file):
   else:
     from .util import fs
     fs.write_file(output_file, contents)
-    click.echo('Output written to "%s".' % (output_file,))
+    click.echo(f'Output written to "{output_file}".')
 
 
 @cli.command()

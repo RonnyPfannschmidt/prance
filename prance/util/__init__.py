@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """This submodule contains utility code for Prance."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__copyright__ = 'Copyright (c) 2016-2021 Jens Finkhaeuser'
+__license__ = 'MIT'
 __all__ = ('iterators', 'fs', 'formats', 'resolver', 'url', 'path',
     'exceptions')
 
@@ -20,9 +19,8 @@ def stringify_keys(data):
   assert isinstance(data, Mapping)
 
   ret = type(data)()
-  import six
-  for key, value in six.iteritems(data):
-    if not isinstance(key, six.string_types):
+  for key, value in data.items():
+    if not isinstance(key, str):
       key = str(key)
     if isinstance(value, Mapping):
       value = stringify_keys(value)

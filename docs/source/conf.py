@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # prance documentation build configuration file, created by
 # sphinx-quickstart on Tue Oct 25 10:28:07 2016.
@@ -12,7 +11,6 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
-
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -20,13 +18,10 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-
 # -- General configuration ------------------------------------------------
-
 # If your documentation needs a minimal Sphinx version, state it here.
 #
 # needs_sphinx = '1.0'
-
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
@@ -74,7 +69,7 @@ author = 'Jens Finkhaeuser'
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-release = '0.20.2'
+from prance import __version__ as release
 
 # The short X.Y version.
 import re

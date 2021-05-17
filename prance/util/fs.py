@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """This submodule contains file system utilities for Prance."""
 
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2019 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__license__ = 'MIT'
 __all__ = ()
 
 
@@ -288,8 +287,7 @@ def read_file(filename, encoding = None):
     encoding = detect_encoding(filename)
 
   # Finally, read the file in the detected encoding
-  import io
-  with io.open(filename, mode = 'r', encoding = encoding) as handle:
+  with open(filename, encoding = encoding) as handle:
     return handle.read()
 
 
@@ -308,7 +306,6 @@ def write_file(filename, contents, encoding = None):
   if not encoding:
     encoding = 'utf-8'
 
-  import io
   fname = from_posix(filename)
-  with io.open(fname, mode = 'w', encoding = encoding) as handle:
+  with open(fname, mode = 'w', encoding = encoding) as handle:
     handle.write(contents)

@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """Test suite for prance.util ."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__copyright__ = 'Copyright (c) 2016-2021 Jens Finkhaeuser'
+__license__ = 'MIT'
 __all__ = ()
 
 
@@ -15,10 +14,10 @@ from prance import util
 def test_stringify_keys():
   test = {
     'str': 42,
-    u'unicode': 123,
+    'unicode': 123,
     'nested': {
       'str': 42,
-      u'unicode': 123,
+      'unicode': 123,
     },
     42: 'int',
     3.14: 'float',
@@ -43,7 +42,7 @@ def test_stringify_keys():
   # str/unicode keys must remain absolutely unchanged. We're testing for
   # object identity.
   found = []
-  for key in ('str', u'unicode'):
+  for key in ('str', 'unicode'):
     found.append(assert_object_identity(key, test, result))
     found.append(assert_object_identity(key, test['nested'], result['nested']))
 

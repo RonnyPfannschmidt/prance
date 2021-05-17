@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """Test OpenAPI specs examples."""
 
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2018 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__license__ = 'MIT'
 __all__ = ()
 
 import pytest
@@ -53,7 +52,7 @@ def iter_entries(parser, backend, version, file_format, path):
     if testcase_name:
       dirname = os.path.dirname(full)
       dirname = dirname.replace('\\', '\\\\')
-      from prance.util import url  
+      from prance.util import url
       absurl = url.absurl(os.path.abspath(full)).geturl()
       code = """
 @pytest.mark.xfail()

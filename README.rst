@@ -43,12 +43,10 @@ Make sure you have `ICU Unicode Library <http://site.icu-project.org/home>`__ in
 as well as Python dev library before running the commands above. If not, use the
 following commands:
 
-**Ubuntu**
-
 .. code:: bash
 
-    $ sudo apt-get install libicu-dev
-    $ sudo apt-get install python3-dev
+    $ sudo apt-get install libicu-dev python3-dev # Ubuntu/Debian
+    $ sudo dnf install libicu-devel python3-devel # Fedora
 
 
 Command Line Interface
@@ -280,19 +278,13 @@ Professional support is available through `finkhaeuser consulting <https://finkh
 License
 =======
 
-Licensed under MITNFA (MIT +no-false-attribs) License. See the
-`LICENSE.txt <https://github.com/jfinkhaeuser/prance/blob/master/LICENSE.txt>`__ file for details.
+Licensed under MIT. See the `LICENSE.txt <https://github.com/RonnyPfannschmidt/prance/blob/master/LICENSE.txt>`__ file for details.
 
 "Prancing unicorn" logo image Copyright (c) Jens Finkhaeuser.
 Made by `Moreven B <http://morevenb.com/>`__. Use of the logo is permitted under
 the `Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license <https://creativecommons.org/licenses/by-nc-sa/4.0/>`__.
 
-.. |Posix Build Status| image:: https://travis-ci.org/jfinkhaeuser/prance.svg?branch=master
-   :target: https://travis-ci.org/jfinkhaeuser/prance
-.. |Windows Build Status| image:: https://ci.appveyor.com/api/projects/status/ic7lo8r95mkee7di/branch/master?svg=true
-   :target: https://ci.appveyor.com/project/jfinkhaeuser/prance
-.. |Docs| image:: https://img.shields.io/badge/docs-passing-brightgreen.svg
-   :target: https://jfinkhaeuser.github.io/prance/
+
 .. |License| image:: https://img.shields.io/pypi/l/prance.svg
    :target: https://pypi.python.org/pypi/prance/
 .. |PyPI| image:: https://img.shields.io/pypi/v/prance.svg
@@ -303,9 +295,6 @@ the `Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International lic
    :target: https://pypi.python.org/pypi/prance/
 .. |Package Status| image:: https://img.shields.io/pypi/status/prance.svg
    :target: https://pypi.python.org/pypi/prance/
-.. |FOSSA Status| image:: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance.svg?type=shield
-   :target: https://app.fossa.io/projects/git%2Bgithub.com%2Fjfinkhaeuser%2Fprance?ref=badge_shield
-.. |Liberapay| image:: http://img.shields.io/liberapay/receives/jfinkhaeuser.svg?logo=liberapay
-   :target: https://liberapay.com/jfinkhaeuser/donate
-.. |Logo| image:: https://raw.githubusercontent.com/jfinkhaeuser/prance/master/docs/images/prance_logo_256.png
-
+.. |FOSSA Status| image:: https://app.fossa.io/api/projects/git%2Bgithub.com%2FRonnyPfannschmidt%2Fprance.svg?type=shield
+   :target: https://app.fossa.io/projects/git%2Bgithub.com%2FRonnyPfannschmidt%2Fprance?ref=badge_shield
+.. |Logo| image:: https://raw.githubusercontent.com/RonnyPfannschmidt/prance/master/docs/images/prance_logo_256.png

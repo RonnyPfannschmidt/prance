@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Prance implements parsers for Swagger/OpenAPI 2.0 and 3.0.0 API specs.
 
@@ -9,10 +8,15 @@ ResolvingParser that additionally resolves any $ref references.
 """
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2020 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__copyright__ = 'Copyright (c) 2016-2021 Jens Finkhaeuser'
+__license__ = 'MIT'
 __all__ = ('util', 'mixins', 'cli', 'convert')
-__version__ = '0.20.2'
+
+try:
+  from prance._version import version as __version__
+except ImportError:
+  # todo: better gussing
+  __version__ = '0.20.0+unknown'
 
 
 # Define our own error class
@@ -31,7 +35,7 @@ else:
   _PLACEHOLDER_URL = 'file:///__placeholder_url__.yaml'
 
 
-class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
+class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
   """
   The BaseParser loads, parses and validates OpenAPI 2.0 and 3.0.0 specs.
 
@@ -180,7 +184,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin, object):
     stringified = self.semver
     if prefix == BaseParser.SPEC_VERSION_2_PREFIX:
       stringified = '%d.%d' % (version[0], version[1])
-    self.version = '%s %s' % (self.version_name, stringified)
+    self.version = f'{self.version_name} {stringified}'
 
   def _validate_flex(self, spec_version):  # pragma: nocover
     # Set the version independently of whether validation succeeds

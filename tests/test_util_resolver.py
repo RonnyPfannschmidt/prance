@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 """Test suite for prance.util.resolver ."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__copyright__ = 'Copyright (c) 2016-2021 Jens Finkhaeuser'
+__license__ = 'MIT'
 __all__ = ()
 
 
@@ -475,7 +474,7 @@ def test_issue_72_nonexistent_file_error():
 @pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
 def test_issue_78_resolve_internal_bug():
   specs = ''
-  with open('tests/specs/issue_78/openapi.json', 'r') as fh:
+  with open('tests/specs/issue_78/openapi.json') as fh:
     specs = fh.read()
 
   from prance.util import formats
@@ -500,7 +499,7 @@ def test_issue_78_resolve_internal_bug():
 @pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
 def test_issue_77_translate_external():
   specs = ''
-  with open('tests/specs/issue_78/openapi.json', 'r') as fh:
+  with open('tests/specs/issue_78/openapi.json') as fh:
     specs = fh.read()
 
   from prance.util import formats
@@ -529,7 +528,7 @@ def test_issue_77_translate_external():
 @pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
 def test_issue_77_translate_external_refs_internal():
   specs = ''
-  with open('tests/specs/issue_78/openapi.json', 'r') as fh:
+  with open('tests/specs/issue_78/openapi.json') as fh:
     specs = fh.read()
 
   from prance.util import formats
@@ -564,7 +563,7 @@ def test_issue_77_translate_external_refs_internal():
 @pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
 def test_issue_77_internal_refs_unresolved():
   specs = ''
-  with open('tests/specs/issue_78/openapi.json', 'r') as fh:
+  with open('tests/specs/issue_78/openapi.json') as fh:
     specs = fh.read()
 
   from prance.util import formats
@@ -589,7 +588,7 @@ def test_issue_77_internal_refs_unresolved():
 @pytest.mark.xfail(reason="https://github.com/RonnyPfannschmidt/prance/issues/87")
 def test_issue_205_swagger_resolution_failure():
   specs = ''
-  with open('tests/specs/kubernetes_api_docs.json', 'r') as fh:
+  with open('tests/specs/kubernetes_api_docs.json') as fh:
     specs = fh.read()
 
   from prance.util import formats
@@ -602,4 +601,3 @@ def test_issue_205_swagger_resolution_failure():
   )
   # test will raise an exception
   res.resolve_references()
-

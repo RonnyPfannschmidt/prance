@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-
 """Utility code for tests."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2020 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__copyright__ = 'Copyright (c) 2021 Jens Finkhaeuser'
+__license__ = 'MIT'
 __all__ = ()
 
 import pytest
 
-class MockResponse(object):
+class MockResponse:
   """
   Minimally imitate a response object from the requests library.
 
@@ -124,4 +123,3 @@ definitions:
       message:
         type: string
 '''
-
