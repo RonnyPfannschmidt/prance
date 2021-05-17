@@ -4,4 +4,3 @@ Implement initial part of maintainer switch
 * License is now MIT after coordination with Jens
 * begin to use pre-commit + pyupgrade
 * set up for setuptools_scm as bumpversion breaks with normalized configfiles
-

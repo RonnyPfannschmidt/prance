@@ -588,7 +588,7 @@ def test_issue_77_internal_refs_unresolved():
 @pytest.mark.xfail(reason="https://github.com/RonnyPfannschmidt/prance/issues/87")
 def test_issue_205_swagger_resolution_failure():
   specs = ''
-  with open('tests/specs/kubernetes_api_docs.json', 'r') as fh:
+  with open('tests/specs/kubernetes_api_docs.json') as fh:
     specs = fh.read()
 
   from prance.util import formats
@@ -601,4 +601,3 @@ def test_issue_205_swagger_resolution_failure():
   )
   # test will raise an exception
   res.resolve_references()
-
