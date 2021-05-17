@@ -30,3 +30,6 @@ repos:
   hooks:
   - id: flake8
     exclude: tests
+    additional_dependencies:
+    - flake8-quotes>=3.2
+    - flake8-docstrings>=1.5
