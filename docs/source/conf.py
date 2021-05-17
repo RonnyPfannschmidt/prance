@@ -69,7 +69,7 @@ author = 'Jens Finkhaeuser'
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-release = '0.20.2'
+from prance import __version__ as release
 
 # The short X.Y version.
 import re

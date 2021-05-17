@@ -1,6 +1,10 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools", "wheel", "setuptools_scm[toml]>6"]
 build-backend = "setuptools.build_meta"
+
+
+[tool.setuptools_scm]
+write_to = "prance/_version.py"
 
 [tool.towncrier]
     package = "prance"

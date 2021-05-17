@@ -11,7 +11,13 @@ __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2020 Jens Finkhaeuser'
 __license__ = 'MIT +no-false-attribs'
 __all__ = ('util', 'mixins', 'cli', 'convert')
-__version__ = '0.20.2'
+
+try:
+  from prance._version import version as __version__
+except ImportError:
+  # todo: better gussing
+  __version__ = '0.20.0+unknown'
+
 
 
 # Define our own error class

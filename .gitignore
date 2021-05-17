@@ -107,3 +107,6 @@ pyvenv.cfg
 
 # Editor swap files
 .*.sw*
+
+
+prance/_version.py
