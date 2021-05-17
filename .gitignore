@@ -107,6 +107,7 @@ pyvenv.cfg
 
 # Editor swap files
 .*.sw*
+.idea
 
 
 prance/_version.py
