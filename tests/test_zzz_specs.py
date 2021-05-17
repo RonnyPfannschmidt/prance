@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test OpenAPI specs examples."""
 
 __author__ = 'Jens Finkhaeuser'

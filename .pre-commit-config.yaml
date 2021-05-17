@@ -2,12 +2,12 @@ default_language_version:
   python: python3.6
 repos:
 - repo: https://github.com/asottile/reorder_python_imports
-  rev: v1.6.0
+  rev: v2.5.0
   hooks:
   - id: reorder-python-imports
     args: [--py3-plus]
 - repo: https://github.com/asottile/pyupgrade
-  rev: v1.19.0
+  rev: v2.16.0
   hooks:
   - id: pyupgrade
     args: [--py36-plus]
@@ -19,11 +19,14 @@ repos:
 #     args: [--line-length, "119"]
 #     require_serial: true
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.2.3
+  rev: v4.0.1
   hooks:
   - id: trailing-whitespace
   - id: end-of-file-fixer
   #- id: check-yaml
   - id: debug-statements
+- repo: https://github.com/pycqa/flake8
+  rev: '3.9.2'
+  hooks:
   - id: flake8
     exclude: tests

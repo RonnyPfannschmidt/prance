@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test suite for prance.ResolvingParser ."""
 
 __author__ = 'Jens Finkhaeuser'

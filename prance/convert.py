@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Functionality for converting from Swagger/OpenAPI 2.0 to OpenAPI 3.0.0.
 

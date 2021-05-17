@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This submodule contains file format related utility code for Prance."""
 
 __author__ = 'Jens Finkhaeuser'

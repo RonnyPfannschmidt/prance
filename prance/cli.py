@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """CLI for prance."""
 
 __author__ = 'Jens Finkhaeuser'

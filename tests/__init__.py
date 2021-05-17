@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test suite module for prance."""
 
 __author__ = 'Jens Finkhaeuser'

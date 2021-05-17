@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test suite for prance.util.formats ."""
 
 __author__ = 'Jens Finkhaeuser'

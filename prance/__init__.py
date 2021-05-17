@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Prance implements parsers for Swagger/OpenAPI 2.0 and 3.0.0 API specs.
 

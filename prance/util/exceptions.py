@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This submodule contains helpers for exception handling."""
 
 __author__ = 'Jens Finkhaeuser'

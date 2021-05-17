@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Utility code for tests."""
 
 __author__ = 'Jens Finkhaeuser'

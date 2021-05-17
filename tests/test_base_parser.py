@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test suite for prance.BaseParser ."""
 
 __author__ = 'Jens Finkhaeuser'

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This submodule contains a JSON reference resolver."""
 
 __author__ = 'Jens Finkhaeuser'

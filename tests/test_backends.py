@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test suite focusing on validation backend features."""
 
 __author__ = 'Jens Finkhaeuser'

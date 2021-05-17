@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This submodule contains specialty iterators over specs."""
 
 __author__ = 'Jens Finkhaeuser'

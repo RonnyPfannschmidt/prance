@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This submodule contains code for fetching/parsing URLs."""
 
 __author__ = 'Jens Finkhaeuser'
