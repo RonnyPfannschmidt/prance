@@ -23,9 +23,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Lint with flake8
-      run: |
-        python setup.py flake8
     - name: Test with pytest
       run: |
-        python setup.py test --addopts '-m "not requires_network"'
+        pytest -m "not requires_network"
