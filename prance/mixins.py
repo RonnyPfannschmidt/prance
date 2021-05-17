@@ -6,7 +6,7 @@ The Mixins are here mostly for separation of concerns.
 
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__license__ = 'MIT'
 __all__ = ()
 
 

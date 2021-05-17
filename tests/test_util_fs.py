@@ -1,8 +1,8 @@
 """Test suite for prance.util.fs ."""
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__copyright__ = 'Copyright (c) 2016-2021 Jens Finkhaeuser'
+__license__ = 'MIT'
 __all__ = ()
 
 

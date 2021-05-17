@@ -8,8 +8,8 @@ ResolvingParser that additionally resolves any $ref references.
 """
 
 __author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2020 Jens Finkhaeuser'
-__license__ = 'MIT +no-false-attribs'
+__copyright__ = 'Copyright (c) 2016-2021 Jens Finkhaeuser'
+__license__ = 'MIT'
 __all__ = ('util', 'mixins', 'cli', 'convert')
 
 try:
@@ -17,7 +17,6 @@ try:
 except ImportError:
   # todo: better gussing
   __version__ = '0.20.0+unknown'
-
 
 
 # Define our own error class
