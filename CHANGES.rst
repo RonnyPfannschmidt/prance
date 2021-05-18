@@ -1,10 +1,27 @@
+v0.21.0 (2021-05-18)
+====================
+
+Features
+--------
+
+- Implement initial part of maintainer switch
+
+  * @RonnyPfannschmidt is the new maintainer, plans to move to jazzband
+  * License is now MIT after coordination with Jens
+  * begin to use pre-commit + pyupgrade
+  * set up for setuptools_scm as bumpversion breaks with normalized configfiles (#93)
+  * github actions
+  * modernize setup.py/cfg
+- return to towncrier default templates
+
+
 v0.20.2
--------
+=======
 
 * #83: Properly propagate strict mode down to nested resolvers.
 
 v0.20.1
---------
+=======
 
 Bugfix release:
 
@@ -13,7 +30,7 @@ Bugfix release:
 * Miscellaneous: #86
 
 v0.20.0
--------
+=======
 
 * #77: Translate local references in external files by injecting them into the main
   specification.
@@ -21,7 +38,8 @@ v0.20.0
 * #78: Fix issue in RESOLVE_INTERNAL handling
 
 v0.19.0
--------
+=======
+
 * #72: Fix behaviour when attempting to resolve nonexistent local references: raise
   ResolutionError instead of what the OS provides.
 
@@ -32,7 +50,7 @@ v0.19.0
 * Miscellaneous: #71
 
 v0.18.3
--------
+=======
 
 Bugfix release:
 
@@ -42,14 +60,14 @@ Bugfix release:
   which URL was being parsed in error message.
 
 v0.18.2
--------
+=======
 
 Bugfix release:
 
 * #65: fix error in resolving files only with ResolvingParser.
 
 v0.18.1
--------
+=======
 
 Maintenance release, focusing on change requests from users.
 
@@ -73,7 +91,8 @@ Maintenance release, focusing on change requests from users.
 
 
 v0.17.0
--------
+=======
+
 * #51: Try a lot more bytes when detecting file encoding. The new value is meant to
   be a multiple of sector/cluster size that's still reasonable on most OSes and
   volumes.
@@ -85,10 +104,12 @@ v0.17.0
 
 
 v0.16.2
--------
+=======
+
 * #47: Fix deprecation warning by always preferring collections.abc over collections.
 
 
 v0.16.1
--------
+=======
+
 * #44: Add changelog generation via `towncrier <https://town-crier.readthedocs.io/en/latest/>`_
