@@ -1,1 +1,0 @@
-widen chardet pin to ease dependency hell for when others haven't updated to >4

@@ -1,3 +1,11 @@
+Prance 0.21.2 (2021-05-18)
+==========================
+
+Bugfixes
+--------
+
+- widen chardet pin to ease dependency hell for when others haven't updated to >4 (#98)
+
 
 v0.21.1 (2021-05-18)
 ====================
@@ -10,12 +18,12 @@ v0.21.0 (2021-05-18)
 Features
 --------
 
-- Implement initial part of maintainer switch
+- Implement initial part of maintainer switch (#93)
 
   * @RonnyPfannschmidt is the new maintainer, plans to move to jazzband
   * License is now MIT after coordination with Jens
   * begin to use pre-commit + pyupgrade
-  * set up for setuptools_scm as bumpversion breaks with normalized configfiles (#93)
+  * set up for setuptools_scm as bumpversion breaks with normalized configfiles
   * github actions
   * modernize setup.py/cfg
 - return to towncrier default templates
