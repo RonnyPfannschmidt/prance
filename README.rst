@@ -1,5 +1,4 @@
-|Docs| |License|
-|PyPI| |Python Versions| |Package Format| |Package Status|
+|License| |PyPI| |Python Versions| |Package Format| |Package Status|
 
 |Logo|
 
