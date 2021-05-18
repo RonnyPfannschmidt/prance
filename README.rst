@@ -1,5 +1,5 @@
-|Posix Build Status| |Windows Build Status| |Docs| |License|
-|PyPI| |Python Versions| |Package Format| |Package Status| |FOSSA Status| |Liberapay|
+|Docs| |License|
+|PyPI| |Python Versions| |Package Format| |Package Status|
 
 |Logo|
 
@@ -295,6 +295,4 @@ the `Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International lic
    :target: https://pypi.python.org/pypi/prance/
 .. |Package Status| image:: https://img.shields.io/pypi/status/prance.svg
    :target: https://pypi.python.org/pypi/prance/
-.. |FOSSA Status| image:: https://app.fossa.io/api/projects/git%2Bgithub.com%2FRonnyPfannschmidt%2Fprance.svg?type=shield
-   :target: https://app.fossa.io/projects/git%2Bgithub.com%2FRonnyPfannschmidt%2Fprance?ref=badge_shield
 .. |Logo| image:: https://raw.githubusercontent.com/RonnyPfannschmidt/prance/master/docs/images/prance_logo_256.png
