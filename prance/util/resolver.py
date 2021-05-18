@@ -1,4 +1,4 @@
-"""This submodule contains a JSON reference resolver."""
+"""This submodule contains a JSON inlining reference resolver."""
 
 __author__ = 'Jens Finkhaeuser'
 __copyright__ = 'Copyright (c) 2016-2018 Jens Finkhaeuser'
@@ -35,7 +35,7 @@ def default_reclimit_handler(limit, parsed_url, recursions = ()):
 
 
 class RefResolver:
-  """Resolve JSON pointers/references in a spec."""
+  """Resolve JSON pointers/references in a spec by inlining."""
 
   def __init__(self, specs, url = None, **options):
     """
