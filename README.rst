@@ -124,7 +124,7 @@ URLs can also be parsed:
 
 Largely, that's it. There is a whole slew of utility code that you may
 or may not find useful, too. Look at the `full documentation
-<https://jfinkhaeuser.github.io/prance/#api-modules>`__ for details.
+<https://ronnypfannschmidt.github.io/prance/#api-modules>`__ for details.
 
 
 Compatibility
