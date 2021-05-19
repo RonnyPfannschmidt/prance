@@ -22,7 +22,8 @@ def _local_ref(path):
     return {'$ref': url}
 
 
-class RefTranslator:
+# Underscored to allow some time for the public API to be stabilized.
+class _RefTranslator:
     """
     Resolve JSON pointers/references in a spec by translation.
 

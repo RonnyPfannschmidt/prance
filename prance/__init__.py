@@ -301,10 +301,11 @@ class ResolvingParser(BaseParser):
     BaseParser._validate(self)
 
 
-class TranslatingParser(BaseParser):
+# Underscored to allow some time for the public API to be stabilized.
+class _TranslatingParser(BaseParser):
   def _validate(self):
-    from .util.translator import RefTranslator
-    translator = RefTranslator(self.specification, self.url)
+    from .util.translator import _RefTranslator
+    translator = _RefTranslator(self.specification, self.url)
     translator.translate_references()
     self.specification = translator.specs
 

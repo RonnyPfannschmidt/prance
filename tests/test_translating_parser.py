@@ -1,6 +1,6 @@
 from os.path import join
 
-from prance import TranslatingParser
+from prance import _TranslatingParser
 
 
 class SpecificationTester:
@@ -25,7 +25,7 @@ class SpecificationTester:
     def _parse_spec(name):
         file = f"{name}.spec.yaml"
         path = join("tests", "specs", "translating_parser", file)
-        parser = TranslatingParser(path)
+        parser = _TranslatingParser(path)
         parser.parse()
         return parser.specification
 
