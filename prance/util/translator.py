@@ -1,6 +1,6 @@
 """This submodule contains a JSON reference translator."""
 
-__author__ = 'Jens Finkhaeuser'
+__author__ = 'Štěpán Tomsa'
 __copyright__ = 'Copyright © 2021 Štěpán Tomsa'
 __license__ = 'MIT'
 __all__ = ()
