@@ -253,7 +253,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
 
 class ResolvingParser(BaseParser):
-  """The ResolvingParser extends BaseParser with resolving references."""
+  """The ResolvingParser extends BaseParser with resolving references by inlining."""
 
   def __init__(self, url = None, spec_string = None, lazy = False, **kwargs):
     """
@@ -298,4 +298,15 @@ class ResolvingParser(BaseParser):
     self.specification = resolver.specs
 
     # Now validate - the BaseParser knows the specifics
+    BaseParser._validate(self)
+
+
+# Underscored to allow some time for the public API to be stabilized.
+class _TranslatingParser(BaseParser):
+  def _validate(self):
+    from .util.translator import _RefTranslator
+    translator = _RefTranslator(self.specification, self.url)
+    translator.translate_references()
+    self.specification = translator.specs
+
     BaseParser._validate(self)
