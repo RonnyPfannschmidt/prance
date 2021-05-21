@@ -1,8 +1,9 @@
 from os.path import join
 from re import match
 
-from prance import _TranslatingParser
 from pytest import fixture
+
+from prance import _TranslatingParser
 
 
 @fixture
