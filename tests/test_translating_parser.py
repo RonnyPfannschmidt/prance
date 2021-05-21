@@ -1,6 +1,20 @@
 from os.path import join
+from re import match
 
 from prance import _TranslatingParser
+from pytest import fixture
+
+
+@fixture
+def tester(request):
+    pattern = r"test_(.+)"
+    test_function_name = request.node.name
+    name_match = match(pattern, test_function_name)
+    test_name = name_match[1]
+
+    file_name = f"{test_name}.spec.yaml"
+    path = join("tests", "specs", "translating_parser", file_name)
+    return SpecificationTester(path)
 
 
 class SpecificationTester:
@@ -21,21 +35,16 @@ class SpecificationTester:
         "some_other_refd_file.spec.yaml_SomeObject", "some_other_refd_file.spec.yaml_SomeOtherObject",
     )
     """
-    @staticmethod
-    def _parse_spec(name):
-        file = f"{name}.spec.yaml"
-        path = join("tests", "specs", "translating_parser", file)
-        parser = _TranslatingParser(path)
-        parser.parse()
-        return parser.specification
 
     @staticmethod
     def _assert_ref(schema, ref):
         assert "$ref" in schema
         assert schema["$ref"] == f"#/components/schemas/{ref}"
 
-    def __init__(self, file):
-        self.specification = self._parse_spec(file)
+    def __init__(self, url):
+        parser = _TranslatingParser(url)
+        parser.parse()
+        self.specification = parser.specification
 
     def assert_schemas(self, keys):
         """
@@ -69,20 +78,17 @@ class SpecificationTester:
         self._assert_ref(schema, ref)
 
 
-def test_local_reference_from_root():
-    tester = SpecificationTester("local_reference_from_root")
+def test_local_reference_from_root(tester):
     tester.assert_path_ref("PlainObject")
     tester.assert_schemas({"PlainObject"})
 
 
-def test_file_reference_from_root():
-    tester = SpecificationTester("file_reference_from_root")
+def test_file_reference_from_root(tester):
     tester.assert_path_ref("file_reference_from_root_schemas.spec.yaml_PlainObject")
     tester.assert_schemas({"file_reference_from_root_schemas.spec.yaml_PlainObject"})
 
 
-def test_local_reference_from_file():
-    tester = SpecificationTester("local_reference_from_file")
+def test_local_reference_from_file(tester):
     tester.assert_path_ref("local_reference_from_file_schemas.spec.yaml_RefObject")
     tester.assert_schemas(
         {
@@ -96,8 +102,7 @@ def test_local_reference_from_file():
     )
 
 
-def test_same_file_reference_from_file():
-    tester = SpecificationTester("same_file_reference_from_file")
+def test_same_file_reference_from_file(tester):
     tester.assert_path_ref("same_file_reference_from_file_schemas.spec.yaml_RefObject")
     tester.assert_schemas(
         {
@@ -111,8 +116,7 @@ def test_same_file_reference_from_file():
     )
 
 
-def test_different_file_reference_from_file():
-    tester = SpecificationTester("different_file_reference_from_file")
+def test_different_file_reference_from_file(tester):
     tester.assert_path_ref("different_file_reference_from_file_schemas1.spec.yaml_RefObject")
     tester.assert_schemas(
         {
@@ -126,26 +130,22 @@ def test_different_file_reference_from_file():
     )
 
 
-def test_root_file_reference_from_file():
-    tester = SpecificationTester("root_file_reference_from_file")
+def test_root_file_reference_from_file(tester):
     tester.assert_path_ref("root_file_reference_from_file_schemas.spec.yaml_RefObject")
     tester.assert_schemas({"PlainObject", "root_file_reference_from_file_schemas.spec.yaml_RefObject"})
     tester.assert_schema_ref("root_file_reference_from_file_schemas.spec.yaml_RefObject", "PlainObject")
 
 
-def test_root_file_reference_from_root():
-    tester = SpecificationTester("root_file_reference_from_root")
+def test_root_file_reference_from_root(tester):
     tester.assert_path_ref("PlainObject")
     tester.assert_schemas({"PlainObject"})
 
 
-def test_recursive_reference_in_root():
-    tester = SpecificationTester("recursive_reference_in_root")
+def test_recursive_reference_in_root(tester):
     tester.assert_schema_ref("RecursiveObject", "RecursiveObject", lambda schema: schema["additionalProperties"])
 
 
-def test_recursive_reference_in_file():
-    tester = SpecificationTester("recursive_reference_in_file")
+def test_recursive_reference_in_file(tester):
     tester.assert_path_ref("recursive_reference_in_file_schemas.spec.yaml_RecursiveObject")
     tester.assert_schemas({"recursive_reference_in_file_schemas.spec.yaml_RecursiveObject"})
     tester.assert_schema_ref(
@@ -155,8 +155,7 @@ def test_recursive_reference_in_file():
     )
 
 
-def test_nested_recursive_reference_in_file():
-    tester = SpecificationTester("nested_recursive_reference_in_file")
+def test_nested_recursive_reference_in_file(tester):
     tester.assert_path_ref("Response")
     tester.assert_schemas({
         "Response",
