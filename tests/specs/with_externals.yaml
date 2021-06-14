@@ -65,6 +65,10 @@ paths:
           description: Expected response to a valid request
           schema:
             $ref: 'http://finkhaeuser.de/projects/prance/petstore.yaml#/definitions/Pet'
+        "203":
+          description: Expected response to a valid request
+          schema:
+            $ref: 'python://tests/specs/petstore.yaml#/definitions/Pet'
         default:
           description: unexpected error
           schema:

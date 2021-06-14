@@ -181,7 +181,7 @@ class RefResolver:
     """Return whether the URL should not be dereferenced."""
     if ref_url.scheme.startswith('http'):
       return (self.__resolve_types & RESOLVE_HTTP) == 0
-    elif ref_url.scheme == 'file':
+    elif ref_url.scheme == 'file' or ref_url.scheme == 'python':
       # Internal references
       if base_url.path == ref_url.path:
         return (self.__resolve_types & RESOLVE_INTERNAL) == 0

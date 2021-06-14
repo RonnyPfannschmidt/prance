@@ -308,6 +308,9 @@ def test_issue_23_partial_resolution_all(mock_get):
   val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '200', 'schema'))
   assert '$ref' not in val
 
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '203', 'schema'))
+  assert '$ref' not in val
+
   val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', 'default', 'schema'))
   assert '$ref' not in val
 
@@ -336,6 +339,9 @@ def test_issue_23_partial_resolution_internal():
   assert '$ref' in val
 
   val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '200', 'schema'))
+  assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '203', 'schema'))
   assert '$ref' in val
 
   val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', 'default', 'schema'))
@@ -367,6 +373,9 @@ def test_issue_23_partial_resolution_files():
 
   val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '200', 'schema'))
   assert '$ref' in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '203', 'schema'))
+  assert '$ref' not in val
 
   val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', 'default', 'schema'))
   assert '$ref' in val
@@ -431,6 +440,9 @@ def test_issue_23_partial_resolution_http(mock_get):
 
   val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '200', 'schema'))
   assert '$ref' not in val
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '203', 'schema'))
+  assert '$ref' in val
 
   val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', 'default', 'schema'))
   assert '$ref' in val
@@ -601,3 +613,19 @@ def test_issue_205_swagger_resolution_failure():
   )
   # test will raise an exception
   res.resolve_references()
+
+@patch('requests.get')
+def test_resolve_package_ref(mock_get):
+  mock_get.side_effect = mock_get_petstore
+
+  specs = get_specs('tests/specs/with_externals.yaml')
+  res = resolver.RefResolver(specs,
+      fs.abspath('tests/specs/with_externals.yaml'),
+      resolve_types = resolver.RESOLVE_FILES
+      )
+  res.resolve_references()
+
+  from prance.util.path import path_get
+
+  val = path_get(res.specs, ('paths', '/pets/{petId}', 'get', 'responses', '203', 'schema'))
+  assert 'required' in val
