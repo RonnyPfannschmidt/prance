@@ -128,7 +128,7 @@ def test_issue_51_encoding_error():
           strict = True,
           encoding = 'iso-8859-2')
 
-  from yaml.reader import ReaderError
+  from ruamel.yaml.reader import ReaderError
   with pytest.raises(ReaderError):
     parser.parse()
 
@@ -179,3 +179,28 @@ def test_issue_83_skip_propagation():
           strict = False)
 
   parser.parse()
+
+
+@pytest.mark.skipif(none_of('openapi-spec-validator'), reason='Missing backends')
+def test_value_not_converted_to_boolean():
+  specs = '''openapi: "3.0.0"
+info:
+  title: ''
+  version: '1.0.0'
+paths: {}
+components:
+    schemas:
+        SampleEnum:
+            type: string
+            enum:
+              - NO
+              - OFF
+'''
+
+  from prance.util import resolver
+  parser = ResolvingParser(
+    spec_string = specs,
+    resolve_types = resolver.RESOLVE_FILES
+  )
+  specs = parser.specification
+  assert specs['components']['schemas']['SampleEnum']['enum'] == ['NO', 'OFF']
