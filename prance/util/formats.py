@@ -61,10 +61,11 @@ def __format_preferences(filename, content_type):  # noqa: N802
 
 # Basic parse functions
 def __parse_yaml(spec_str):  # noqa: N802
-  import yaml, yaml.parser
+  from ruamel.yaml import YAML, parser
   try:
-    return yaml.safe_load(str(spec_str))
-  except yaml.parser.ParserError as err:
+    yaml = YAML(typ='safe')
+    return yaml.load(str(spec_str))
+  except parser.ParserError as err:
     raise ParseError(str(err))
 
 
@@ -78,16 +79,13 @@ def __parse_json(spec_str):  # noqa: N802
 
 # Basic serialization functions
 def __serialize_yaml(specs):  # noqa: N802
-  # I don't know what the PyYAML authors smoked, but in order for it to parse
-  # unicode specs and not mess encoding up, you need to allow_unicode and
-  # explicitly set the encoding to None.
-  import yaml
-  utf = yaml.dump(specs,
-                  allow_unicode = True,
-                  encoding = None,
-                  default_flow_style = False)
+  import io
+  from ruamel.yaml import YAML
 
-  return str(utf)
+  yaml = YAML()
+  buf = io.BytesIO()
+  yaml.dump(specs, buf)
+  return buf.getvalue().decode('UTF-8')
 
 
 def __serialize_json(specs):  # noqa: N802
