@@ -1,27 +1,29 @@
 """Utility code for tests."""
 
-__author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2021 Jens Finkhaeuser'
-__license__ = 'MIT'
+__author__ = "Jens Finkhaeuser"
+__copyright__ = "Copyright (c) 2021 Jens Finkhaeuser"
+__license__ = "MIT"
 __all__ = ()
 
 import pytest
 
+
 class MockResponse:
-  """
-  Minimally imitate a response object from the requests library.
+    """
+    Minimally imitate a response object from the requests library.
 
-  Implements all that's required for prance.util.url
-  """
+    Implements all that's required for prance.util.url
+    """
 
-  def __init__(self, *args, **kwargs):
-    self.ok = kwargs.get('is_ok', True)
-    self.headers = kwargs.get('headers', { 'content-type': 'text/plain' })
-    self.text = kwargs.get('text', '')
+    def __init__(self, *args, **kwargs):
+        self.ok = kwargs.get("is_ok", True)
+        self.headers = kwargs.get("headers", {"content-type": "text/plain"})
+        self.text = kwargs.get("text", "")
+
 
 # The petstore.yaml file served at
 # http://finkhaeuser.de/projects/prance/petstore.yaml
-PETSTORE_YAML = '''swagger: "2.0"
+PETSTORE_YAML = """swagger: "2.0"
 info:
   version: 1.0.0
   title: Swagger Petstore
@@ -122,4 +124,4 @@ definitions:
         format: int32
       message:
         type: string
-'''
+"""

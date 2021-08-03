@@ -1,201 +1,221 @@
 """Test suite for prance.cli ."""
 
-__author__ = 'Jens Finkhaeuser'
-__copyright__ = 'Copyright (c) 2016-2021 Jens Finkhaeuser'
-__license__ = 'MIT'
+__author__ = "Jens Finkhaeuser"
+__copyright__ = "Copyright (c) 2016-2021 Jens Finkhaeuser"
+__license__ = "MIT"
 __all__ = ()
 
 import pytest
 
 from . import none_of
 
+
 @pytest.fixture
 def runner():
-  from click.testing import CliRunner
-  return CliRunner()
+    from click.testing import CliRunner
+
+    return CliRunner()
 
 
-@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
+@pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 def test_validate_defaults(runner):
-  from prance import cli
+    from prance import cli
 
-  # Good example
-  result = runner.invoke(cli.validate, ['tests/specs/petstore.yaml'])
-  assert result.exit_code == 0
-  expected = """Processing "tests/specs/petstore.yaml"...
+    # Good example
+    result = runner.invoke(cli.validate, ["tests/specs/petstore.yaml"])
+    assert result.exit_code == 0
+    expected = """Processing "tests/specs/petstore.yaml"...
  -> Resolving external references.
 Validates OK as Swagger/OpenAPI 2.0!
 """
-  assert result.output == expected
+    assert result.output == expected
 
-  # Bad example
-  result = runner.invoke(cli.validate, ['tests/specs/definitions.yaml'])
-  assert result.exit_code == 1
-  assert 'ValidationError' in result.output
+    # Bad example
+    result = runner.invoke(cli.validate, ["tests/specs/definitions.yaml"])
+    assert result.exit_code == 1
+    assert "ValidationError" in result.output
 
 
-@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
+@pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 def test_validate_multiple(runner):
-  from prance import cli
+    from prance import cli
 
-  result = runner.invoke(cli.validate,
-      ['tests/specs/petstore.yaml', 'tests/specs/petstore.yaml'])
-  assert result.exit_code == 0
-  expected = """Processing "tests/specs/petstore.yaml"...
+    result = runner.invoke(
+        cli.validate, ["tests/specs/petstore.yaml", "tests/specs/petstore.yaml"]
+    )
+    assert result.exit_code == 0
+    expected = """Processing "tests/specs/petstore.yaml"...
  -> Resolving external references.
 Validates OK as Swagger/OpenAPI 2.0!
 Processing "tests/specs/petstore.yaml"...
  -> Resolving external references.
 Validates OK as Swagger/OpenAPI 2.0!
 """
-  assert result.output == expected
+    assert result.output == expected
 
 
-@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
+@pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 def test_validate_no_resolve(runner):
-  from prance import cli
+    from prance import cli
 
-  # Good example
-  result = runner.invoke(cli.validate, ['--no-resolve', 'tests/specs/petstore.yaml'])
-  assert result.exit_code == 0
-  expected = """Processing "tests/specs/petstore.yaml"...
+    # Good example
+    result = runner.invoke(cli.validate, ["--no-resolve", "tests/specs/petstore.yaml"])
+    assert result.exit_code == 0
+    expected = """Processing "tests/specs/petstore.yaml"...
  -> Not resolving external references.
 Validates OK as Swagger/OpenAPI 2.0!
 """
-  assert result.output == expected
+    assert result.output == expected
 
 
-@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
+@pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 def test_validate_output_too_many_inputs(runner):
-  from prance import cli
+    from prance import cli
 
-  result = runner.invoke(cli.validate,
-      ['-o', 'foo', 'tests/specs/petstore.yaml', 'tests/specs/petstore.yaml'])
-  assert result.exit_code == 2
-  assert 'If --output-file is given,' in result.output
+    result = runner.invoke(
+        cli.validate,
+        ["-o", "foo", "tests/specs/petstore.yaml", "tests/specs/petstore.yaml"],
+    )
+    assert result.exit_code == 2
+    assert "If --output-file is given," in result.output
 
 
-@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
+@pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 def test_validate_output(runner):
-  from prance import cli
+    from prance import cli
 
-  import os, os.path
-  curdir = os.getcwd()
+    import os, os.path
 
-  outnames = ['foo.json', 'foo.yaml']
-  for outname in outnames:
-    with runner.isolated_filesystem():
-      result = runner.invoke(cli.validate,
-          ['-o', outname, os.path.join(curdir, 'tests/specs/petstore.yaml')])
-      assert result.exit_code == 0
+    curdir = os.getcwd()
 
-      # There also must be a 'foo' file now.
-      files = [f for f in os.listdir('.') if os.path.isfile(f)]
-      assert outname in files
+    outnames = ["foo.json", "foo.yaml"]
+    for outname in outnames:
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                cli.validate,
+                ["-o", outname, os.path.join(curdir, "tests/specs/petstore.yaml")],
+            )
+            assert result.exit_code == 0
 
-      # Ensure a UTF-8 file encoding.
-      from prance.util import fs
-      assert 'utf-8' in fs.detect_encoding(outname, default_to_utf8 = False,
-                                           read_all = True)
+            # There also must be a 'foo' file now.
+            files = [f for f in os.listdir(".") if os.path.isfile(f)]
+            assert outname in files
 
-      # Now do a full encoding detection, too
+            # Ensure a UTF-8 file encoding.
+            from prance.util import fs
 
-      # The 'foo' file must be a valid swagger spec.
-      result = runner.invoke(cli.validate, [outname])
-      assert result.exit_code == 0
+            assert "utf-8" in fs.detect_encoding(
+                outname, default_to_utf8=False, read_all=True
+            )
+
+            # Now do a full encoding detection, too
+
+            # The 'foo' file must be a valid swagger spec.
+            result = runner.invoke(cli.validate, [outname])
+            assert result.exit_code == 0
 
 
-@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
+@pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 def test_compile_defaults(runner):
-  from prance import cli
+    from prance import cli
 
-  # Good example
-  result = runner.invoke(cli.compile, ['tests/specs/petstore.yaml'])
-  assert result.exit_code == 0
-  expected = """Processing "tests/specs/petstore.yaml"...
+    # Good example
+    result = runner.invoke(cli.compile, ["tests/specs/petstore.yaml"])
+    assert result.exit_code == 0
+    expected = """Processing "tests/specs/petstore.yaml"...
  -> Resolving external references.
 Validates OK as Swagger/OpenAPI 2.0!
 """
-  assert result.output.startswith(expected)
+    assert result.output.startswith(expected)
 
-  # Bad example
-  result = runner.invoke(cli.validate, ['tests/specs/definitions.yaml'])
-  assert result.exit_code == 1
-  assert 'ValidationError' in result.output
+    # Bad example
+    result = runner.invoke(cli.validate, ["tests/specs/definitions.yaml"])
+    assert result.exit_code == 1
+    assert "ValidationError" in result.output
 
 
-@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
+@pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 def test_compile_output(runner):
-  from prance import cli
+    from prance import cli
 
-  import os, os.path
-  curdir = os.getcwd()
+    import os, os.path
 
-  outnames = ['foo.json', 'foo.yaml']
-  for outname in outnames:
-    with runner.isolated_filesystem():
-      result = runner.invoke(cli.compile,
-          [os.path.join(curdir, 'tests/specs/petstore.yaml'), outname])
-      assert result.exit_code == 0
+    curdir = os.getcwd()
 
-      # There also must be a 'foo' file now.
-      files = [f for f in os.listdir('.') if os.path.isfile(f)]
-      assert outname in files
+    outnames = ["foo.json", "foo.yaml"]
+    for outname in outnames:
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                cli.compile,
+                [os.path.join(curdir, "tests/specs/petstore.yaml"), outname],
+            )
+            assert result.exit_code == 0
 
-      # Ensure a UTF-8 file encoding.
-      from prance.util import fs
-      assert 'utf-8' in fs.detect_encoding(outname, default_to_utf8 = False,
-                                           read_all = True)
+            # There also must be a 'foo' file now.
+            files = [f for f in os.listdir(".") if os.path.isfile(f)]
+            assert outname in files
 
-      # Now do a full encoding detection, too
+            # Ensure a UTF-8 file encoding.
+            from prance.util import fs
 
-      # The 'foo' file must be a valid swagger spec.
-      result = runner.invoke(cli.validate, [outname])
-      assert result.exit_code == 0
+            assert "utf-8" in fs.detect_encoding(
+                outname, default_to_utf8=False, read_all=True
+            )
+
+            # Now do a full encoding detection, too
+
+            # The 'foo' file must be a valid swagger spec.
+            result = runner.invoke(cli.validate, [outname])
+            assert result.exit_code == 0
 
 
-@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
+@pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 @pytest.mark.requires_network()
 def test_convert_defaults(runner):
-  from prance import cli
+    from prance import cli
 
-  # Good example
-  result = runner.invoke(cli.convert, ['tests/specs/petstore.yaml'])
-  assert result.exit_code == 0
-  assert 'openapi' in result.output
-  assert '3.' in result.output
+    # Good example
+    result = runner.invoke(cli.convert, ["tests/specs/petstore.yaml"])
+    assert result.exit_code == 0
+    assert "openapi" in result.output
+    assert "3." in result.output
 
-  # Bad example
-  result = runner.invoke(cli.validate, ['tests/specs/definitions.yaml'])
-  assert result.exit_code == 1
-  assert 'ValidationError' in result.output
+    # Bad example
+    result = runner.invoke(cli.validate, ["tests/specs/definitions.yaml"])
+    assert result.exit_code == 1
+    assert "ValidationError" in result.output
 
 
-@pytest.mark.skipif(none_of('click'), reason = 'Click does not exist')
+@pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 @pytest.mark.requires_network()
 def test_convert_output(runner):
-  from prance import cli
+    from prance import cli
 
-  import os, os.path
-  curdir = os.getcwd()
+    import os, os.path
 
-  outnames = ['foo.json', 'foo.yaml']
-  for outname in outnames:
-    with runner.isolated_filesystem():
-      result = runner.invoke(cli.convert,
-          [os.path.join(curdir, 'tests/specs/petstore.yaml'), outname])
-      assert result.exit_code == 0
+    curdir = os.getcwd()
 
-      # There also must be a 'foo' file now.
-      files = [f for f in os.listdir('.') if os.path.isfile(f)]
-      assert outname in files
+    outnames = ["foo.json", "foo.yaml"]
+    for outname in outnames:
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                cli.convert,
+                [os.path.join(curdir, "tests/specs/petstore.yaml"), outname],
+            )
+            assert result.exit_code == 0
 
-      # Ensure a UTF-8 file encoding.
-      from prance.util import fs
-      assert 'utf-8' in fs.detect_encoding(outname, default_to_utf8 = False,
-                                           read_all = True)
+            # There also must be a 'foo' file now.
+            files = [f for f in os.listdir(".") if os.path.isfile(f)]
+            assert outname in files
 
-      # Now do a full encoding detection, too
-      contents = fs.read_file(outname)
-      assert 'openapi' in contents
-      assert '3.' in contents
+            # Ensure a UTF-8 file encoding.
+            from prance.util import fs
+
+            assert "utf-8" in fs.detect_encoding(
+                outname, default_to_utf8=False, read_all=True
+            )
+
+            # Now do a full encoding detection, too
+            contents = fs.read_file(outname)
+            assert "openapi" in contents
+            assert "3." in contents
