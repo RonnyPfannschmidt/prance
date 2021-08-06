@@ -20,7 +20,7 @@ from . import sandbox, platform
 def create_symlink():
     # Defined as a fixture so we can selectively use it for tests."
     testname = "tests/specs/symlink_test"
-    import os, os.path
+    import os.path
 
     if os.path.islink(testname):
         return testname
