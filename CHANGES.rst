@@ -1,3 +1,20 @@
+Prance 0.21.8.0 (2021-08-06)
+===================================================
+
+Features
+--------
+
+- Initial translating parser to inline other specs to new names. (#101)
+- replace pyyaml with ruamel.yaml for modern yaml support (#110)
+- Adopt black as code formatter. (#113)
+
+
+Bugfixes
+--------
+
+- RefResolver will again accept and if instructed resolve references using the "python" URL scheme. (#104)
+
+
 Prance 0.21.2 (2021-05-18)
 ==========================
 
