@@ -118,7 +118,9 @@ def test_same_file_reference_from_file(tester):
 
 
 def test_different_file_reference_from_file(tester):
-    tester.assert_path_ref("different_file_reference_from_file_schemas1.spec.yaml_RefObject")
+    tester.assert_path_ref(
+        "different_file_reference_from_file_schemas1.spec.yaml_RefObject"
+    )
     tester.assert_schemas(
         {
             "different_file_reference_from_file_schemas1.spec.yaml_RefObject",
@@ -133,8 +135,12 @@ def test_different_file_reference_from_file(tester):
 
 def test_root_file_reference_from_file(tester):
     tester.assert_path_ref("root_file_reference_from_file_schemas.spec.yaml_RefObject")
-    tester.assert_schemas({"PlainObject", "root_file_reference_from_file_schemas.spec.yaml_RefObject"})
-    tester.assert_schema_ref("root_file_reference_from_file_schemas.spec.yaml_RefObject", "PlainObject")
+    tester.assert_schemas(
+        {"PlainObject", "root_file_reference_from_file_schemas.spec.yaml_RefObject"}
+    )
+    tester.assert_schema_ref(
+        "root_file_reference_from_file_schemas.spec.yaml_RefObject", "PlainObject"
+    )
 
 
 def test_root_file_reference_from_root(tester):
@@ -143,41 +149,51 @@ def test_root_file_reference_from_root(tester):
 
 
 def test_recursive_reference_in_root(tester):
-    tester.assert_schema_ref("RecursiveObject", "RecursiveObject", lambda schema: schema["additionalProperties"])
+    tester.assert_schema_ref(
+        "RecursiveObject",
+        "RecursiveObject",
+        lambda schema: schema["additionalProperties"],
+    )
 
 
 def test_recursive_reference_in_file(tester):
-    tester.assert_path_ref("recursive_reference_in_file_schemas.spec.yaml_RecursiveObject")
-    tester.assert_schemas({"recursive_reference_in_file_schemas.spec.yaml_RecursiveObject"})
+    tester.assert_path_ref(
+        "recursive_reference_in_file_schemas.spec.yaml_RecursiveObject"
+    )
+    tester.assert_schemas(
+        {"recursive_reference_in_file_schemas.spec.yaml_RecursiveObject"}
+    )
     tester.assert_schema_ref(
         "recursive_reference_in_file_schemas.spec.yaml_RecursiveObject",
         "recursive_reference_in_file_schemas.spec.yaml_RecursiveObject",
-        lambda schema: schema["additionalProperties"]
+        lambda schema: schema["additionalProperties"],
     )
 
 
 def test_nested_recursive_reference_in_file(tester):
     tester.assert_path_ref("Response")
-    tester.assert_schemas({
-        "Response",
-        "ResultsItem",
-        "ReferenceObject",
-        "nested_recursive_reference_in_file_schemas.spec.yaml_ComplexObject",
-        "nested_recursive_reference_in_file_schemas.spec.yaml_ComplexObjectProperty",
-        "nested_recursive_reference_in_file_schemas.spec.yaml_RecursiveObject",
-    })
+    tester.assert_schemas(
+        {
+            "Response",
+            "ResultsItem",
+            "ReferenceObject",
+            "nested_recursive_reference_in_file_schemas.spec.yaml_ComplexObject",
+            "nested_recursive_reference_in_file_schemas.spec.yaml_ComplexObjectProperty",
+            "nested_recursive_reference_in_file_schemas.spec.yaml_RecursiveObject",
+        }
+    )
     tester.assert_schema_ref(
         "nested_recursive_reference_in_file_schemas.spec.yaml_ComplexObject",
         "nested_recursive_reference_in_file_schemas.spec.yaml_ComplexObjectProperty",
-        lambda schema: schema["properties"]["property"]
+        lambda schema: schema["properties"]["property"],
     )
     tester.assert_schema_ref(
         "nested_recursive_reference_in_file_schemas.spec.yaml_ComplexObjectProperty",
         "nested_recursive_reference_in_file_schemas.spec.yaml_RecursiveObject",
-        lambda schema: schema["properties"]["recursive"]
+        lambda schema: schema["properties"]["recursive"],
     )
     tester.assert_schema_ref(
         "nested_recursive_reference_in_file_schemas.spec.yaml_RecursiveObject",
         "nested_recursive_reference_in_file_schemas.spec.yaml_RecursiveObject",
-        lambda schema: schema["additionalProperties"]["oneOf"][0]
+        lambda schema: schema["additionalProperties"]["oneOf"][0],
     )
