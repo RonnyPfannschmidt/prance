@@ -1,1 +1,0 @@
-replace pyyaml with ruamel.yaml for modern yaml support
