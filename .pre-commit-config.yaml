@@ -7,13 +7,13 @@ repos:
   - id: reorder-python-imports
     args: [--py36-plus]
 - repo: https://github.com/asottile/pyupgrade
-  rev: v2.26.0
+  rev: v2.29.0
   hooks:
   - id: pyupgrade
     args: [--py36-plus]
 
 - repo: https://github.com/psf/black
-  rev: 21.9b0
+  rev: 21.10b0
   hooks:
   - id: black
 
@@ -25,7 +25,7 @@ repos:
   #- id: check-yaml
   - id: debug-statements
 - repo: https://github.com/pycqa/flake8
-  rev: '3.9.2'
+  rev: '4.0.1'
   hooks:
   - id: flake8
     exclude: tests
