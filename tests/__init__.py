@@ -30,7 +30,7 @@ def _find_imports(*args):
 
 def none_of(*args):
     """
-    Return true if none of the named modules exist, false otheriwse.
+    Return true if none of the named modules exist, false otherwise.
     """
     exists = _find_imports(*args)
     return len(exists[True]) == 0

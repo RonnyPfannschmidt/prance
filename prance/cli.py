@@ -50,7 +50,7 @@ def __parser_for_url(url, resolve, backend, strict, encoding):  # noqa: N802
             url, lazy=True, backend=backend, strict=strict, encoding=encoding
         )
 
-    # XXX maybe enable tihs in debug mode or something.
+    # XXX maybe enable this in debug mode or something.
     # click.echo(' -> Using backend: {0.backend}'.format(parser))
     return parser, formatted
 

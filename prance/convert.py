@@ -90,7 +90,7 @@ def convert_spec(parser_or_spec, parser_klass=None, *args, **kwargs):
     the returned parser's options are taken from this source parser.
 
     If the first parameter is a parsed spec, you must specify the class
-    of parser to instanciate. You can specify other options as key word
+    of parser to instantiate. You can specify other options as key word
     arguments. See the parser klass for details.
 
     Any key word arguments specified here also override options from a
@@ -98,13 +98,13 @@ def convert_spec(parser_or_spec, parser_klass=None, *args, **kwargs):
 
     This parametrization may seem a little convoluted. What it does, though,
     is allow maximum flexibility. You can create parsed (but unvalidated)
-    OpenAPI 3.0 specs even if you only have backends that support vresion 2.0.
+    OpenAPI 3.0 specs even if you only have backends that support version 2.0.
     You can pass the source parser, and the lazy flag, and that's it. If your
     version 2.0 specs were valid, there's a good chance your converted 3.0
     specs are also valid.
 
     :param mixed parser_or_spec: A dict (spec) or an instance of BaseParser
-    :param type parser_klass: [optional] A parser class to instanciate for
+    :param type parser_klass: [optional] A parser class to instantiate for
       the result.
     :return: A parser instance.
     :rtype: BaseParser or derived.

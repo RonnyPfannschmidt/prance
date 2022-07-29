@@ -60,7 +60,7 @@ class RefResolver:
             yourself. It's safe to ignore this parameter in other cases.
         :param int recursion_limit: [optional] set the limit on recursive
             references. The default is 1, indicating that an element may be
-            refered to exactly once when resolving references. When the limit
+            referred to exactly once when resolving references. When the limit
             is reached, the recursion_limit_handler is invoked.
         :param callable recursion_limit_handler: [optional] A callable that
             gets invoked when the recursion_limit is reached. Defaults to

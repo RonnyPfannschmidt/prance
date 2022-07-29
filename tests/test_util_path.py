@@ -285,7 +285,7 @@ def test_set_mixed_create_no_fill():
 def test_get_informative_key_error():
     base = {"foo": {"bar": [123]}}
 
-    # Match that the object being examing has its path printed, as
+    # Match that the object being examining has its path printed, as
     # well as that the key is included.
     with pytest.raises(KeyError, match=r'.*"/".*asdf'):
         path_get(base, ("asdf",))

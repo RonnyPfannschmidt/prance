@@ -87,7 +87,7 @@ Create a simple text file in `changelog.d/<issue-or-pr>.<type>`. Write a
 concise summary of the change and how it affects users.
 
 For very small changes, use `misc` - the descriptions from that type won't
-even be added to the changelog, just a link ot the issue.
+even be added to the changelog, just a link to the issue.
 
 Prefer issue numbers over PR numbers, if you have both.
 
