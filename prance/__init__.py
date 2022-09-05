@@ -226,7 +226,11 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
             raise_from(ValidationError, ex)
 
     def _validate_openapi_spec_validator(self, spec_version):  # pragma: nocover
-        from openapi_spec_validator import validate_spec, openapi_v2_spec_validator, openapi_v3_spec_validator
+        from openapi_spec_validator import (
+            validate_spec,
+            openapi_v2_spec_validator,
+            openapi_v3_spec_validator,
+        )
         from jsonschema.exceptions import ValidationError as JSEValidationError
         from jsonschema.exceptions import RefResolutionError
 
