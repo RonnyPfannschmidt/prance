@@ -103,7 +103,7 @@ def test_cache_specs_mixin(petstore_parser):
     assert yaml, "Did not get YAML representation of specs!"
 
     # Caching should mean that if the specifications do not change, then neither
-    # does the YAML repersentation.
+    # does the YAML representation.
     assert yaml == petstore_parser.yaml(), "YAML representation changed!"
 
     # In fact, the objects shouldn't even change.

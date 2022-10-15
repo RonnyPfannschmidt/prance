@@ -241,7 +241,7 @@ def detect_encoding(filename, default_to_utf8=True, **kwargs):
     with open(filename, "rb") as raw_handle:
         raw = raw_handle.read(read_len)
 
-    # Detect the encoding the file specfies, if any.
+    # Detect the encoding the file specifies, if any.
     import codecs
 
     if raw.startswith(codecs.BOM_UTF8):

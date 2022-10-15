@@ -271,7 +271,7 @@ class ResolvingParser(BaseParser):
         See :py:class:`BaseParser`.
 
         Resolves JSON pointers/references (i.e. '$ref' keys) before validating the
-        specs. The implication is that self.specfication is fully resolved, and
+        specs. The implication is that self.specification is fully resolved, and
         does not contain any references.
 
         Additional parameters, see :py::class:`util.RefResolver`.

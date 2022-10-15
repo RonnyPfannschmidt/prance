@@ -667,7 +667,7 @@ def test_issue_77_translate_external_refs_internal():
         == val["content"]["application/json"]["$ref"]
     )
 
-    # Internal references is copied to componnents/schemas seperately
+    # Internal references is copied to components/schemas separately
     val = path_get(res.specs, ("components", "schemas", "_schemas.json_Something"))
     assert "type" in val
 
