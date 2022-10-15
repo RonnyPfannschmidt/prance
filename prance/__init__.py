@@ -226,7 +226,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
             raise_from(ValidationError, ex)
 
     def _validate_openapi_spec_validator(self, spec_version):  # pragma: nocover
-        from openapi_spec_validator import validate_v2_spec, validate_v3_spec
+        from openapi_spec_validator import validate_spec
         from jsonschema.exceptions import ValidationError as JSEValidationError
         from jsonschema.exceptions import RefResolutionError
 
@@ -237,27 +237,18 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         if spec_version[0] == 3:
             # Set the version independently of whether validation succeeds
             self.__set_version(BaseParser.SPEC_VERSION_3_PREFIX, spec_version)
-
-            try:
-                validate_v3_spec(self.specification)
-            except TypeError as type_ex:
-                raise_from(ValidationError, type_ex, self._strict_warning())
-            except JSEValidationError as v3_ex:
-                raise_from(ValidationError, v3_ex)
-            except RefResolutionError as ref_ex:
-                raise_from(ValidationError, ref_ex)
         elif spec_version[0] == 2:
             # Set the version independently of whether validation succeeds
             self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
-            try:
-                validate_v2_spec(self.specification)
-            except TypeError as type_ex:  # pragma: nocover
-                raise_from(ValidationError, type_ex, self._strict_warning())
-            except JSEValidationError as v2_ex:
-                raise_from(ValidationError, v2_ex)
-            except RefResolutionError as ref_ex:
-                raise_from(ValidationError, ref_ex)
+        try:
+            validate_spec(self.specification)
+        except TypeError as type_ex:  # pragma: nocover
+            raise_from(ValidationError, type_ex, self._strict_warning())
+        except JSEValidationError as v2_ex:
+            raise_from(ValidationError, v2_ex)
+        except RefResolutionError as ref_ex:
+            raise_from(ValidationError, ref_ex)
 
     def _strict_warning(self):
         """Return a warning if strict mode is off."""
