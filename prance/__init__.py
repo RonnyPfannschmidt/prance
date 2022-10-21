@@ -168,10 +168,10 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
             )
 
         # Try parsing the spec version, examine the first component.
-        import distutils.version
+        import packaging.version
 
-        parsed = distutils.version.StrictVersion(spec_version).version
-        if parsed[0] not in versions:
+        parsed = packaging.version.parse(spec_version)
+        if parsed.major not in versions:
             raise ValidationError(
                 'Version mismatch: selected backend "%s"'
                 " does not support specified version %s!" % (self.backend, spec_version)
