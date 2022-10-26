@@ -210,7 +210,9 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
             raise_from(ValidationError, ex)
 
-    def _validate_swagger_spec_validator(self, spec_version: Version):  # pragma: nocover
+    def _validate_swagger_spec_validator(
+        self, spec_version: Version
+    ):  # pragma: nocover
         # Set the version independently of whether validation succeeds
         self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
@@ -224,7 +226,9 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
             raise_from(ValidationError, ex)
 
-    def _validate_openapi_spec_validator(self, spec_version: Version):  # pragma: nocover
+    def _validate_openapi_spec_validator(
+        self, spec_version: Version
+    ):  # pragma: nocover
         from openapi_spec_validator import validate_spec
         from jsonschema.exceptions import ValidationError as JSEValidationError
         from jsonschema.exceptions import RefResolutionError
