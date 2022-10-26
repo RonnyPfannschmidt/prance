@@ -189,7 +189,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
     def __set_version(self, prefix, version: Version):
         self.version_name = prefix
-        self.version_parsed = version
+        self.version_parsed = version.release
 
         stringified = str(version)
         if prefix == BaseParser.SPEC_VERSION_2_PREFIX:
