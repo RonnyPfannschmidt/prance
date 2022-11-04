@@ -8,11 +8,11 @@ __all__ = ()
 import prance.util.url as _url
 
 #: Resolve internal references
-RESOLVE_INTERNAL = 2 ** 1
+RESOLVE_INTERNAL = 2**1
 #: Resolve references to HTTP external files.
-RESOLVE_HTTP = 2 ** 2
+RESOLVE_HTTP = 2**2
 #: Resolve references to local files.
-RESOLVE_FILES = 2 ** 3
+RESOLVE_FILES = 2**3
 
 #: Copy the schema changing the reference.
 TRANSLATE_EXTERNAL = 0

@@ -64,27 +64,20 @@ def iter_entries(parser, backend, version, file_format, path):
             from prance.util import url
 
             absurl = url.absurl(os.path.abspath(full)).geturl()
-            code = """
+            code = f"""
 @pytest.mark.xfail()
-def %s():
+def {testcase_name}():
   import os
   cur = os.getcwd()
 
-  os.chdir('%s')
+  os.chdir('{dirname}')
 
-  from prance import %s
+  from prance import {parser}
   try:
-    parser = %s('%s', backend = '%s')
+    parser = {parser}('{absurl}', backend = '{backend}')
   finally:
     os.chdir(cur)
-""" % (
-                testcase_name,
-                dirname,
-                parser,
-                parser,
-                absurl,
-                backend,
-            )
+"""
             print(code)
             exec(code, globals())
 

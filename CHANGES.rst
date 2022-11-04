@@ -1,3 +1,15 @@
+Prance 0.22.11.04.0
+====================
+
+Features
+--------
+
+- consolidate and unify openapi-spec-validator api usage (#132)
+- drop dead pythons and upgrade builds for python 3.7 - 3.10 (#137)
+- migrate from distutils.version to packaging.version (#138)
+
+
+
 Prance 0.21.8.0 (2021-08-06)
 ===================================================
 
