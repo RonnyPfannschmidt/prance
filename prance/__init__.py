@@ -12,6 +12,8 @@ __copyright__ = "Copyright (c) 2016-2021 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ("util", "mixins", "cli", "convert")
 
+from packaging.version import Version
+
 try:
     from prance._version import version as __version__
 except ImportError:
@@ -168,10 +170,10 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
             )
 
         # Try parsing the spec version, examine the first component.
-        import distutils.version
+        import packaging.version
 
-        parsed = distutils.version.StrictVersion(spec_version).version
-        if parsed[0] not in versions:
+        parsed = packaging.version.parse(spec_version)
+        if parsed.major not in versions:
             raise ValidationError(
                 'Version mismatch: selected backend "%s"'
                 " does not support specified version %s!" % (self.backend, spec_version)
@@ -185,19 +187,16 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         validator(parsed)
         self.valid = True
 
-    def __set_version(self, prefix, version):
+    def __set_version(self, prefix, version: Version):
         self.version_name = prefix
-        self.version_parsed = version
-        import semver
+        self.version_parsed = version.release
 
-        self.semver = str(semver.VersionInfo(*version))
-
-        stringified = self.semver
+        stringified = str(version)
         if prefix == BaseParser.SPEC_VERSION_2_PREFIX:
-            stringified = "%d.%d" % (version[0], version[1])
+            stringified = "%d.%d" % (version.major, version.minor)
         self.version = f"{self.version_name} {stringified}"
 
-    def _validate_flex(self, spec_version):  # pragma: nocover
+    def _validate_flex(self, spec_version: Version):  # pragma: nocover
         # Set the version independently of whether validation succeeds
         self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
@@ -211,7 +210,9 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
             raise_from(ValidationError, ex)
 
-    def _validate_swagger_spec_validator(self, spec_version):  # pragma: nocover
+    def _validate_swagger_spec_validator(
+        self, spec_version: Version
+    ):  # pragma: nocover
         # Set the version independently of whether validation succeeds
         self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
@@ -225,7 +226,9 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
             raise_from(ValidationError, ex)
 
-    def _validate_openapi_spec_validator(self, spec_version):  # pragma: nocover
+    def _validate_openapi_spec_validator(
+        self, spec_version: Version
+    ):  # pragma: nocover
         from openapi_spec_validator import validate_spec
         from jsonschema.exceptions import ValidationError as JSEValidationError
         from jsonschema.exceptions import RefResolutionError
@@ -234,10 +237,10 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         # already caught outside of this function.
         from .util.exceptions import raise_from
 
-        if spec_version[0] == 3:
+        if spec_version.major == 3:
             # Set the version independently of whether validation succeeds
             self.__set_version(BaseParser.SPEC_VERSION_3_PREFIX, spec_version)
-        elif spec_version[0] == 2:
+        elif spec_version.major == 2:
             # Set the version independently of whether validation succeeds
             self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
