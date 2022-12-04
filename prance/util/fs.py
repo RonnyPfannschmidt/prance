@@ -58,12 +58,14 @@ def is_pathname_valid(pathname):
         _, pathname = os.path.splitdrive(pathname)
 
         # Directory guaranteed to exist. If the current OS is Windows, this is
-        # the drive to which Windows was installed (e.g., the "%HOMEDRIVE%"
+        # the drive to which Windows was installed (e.g., the "%SYSTEMDRIVE%"
         # environment variable); else, the typical root directory.
+        # The %systemdrive% (typically c:) is the partition with
+        # the %systemroot% (typically Windows) directory.
         import sys
 
         root_dirname = (
-            os.environ.get("HOMEDRIVE", "C:")
+            os.environ.get("SYSTEMDRIVE", "C:")
             if sys.platform == "win32"
             else os.path.sep
         )
