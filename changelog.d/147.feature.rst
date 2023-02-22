@@ -1,0 +1,1 @@
+Update packaging to use modern setuptools and drop python3.7.
