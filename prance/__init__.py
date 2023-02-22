@@ -11,6 +11,7 @@ __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2021 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ("util", "mixins", "cli", "convert")
+import sys
 
 from packaging.version import Version
 
@@ -20,16 +21,15 @@ except ImportError:
     # todo: better gussing
     __version__ = "0.20.0+unknown"
 
+from . import mixins
+
 
 # Define our own error class
 class ValidationError(Exception):
     pass
 
 
-from . import mixins
-
 # Placeholder for when no URL is specified for the main spec file
-import sys
 
 if sys.platform == "win32":  # pragma: nocover
     # Placeholder must be absolute
