@@ -9,6 +9,7 @@ __all__ = ()
 import click
 
 import prance
+from prance.util import default_validation_backend
 
 
 def __write_to_file(filename, specs):  # noqa: N802
@@ -113,9 +114,6 @@ class GroupWithCommandOptions(click.Group):
             original_invoke(ctx)
 
         return command_invoke
-
-
-from prance.util import default_validation_backend
 
 
 @click.group(cls=GroupWithCommandOptions)

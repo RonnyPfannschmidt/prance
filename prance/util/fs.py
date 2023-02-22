@@ -43,7 +43,8 @@ def is_pathname_valid(pathname):
         otherwise.
     :rtype: bool
     """
-    import errno, os
+    import errno
+    import os
 
     # If this pathname is either not a string or is but is empty, this pathname
     # is invalid.
@@ -195,7 +196,7 @@ def canonical_filename(filename):
     :return: The canonical filename.
     :rtype: str
     """
-    import os, os.path
+    import os.path
 
     path = from_posix(filename)
     while True:

@@ -138,9 +138,8 @@ class RefResolver:
             # Split the reference string into parsed URL and object path
             ref_url, obj_path = _url.split_url_reference(base_url, refstring)
 
-            translate = (
-                self.__resolve_method == TRANSLATE_EXTERNAL
-                and self.parsed_url.path != ref_url.path
+            translate = (self.__resolve_method == TRANSLATE_EXTERNAL) and (
+                self.parsed_url.path != ref_url.path
             )
 
             if self._skip_reference(base_url, ref_url):
