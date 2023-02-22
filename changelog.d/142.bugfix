@@ -1,1 +1,0 @@
-Fixed bug where user's HOMEDRIVE exists, but HOMEDRIVE is offline.

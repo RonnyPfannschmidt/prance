@@ -1,3 +1,21 @@
+Prance 0.23.02.22.0 (2023-02-22)
+================================
+
+Features
+--------
+
+- Update packaging to use modern setuptools and drop python3.7. (#147)
+
+
+Bugfixes
+--------
+
+- Fixed bug where user's HOMEDRIVE exists, but HOMEDRIVE is offline. (#142)
+- unpin chardet to allow usage. (#144)
+- Unpin packaging to prevent pin issues. (#145)
+- unpin click to allow using modern versions. (#146)
+
+
 Prance 0.22.11.04.0
 ====================
 
