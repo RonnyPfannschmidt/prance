@@ -1,4 +1,5 @@
 """This submodule contains specialty iterators over specs."""
+from __future__ import annotations
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2018 Jens Finkhaeuser"
@@ -6,7 +7,9 @@ __license__ = "MIT"
 __all__ = ()
 
 
-def item_iterator(value, path=()):
+def item_iterator(
+    value, path: tuple[str | int, ...] = ()
+) -> tuple[object, tuple[str | int, ...]]:
     """
     Return item iterator over the a nested dict- or list-like object.
 

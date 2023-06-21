@@ -206,9 +206,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         try:
             validate(self.specification)
         except JSEValidationError as ex:
-            from .util.exceptions import raise_from
-
-            raise_from(ValidationError, ex)
+            raise ValidationError(str(ex)) from ex
 
     def _validate_swagger_spec_validator(
         self, spec_version: Version
@@ -222,9 +220,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         try:
             validate_spec(self.specification)
         except SSVErr as ex:
-            from .util.exceptions import raise_from
-
-            raise_from(ValidationError, ex)
+            raise ValidationError(str(ex)) from ex
 
     def _validate_openapi_spec_validator(
         self, spec_version: Version
@@ -235,7 +231,6 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
         # Validate according to detected version. Unsupported versions are
         # already caught outside of this function.
-        from .util.exceptions import raise_from
 
         if spec_version.major == 3:
             # Set the version independently of whether validation succeeds
@@ -247,11 +242,11 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         try:
             validate_spec(self.specification)
         except TypeError as type_ex:  # pragma: nocover
-            raise_from(ValidationError, type_ex, self._strict_warning())
+            raise ValidationError(str(type_ex), self._strict_warning()) from type_ex
         except JSEValidationError as v2_ex:
-            raise_from(ValidationError, v2_ex)
+            raise ValidationError(str(v2_ex)) from v2_ex
         except RefResolutionError as ref_ex:
-            raise_from(ValidationError, ref_ex)
+            raise ValidationError(str(ref_ex)) from ref_ex
 
     def _strict_warning(self):
         """Return a warning if strict mode is off."""
