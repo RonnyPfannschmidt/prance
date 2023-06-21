@@ -6,10 +6,6 @@ __license__ = "MIT"
 __all__ = ()
 
 
-# Re-define an error for backwards compatibility
-FileNotFoundError = FileNotFoundError  # pragma: no cover
-
-
 # The following constant and function are taken from
 # https://stackoverflow.com/questions/9532499/check-whether-a-path-is-valid-in-python-without-creating-a-file-at-the-paths-ta
 
@@ -121,7 +117,7 @@ def is_pathname_valid(pathname):
     # Did we mention this should be shipped with Python already?
 
 
-def from_posix(fname):
+def from_posix(fname: str) -> str:
     """
     Convert a path from posix-like, to the platform format.
 
@@ -138,7 +134,7 @@ def from_posix(fname):
     return fname
 
 
-def to_posix(fname):
+def to_posix(fname: str) -> str:
     """
     Convert a path to posix-like format.
 
@@ -213,7 +209,9 @@ def canonical_filename(filename):
             return path
 
 
-def detect_encoding(filename, default_to_utf8=True, **kwargs):
+def detect_encoding(
+    filename: str, default_to_utf8: bool = True, *, read_all: bool = False
+) -> str:
     """
     Detect the named file's character encoding.
 
@@ -237,7 +235,7 @@ def detect_encoding(filename, default_to_utf8=True, **kwargs):
     read_len = min(_READ_CHUNK_SIZE, file_len)
 
     # ... unless we're supposed to!
-    if kwargs.get("read_all", False):
+    if read_all:
         read_len = file_len
 
     # Read the first read_len bytes raw, so we can detect the encoding

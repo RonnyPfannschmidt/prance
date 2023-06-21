@@ -57,9 +57,7 @@ def absurl(url, relative_to=None):
         try:
             parsed = parse.urlparse(url)
         except Exception as ex:
-            from .exceptions import raise_from
-
-            raise_from(ResolutionError, ex, f"Unable to parse url: {url}")
+            raise ResolutionError(f"{ex} -- Unable to parse url: {url}") from ex
 
     # Any non-file scheme we just return immediately.
     if parsed.scheme not in (None, "", "file"):
@@ -182,9 +180,7 @@ def fetch_url_text(url, cache={}, encoding=None):
         try:
             content = read_file(from_posix(url.path), encoding)
         except FileNotFoundError as ex:
-            from .exceptions import raise_from
-
-            raise_from(ResolutionError, ex, f"File not found: {url.path}")
+            raise ResolutionError(f"{ex} -- File not found: {url.path}")
     elif url.scheme == "python":
         # Resolve package path
         package = url.netloc
@@ -205,8 +201,8 @@ def fetch_url_text(url, cache={}, encoding=None):
         response = requests.get(url.geturl())
         if not response.ok:  # pragma: nocover
             raise ResolutionError(
-                'Cannot fetch URL "%s": %d %s'
-                % (url.geturl(), response.status_code, response.reason)
+                f"Cannot fetch URL {url.geturl()!r}: "
+                f"{response.status_code} {response.reason}"
             )
         content_type = response.headers.get("content-type", "text/plain")
         content = response.text
