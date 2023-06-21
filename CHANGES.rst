@@ -1,5 +1,13 @@
+Prance 23.06.21.0
+==================
+
+- first release to do away with zerover
+- prance now uses calver by date
+
 Prance 0.23.02.22.0 (2023-02-22)
 ================================
+
+- note: due to a mistake in tagging this was released as 0.22.2.22.0 and was not found as the latest release
 
 Features
 --------
