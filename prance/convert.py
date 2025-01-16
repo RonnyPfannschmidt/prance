@@ -37,9 +37,8 @@ def convert_str(spec_str, filename=None, **kwargs):
 
     # Ok, parsing went fine, so let's convert.
     data = spec_str
-    
 
-    headers = {"accept": content_type,"content-type":content_type}
+    headers = {"accept": content_type, "content-type": content_type}
 
     # Convert via API
     import requests

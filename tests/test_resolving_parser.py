@@ -188,7 +188,7 @@ components:
     parser = ResolvingParser(
         spec_string=specs,
         resolve_types=resolver.RESOLVE_FILES,
-        backend="openapi-spec-validator"
+        backend="openapi-spec-validator",
     )
 
     from prance.util.path import path_get
@@ -242,9 +242,9 @@ components:
     from prance.util import resolver
 
     parser = ResolvingParser(
-        spec_string=specs, 
+        spec_string=specs,
         resolve_types=resolver.RESOLVE_FILES,
-        backend="openapi-spec-validator"
+        backend="openapi-spec-validator",
     )
     specs = parser.specification
     assert specs["components"]["schemas"]["SampleEnum"]["enum"] == ["NO", "OFF"]

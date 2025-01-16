@@ -1,11 +1,9 @@
 from os.path import join
 from re import match
 
-
 import pytest
 
 from . import none_of
-
 from prance import _TranslatingParser
 
 
@@ -81,6 +79,7 @@ class SpecificationTester:
         schema = getter(schemas[key])
         self._assert_ref(schema, ref)
 
+
 @pytest.mark.skipif(
     none_of("openapi-spec-validator"), reason="Missing openapi-spec-validator"
 )
@@ -88,12 +87,14 @@ def test_local_reference_from_root(tester):
     tester.assert_path_ref("PlainObject")
     tester.assert_schemas({"PlainObject"})
 
+
 @pytest.mark.skipif(
     none_of("openapi-spec-validator"), reason="Missing openapi-spec-validator"
 )
 def test_file_reference_from_root(tester):
     tester.assert_path_ref("file_reference_from_root_schemas.spec.yaml_PlainObject")
     tester.assert_schemas({"file_reference_from_root_schemas.spec.yaml_PlainObject"})
+
 
 @pytest.mark.skipif(
     none_of("openapi-spec-validator"), reason="Missing openapi-spec-validator"
@@ -111,6 +112,7 @@ def test_local_reference_from_file(tester):
         "local_reference_from_file_schemas.spec.yaml_PlainObject",
     )
 
+
 @pytest.mark.skipif(
     none_of("openapi-spec-validator"), reason="Missing openapi-spec-validator"
 )
@@ -126,6 +128,7 @@ def test_same_file_reference_from_file(tester):
         "same_file_reference_from_file_schemas.spec.yaml_RefObject",
         "same_file_reference_from_file_schemas.spec.yaml_PlainObject",
     )
+
 
 @pytest.mark.skipif(
     none_of("openapi-spec-validator"), reason="Missing openapi-spec-validator"
@@ -145,6 +148,7 @@ def test_different_file_reference_from_file(tester):
         "different_file_reference_from_file_schemas2.spec.yaml_PlainObject",
     )
 
+
 @pytest.mark.skipif(
     none_of("openapi-spec-validator"), reason="Missing openapi-spec-validator"
 )
@@ -157,12 +161,14 @@ def test_root_file_reference_from_file(tester):
         "root_file_reference_from_file_schemas.spec.yaml_RefObject", "PlainObject"
     )
 
+
 @pytest.mark.skipif(
     none_of("openapi-spec-validator"), reason="Missing openapi-spec-validator"
 )
 def test_root_file_reference_from_root(tester):
     tester.assert_path_ref("PlainObject")
     tester.assert_schemas({"PlainObject"})
+
 
 @pytest.mark.skipif(
     none_of("openapi-spec-validator"), reason="Missing openapi-spec-validator"
@@ -173,6 +179,7 @@ def test_recursive_reference_in_root(tester):
         "RecursiveObject",
         lambda schema: schema["additionalProperties"],
     )
+
 
 @pytest.mark.skipif(
     none_of("openapi-spec-validator"), reason="Missing openapi-spec-validator"
@@ -189,6 +196,7 @@ def test_recursive_reference_in_file(tester):
         "recursive_reference_in_file_schemas.spec.yaml_RecursiveObject",
         lambda schema: schema["additionalProperties"],
     )
+
 
 @pytest.mark.skipif(
     none_of("openapi-spec-validator"), reason="Missing openapi-spec-validator"

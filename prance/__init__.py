@@ -232,7 +232,6 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         from openapi_spec_validator import validate
         from jsonschema.exceptions import ValidationError as JSEValidationError
         from referencing.exceptions import Unresolvable
-        
 
         # Validate according to detected version. Unsupported versions are
         # already caught outside of this function.
@@ -253,7 +252,6 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
             raise_from(ValidationError, v2_ex)
         except Unresolvable as ref_unres:
             raise_from(ValidationError, ref_unres)
-
 
     def _strict_warning(self):
         """Return a warning if strict mode is off."""

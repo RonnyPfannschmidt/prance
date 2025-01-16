@@ -28,7 +28,9 @@ def petstore_json():
 
 @pytest.mark.requires_network()
 def test_convert_petstore_yaml(petstore_yaml):
-    converted, content_type = convert.convert_str(petstore_yaml, content_type='application/yaml')
+    converted, content_type = convert.convert_str(
+        petstore_yaml, content_type="application/yaml"
+    )
 
     # Check correct content type
     assert "yaml" in content_type
@@ -45,7 +47,9 @@ def test_convert_petstore_yaml(petstore_yaml):
 
 @pytest.mark.requires_network()
 def test_convert_petstore_json(petstore_json):
-    converted, content_type = convert.convert_str(petstore_json, content_type='application/json')
+    converted, content_type = convert.convert_str(
+        petstore_json, content_type="application/json"
+    )
 
     # Check correct content type
     assert "json" in content_type
