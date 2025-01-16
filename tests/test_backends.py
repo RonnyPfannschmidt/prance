@@ -106,7 +106,7 @@ def test_openapi_spec_validator_issue_5_integer_keys():
 )
 def test_openapi_spec_validator_issue_36_error_reporting():
     with pytest.raises(ValidationError, match=r"Strict mode enabled"):
-        BaseParser("tests/specs/issue_36.yaml")
+        BaseParser("tests/specs/issue_36.yaml", backend="openapi-spec-validator")
 
 
 @pytest.mark.skipif(

@@ -1,7 +1,7 @@
 """
 Functionality for converting from Swagger/OpenAPI 2.0 to OpenAPI 3.0.0.
 
-The functions use https://mermade.org.uk/ APIs for conversion.
+The functions use https://converter.swagger.io/ APIs for conversion.
 """
 
 __author__ = "Jens Finkhaeuser"
@@ -36,21 +36,16 @@ def convert_str(spec_str, filename=None, **kwargs):
     spec, content_type, extension = parse_spec_details(spec_str, filename, **kwargs)
 
     # Ok, parsing went fine, so let's convert.
-    data = {
-        "source": spec_str,
-    }
-    if filename is not None:
-        data["filename"] = filename
-    else:
-        data["filename"] = f"openapi{extension}"
+    data = spec_str
+    
 
-    headers = {"accept": f"{content_type}; charset=utf-8"}
+    headers = {"accept": content_type,"content-type":content_type}
 
     # Convert via API
     import requests
 
     r = requests.post(
-        "https://mermade.org.uk/api/v1/convert", data=data, headers=headers
+        "https://converter.swagger.io/api/convert", data=data, headers=headers
     )
     if not r.ok:  # pragma: nocover
         raise ConversionError(
@@ -136,10 +131,10 @@ def convert_spec(parser_or_spec, parser_klass=None, *args, **kwargs):
     # YAML.
     from .util import formats
 
-    serialized = formats.serialize_spec(spec, content_type="text/yaml")
+    serialized = formats.serialize_spec(spec, content_type="application/yaml")
 
     # Convert serialized
-    converted, ctype = convert_str(serialized, content_type="text/yaml")
+    converted, ctype = convert_str(serialized, content_type="application/yaml")
 
     # Create parser with options
     result = klass(spec_string=converted, **options)
