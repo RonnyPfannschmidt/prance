@@ -47,9 +47,7 @@ def convert_str(spec_str, filename=None, **kwargs):
         "https://converter.swagger.io/api/convert", data=data, headers=headers
     )
     if not r.ok:  # pragma: nocover
-        raise ConversionError(
-            "Could not convert spec: %d %s" % (r.status_code, r.reason)
-        )
+        raise ConversionError(f"Could not convert spec: {r.status_code} {r.reason}")
 
     return r.text, "{}; {}".format(r.headers["content-type"], r.apparent_encoding)
 

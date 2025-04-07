@@ -5,7 +5,6 @@ __copyright__ = "Copyright (c) 2016-2021 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ()
 
-import sys
 
 import pytest
 
@@ -192,7 +191,7 @@ def test_fetch_url_text_cached():
 
 @pytest.mark.requires_network()
 def test_fetch_url_http():
-    exturl = "https://petstore.swagger.io/v2/swagger.yaml" "#/definitions/Pet"
+    exturl = "https://petstore.swagger.io/v2/swagger.yaml#/definitions/Pet"
     content = url.fetch_url(url.absurl(exturl))
     assert content["swagger"] == "2.0"
 

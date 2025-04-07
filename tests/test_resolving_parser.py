@@ -5,17 +5,17 @@ __copyright__ = "Copyright (c) 2016-2021 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ()
 
-import pytest
 from unittest.mock import patch
 
-from prance import ResolvingParser
-from prance import ValidationError
+import pytest
+
+from prance import ResolvingParser, ValidationError
 
 from . import none_of
 
 
 def mock_get_petstore(*args, **kwargs):
-    from .mock_response import MockResponse, PETSTORE_YAML
+    from .mock_response import PETSTORE_YAML, MockResponse
 
     return MockResponse(text=PETSTORE_YAML)
 
@@ -101,9 +101,9 @@ def test_with_externals_resolve(with_externals_parser):
 )
 def test_relative_urls_from_string(petstore_parser_from_string):
     # This must succeed
-    assert (
-        petstore_parser_from_string.yaml()
-    ), "Did not get YAML representation of specs!"
+    assert petstore_parser_from_string.yaml(), (
+        "Did not get YAML representation of specs!"
+    )
 
 
 @pytest.mark.skipif(

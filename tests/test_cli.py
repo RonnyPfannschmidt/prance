@@ -82,9 +82,10 @@ def test_validate_output_too_many_inputs(runner):
 
 @pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 def test_validate_output(runner):
-    from prance import cli
+    import os
+    import os.path
 
-    import os, os.path
+    from prance import cli
 
     curdir = os.getcwd()
 
@@ -136,9 +137,10 @@ Validates OK as Swagger/OpenAPI 2.0!
 
 @pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 def test_compile_output(runner):
-    from prance import cli
+    import os
+    import os.path
 
-    import os, os.path
+    from prance import cli
 
     curdir = os.getcwd()
 
@@ -189,9 +191,10 @@ def test_convert_defaults(runner):
 @pytest.mark.skipif(none_of("click"), reason="Click does not exist")
 @pytest.mark.requires_network()
 def test_convert_output(runner):
-    from prance import cli
+    import os
+    import os.path
 
-    import os, os.path
+    from prance import cli
 
     curdir = os.getcwd()
 

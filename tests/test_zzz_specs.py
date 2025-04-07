@@ -1,15 +1,11 @@
 """Test OpenAPI specs examples."""
 
+import os
+
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2018 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ()
-
-import pytest
-
-from prance import ResolvingParser
-from prance import ValidationError
-from prance.util.fs import FileNotFoundError
 
 
 def make_name(path, parser, backend, version, file_format, entry):
@@ -33,7 +29,6 @@ def make_name(path, parser, backend, version, file_format, entry):
 # - file
 # That gives >50 test cases
 
-import os, os.path
 
 base = os.path.join("tests", "examples")
 
@@ -52,7 +47,7 @@ def iter_entries(parser, backend, version, file_format, path):
         elif os.path.isdir(full):
             if parser == "BaseParser":
                 continue  # skip separate files for the BaseParser
-            full = os.path.join(full, "spec", "swagger.%s" % (file_format))
+            full = os.path.join(full, "spec", f"swagger.{file_format}")
             if os.path.isfile(full):
                 testcase_name = make_name(
                     full, parser, backend, version, file_format, entry

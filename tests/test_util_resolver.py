@@ -6,11 +6,11 @@ __license__ = "MIT"
 __all__ = ()
 
 
-import pytest
 from unittest.mock import patch
 
-from prance.util import fs
-from prance.util import resolver
+import pytest
+
+from prance.util import fs, resolver
 from prance.util.url import ResolutionError
 
 from . import none_of
@@ -27,7 +27,7 @@ def get_specs(fname):
 
 
 def mock_get_petstore(*args, **kwargs):
-    from .mock_response import MockResponse, PETSTORE_YAML
+    from .mock_response import PETSTORE_YAML, MockResponse
 
     return MockResponse(text=PETSTORE_YAML)
 
@@ -77,7 +77,6 @@ def test_resolver_noname(externals_file):
 def test_resolver_named(mock_get, externals_file):
     mock_get.side_effect = mock_get_petstore
 
-    import os.path
     from prance.util import fs
 
     res = resolver.RefResolver(
@@ -89,8 +88,6 @@ def test_resolver_named(mock_get, externals_file):
 @patch("requests.get")
 def test_resolver_missing_reference(mock_get, missing_file):
     mock_get.side_effect = mock_get_petstore
-
-    import os.path
 
     res = resolver.RefResolver(
         missing_file, fs.abspath("tests/specs/missing_reference.yaml")
@@ -106,7 +103,6 @@ def test_resolver_recursive_objects(mock_get, recursive_objs_file):
     mock_get.side_effect = mock_get_petstore
 
     # Recursive references to objects are a problem
-    import os.path
 
     res = resolver.RefResolver(
         recursive_objs_file, fs.abspath("tests/specs/recursive_objs.yaml")
@@ -122,7 +118,6 @@ def test_resolver_recursive_files(mock_get, recursive_files_file):
     mock_get.side_effect = mock_get_petstore
 
     # Recursive references to files are not a problem
-    import os.path
 
     res = resolver.RefResolver(
         recursive_files_file, fs.abspath("tests/specs/recursive_files.yaml")
@@ -132,7 +127,6 @@ def test_resolver_recursive_files(mock_get, recursive_files_file):
 
 def test_recursion_limit_do_not_recurse_raise(recursion_limit_file):
     # Expect the default behaviour to raise.
-    import os.path
 
     res = resolver.RefResolver(
         recursion_limit_file, fs.abspath("tests/specs/recursion_limit.yaml")
@@ -146,7 +140,6 @@ def test_recursion_limit_do_not_recurse_raise(recursion_limit_file):
 def test_recursion_limit_do_not_recurse_ignore(recursion_limit_file):
     # If we overload the handler, we should not get an error but should
     # also simply not have the 'next' field - or it should be None
-    import os.path
 
     res = resolver.RefResolver(
         recursion_limit_file,
@@ -157,7 +150,7 @@ def test_recursion_limit_do_not_recurse_ignore(recursion_limit_file):
 
     from prance.util import formats
 
-    contents = formats.serialize_spec(res.specs, "foo.yaml")
+    formats.serialize_spec(res.specs, "foo.yaml")
 
     # The effect of returning None on recursion limit should be that
     # despite having recursion, the outermost reference to
@@ -179,8 +172,6 @@ def test_recursion_limit_set_limit_ignore(recursion_limit_file):
     # If we overload the handler, and set the recursion limit higher,
     # we should get nested Pet objects a few levels deep.
 
-    import os.path
-
     res = resolver.RefResolver(
         recursion_limit_file,
         fs.abspath("tests/specs/recursion_limit.yaml"),
@@ -191,7 +182,7 @@ def test_recursion_limit_set_limit_ignore(recursion_limit_file):
 
     from prance.util import formats
 
-    contents = formats.serialize_spec(res.specs, "foo.yaml")
+    formats.serialize_spec(res.specs, "foo.yaml")
 
     # The effect of returning None on recursion limit should be that
     # despite having recursion, the outermost reference to
@@ -212,7 +203,6 @@ def test_recursion_limit_set_limit_ignore(recursion_limit_file):
 
 def test_recursion_limit_do_not_recurse_raise_files(recursion_limit_files_file):
     # Expect the default behaviour to raise.
-    import os.path
 
     res = resolver.RefResolver(
         recursion_limit_files_file, fs.abspath("tests/specs/recursion_limit_files.yaml")
@@ -226,7 +216,6 @@ def test_recursion_limit_do_not_recurse_raise_files(recursion_limit_files_file):
 def test_recursion_limit_do_not_recurse_ignore_files(recursion_limit_files_file):
     # If we overload the handler, we should not get an error but should
     # also simply not have the 'next' field - or it should be None
-    import os.path
 
     res = resolver.RefResolver(
         recursion_limit_files_file,
@@ -237,7 +226,7 @@ def test_recursion_limit_do_not_recurse_ignore_files(recursion_limit_files_file)
 
     from prance.util import formats
 
-    contents = formats.serialize_spec(res.specs, "foo.yaml")
+    formats.serialize_spec(res.specs, "foo.yaml")
 
     # The effect of returning None on recursion limit should be that
     # despite having recursion, the outermost reference to
@@ -259,8 +248,6 @@ def test_recursion_limit_set_limit_ignore_files(recursion_limit_files_file):
     # If we overload the handler, and set the recursion limit higher,
     # we should get nested Pet objects a few levels deep.
 
-    import os.path
-
     res = resolver.RefResolver(
         recursion_limit_files_file,
         fs.abspath("tests/specs/recursion_limit_files.yaml"),
@@ -271,7 +258,7 @@ def test_recursion_limit_set_limit_ignore_files(recursion_limit_files_file):
 
     from prance.util import formats
 
-    contents = formats.serialize_spec(res.specs, "foo.yaml")
+    formats.serialize_spec(res.specs, "foo.yaml")
 
     # The effect of returning None on recursion limit should be that
     # despite having recursion, the outermost reference to
@@ -301,7 +288,6 @@ def test_issue_22_empty_path(mock_get, externals_file):
     assert "overwritten" in param
     assert "$ref" in param
 
-    import os.path
     from prance.util import fs
 
     res = resolver.RefResolver(

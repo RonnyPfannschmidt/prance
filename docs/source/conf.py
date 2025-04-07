@@ -25,6 +25,12 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+
+
+import re
+
+from prance import __version__ as release
+
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
@@ -69,10 +75,7 @@ author = "Jens Finkhaeuser"
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-from prance import __version__ as release
-
 # The short X.Y version.
-import re
 
 version = ".".join(re.findall(r"[\w]+", release)[0:2])
 

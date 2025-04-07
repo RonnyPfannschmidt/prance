@@ -84,9 +84,10 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         # Keep the parameters around for later use
         self.url = None
         if url:
-            from .util.url import absurl
-            from .util.fs import abspath
             import os
+
+            from .util.fs import abspath
+            from .util.url import absurl
 
             self.url = absurl(url, abspath(os.getcwd()))
         else:
@@ -165,9 +166,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         if spec_version is None:
             spec_version = self.specification.get("swagger", None)
         if spec_version is None:
-            raise ValidationError(
-                "Could not determine specification schema " "version!"
-            )
+            raise ValidationError("Could not determine specification schema version!")
 
         # Try parsing the spec version, examine the first component.
         import packaging.version
@@ -175,8 +174,8 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         parsed = packaging.version.parse(spec_version)
         if parsed.major not in versions:
             raise ValidationError(
-                'Version mismatch: selected backend "%s"'
-                " does not support specified version %s!" % (self.backend, spec_version)
+                f'Version mismatch: selected backend "{self.backend}"'
+                f" does not support specified version {spec_version}!"
             )
 
         # Validate the parsed specs, using the given validation backend.
@@ -193,22 +192,20 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
         stringified = str(version)
         if prefix == BaseParser.SPEC_VERSION_2_PREFIX:
-            stringified = "%d.%d" % (version.major, version.minor)
+            stringified = f"{version.major}.{version.minor}"
         self.version = f"{self.version_name} {stringified}"
 
     def _validate_flex(self, spec_version: Version):  # pragma: nocover
         # Set the version independently of whether validation succeeds
         self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
-        from flex.exceptions import ValidationError as JSEValidationError
         from flex.core import parse as validate
+        from flex.exceptions import ValidationError as JSEValidationError
 
         try:
             validate(self.specification)
         except JSEValidationError as ex:
-            from .util.exceptions import raise_from
-
-            raise_from(ValidationError, ex)
+            raise ValidationError(str(ex)) from ex
 
     def _validate_swagger_spec_validator(
         self, spec_version: Version
@@ -222,20 +219,17 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         try:
             validate_spec(self.specification)
         except SSVErr as ex:
-            from .util.exceptions import raise_from
-
-            raise_from(ValidationError, ex)
+            raise ValidationError(str(ex)) from ex
 
     def _validate_openapi_spec_validator(
         self, spec_version: Version
     ):  # pragma: nocover
-        from openapi_spec_validator import validate
         from jsonschema.exceptions import ValidationError as JSEValidationError
+        from openapi_spec_validator import validate
         from referencing.exceptions import Unresolvable
 
         # Validate according to detected version. Unsupported versions are
         # already caught outside of this function.
-        from .util.exceptions import raise_from
 
         if spec_version.major == 3:
             # Set the version independently of whether validation succeeds
@@ -247,11 +241,11 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         try:
             validate(self.specification)
         except TypeError as type_ex:  # pragma: nocover
-            raise_from(ValidationError, type_ex, self._strict_warning())
+            raise ValidationError(str(type_ex), self._strict_warning()) from type_ex
         except JSEValidationError as v2_ex:
-            raise_from(ValidationError, v2_ex)
-        except Unresolvable as ref_unres:
-            raise_from(ValidationError, ref_unres)
+            raise ValidationError(str(v2_ex)) from v2_ex
+        except Unresolvable as ref_ex:
+            raise ValidationError(str(ref_ex)) from ref_ex
 
     def _strict_warning(self):
         """Return a warning if strict mode is off."""

@@ -7,9 +7,7 @@ __all__ = ()
 
 import pytest
 
-from prance import BaseParser
-from prance import ValidationError
-from prance.util import validation_backends
+from prance import BaseParser, ValidationError
 
 from . import none_of
 
@@ -28,13 +26,13 @@ def test_flex_issue_5_integer_keys():
 
 @pytest.mark.skipif(none_of("flex"), reason="Missing dependencies: flex")
 def test_flex_validate_success():
-    parser = BaseParser("tests/specs/petstore.yaml", backend="flex")
+    BaseParser("tests/specs/petstore.yaml", backend="flex")
 
 
 @pytest.mark.skipif(none_of("flex"), reason="Missing dependencies: flex")
 def test_flex_validate_failure():
     with pytest.raises(ValidationError):
-        parser = BaseParser("tests/specs/missing_reference.yaml", backend="flex")
+        BaseParser("tests/specs/missing_reference.yaml", backend="flex")
 
 
 @pytest.mark.skipif(
@@ -64,7 +62,7 @@ def test_swagger_spec_validator_issue_5_integer_keys():
     reason="Missing dependencies: swagger-spec-validator",
 )
 def test_swagger_spec_validator_validate_success():
-    parser = BaseParser("tests/specs/petstore.yaml", backend="swagger-spec-validator")
+    BaseParser("tests/specs/petstore.yaml", backend="swagger-spec-validator")
 
 
 @pytest.mark.skipif(
@@ -73,7 +71,7 @@ def test_swagger_spec_validator_validate_success():
 )
 def test_swagger_spec_validator_validate_failure():
     with pytest.raises(ValidationError):
-        parser = BaseParser(
+        BaseParser(
             "tests/specs/missing_reference.yaml", backend="swagger-spec-validator"
         )
 
@@ -114,7 +112,7 @@ def test_openapi_spec_validator_issue_36_error_reporting():
     reason="Missing dependencies: openapi-spec-validator",
 )
 def test_openapi_spec_validator_validate_success():
-    parser = BaseParser("tests/specs/petstore.yaml", backend="openapi-spec-validator")
+    BaseParser("tests/specs/petstore.yaml", backend="openapi-spec-validator")
 
 
 @pytest.mark.skipif(
@@ -123,7 +121,7 @@ def test_openapi_spec_validator_validate_success():
 )
 def test_openapi_spec_validator_validate_failure():
     with pytest.raises(ValidationError):
-        parser = BaseParser(
+        BaseParser(
             "tests/specs/missing_reference.yaml", backend="openapi-spec-validator"
         )
 

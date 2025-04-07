@@ -7,13 +7,12 @@ __all__ = ()
 
 
 import os
-import sys
 
 import pytest
 
 from prance.util import fs
 
-from . import sandbox, platform
+from . import platform, sandbox
 
 
 @pytest.fixture
@@ -198,16 +197,16 @@ def test_valid_pathname():
     # A URL should not be valid
     from prance.util.fs import is_pathname_valid
 
-    assert False == is_pathname_valid("\x00o.bar.org")
+    assert not is_pathname_valid("\x00o.bar.org")
 
     # However, the current path should be.
     import os
 
-    assert True == is_pathname_valid(os.getcwd())
+    assert is_pathname_valid(os.getcwd())
 
     # Can't put non-strings into this function
-    assert True == is_pathname_valid("foo")
-    assert False == is_pathname_valid(123)
+    assert is_pathname_valid("foo")
+    assert not is_pathname_valid(123)
 
     # Can't accept too long components
-    assert False == is_pathname_valid("a" * 256)
+    assert not is_pathname_valid("a" * 256)
