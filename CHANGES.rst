@@ -1,3 +1,20 @@
+Prance 25.04.08.0
+==================
+
+Compatibility changes
+---------------------
+
+Thank you to Mathis for bringing this forth.
+
+- migrate from jsonschema to referencing for references
+- drop unmaintained python 3.8/3.9
+- add support  + ci for python 3.11/3.12/3.14
+- migrate convert from mermade.org.uk to converter.swagger.io
+- switch yaml mimetype from the x-yaml form to the official yaml form
+- include petstore example data to ease testing without the git subrepo
+- explicitly use openapi-spec-validator backends in tests
+- drop dependency on setuptools and six
+
 Prance 23.06.21.0
 ==================
 
