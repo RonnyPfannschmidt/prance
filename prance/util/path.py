@@ -169,7 +169,7 @@ def path_set(obj, path, value, **options):
             obj[path[0]] = value
         else:
             if create and path[0] not in obj:
-                if type(path[1]) == int:
+                if isinstance(path[1], int):
                     obj[path[0]] = []
                 else:
                     obj[path[0]] = {}

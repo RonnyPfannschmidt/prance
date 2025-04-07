@@ -2,30 +2,30 @@ default_language_version:
   python: python3.10
 repos:
 - repo: https://github.com/asottile/reorder-python-imports
-  rev: v3.10.0
+  rev: v3.14.0
   hooks:
   - id: reorder-python-imports
     args: [--py37-plus]
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.7.0
+  rev: v3.19.1
   hooks:
   - id: pyupgrade
     args: [--py38-plus]
 
 - repo: https://github.com/psf/black
-  rev: 23.3.0
+  rev: 25.1.0
   hooks:
   - id: black
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v5.0.0
   hooks:
   - id: trailing-whitespace
   - id: end-of-file-fixer
   #- id: check-yaml
   - id: debug-statements
 - repo: https://github.com/pycqa/flake8
-  rev: '6.0.0'
+  rev: '7.2.0'
   hooks:
   - id: flake8
     exclude: tests
