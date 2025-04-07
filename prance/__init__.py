@@ -245,7 +245,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
             raise ValidationError(str(type_ex), self._strict_warning()) from type_ex
         except JSEValidationError as v2_ex:
             raise ValidationError(str(v2_ex)) from v2_ex
-        except RefResolutionError as ref_ex:
+        except Unresolvable as ref_ex:
             raise ValidationError(str(ref_ex)) from ref_ex
 
     def _strict_warning(self):

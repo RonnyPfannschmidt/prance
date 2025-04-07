@@ -1,4 +1,5 @@
 """This submodule contains specialty iterators over specs."""
+
 from __future__ import annotations
 
 __author__ = "Jens Finkhaeuser"
