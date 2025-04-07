@@ -16,19 +16,21 @@ from prance import convert
 def petstore_yaml():
     from prance.util import fs
 
-    return fs.read_file("tests/OpenAPI-Specification/examples/v2.0/yaml/petstore.yaml")
+    return fs.read_file("tests/examples/v2.0/yaml/petstore.yaml")
 
 
 @pytest.fixture
 def petstore_json():
     from prance.util import fs
 
-    return fs.read_file("tests/OpenAPI-Specification/examples/v2.0/json/petstore.json")
+    return fs.read_file("tests/examples/v2.0/json/petstore.json")
 
 
 @pytest.mark.requires_network()
 def test_convert_petstore_yaml(petstore_yaml):
-    converted, content_type = convert.convert_str(petstore_yaml)
+    converted, content_type = convert.convert_str(
+        petstore_yaml, content_type="application/yaml"
+    )
 
     # Check correct content type
     assert "yaml" in content_type
@@ -45,7 +47,9 @@ def test_convert_petstore_yaml(petstore_yaml):
 
 @pytest.mark.requires_network()
 def test_convert_petstore_json(petstore_json):
-    converted, content_type = convert.convert_str(petstore_json)
+    converted, content_type = convert.convert_str(
+        petstore_json, content_type="application/json"
+    )
 
     # Check correct content type
     assert "json" in content_type
@@ -90,7 +94,6 @@ def test_convert_url():
 
 
 @pytest.mark.requires_network()
-@pytest.mark.xfail()
 def test_convert_spec():
     from prance import BaseParser, ResolvingParser, ValidationError
 
@@ -98,7 +101,7 @@ def test_convert_spec():
 
     # Conversion should fail with the default backend.
     with pytest.raises(ValidationError):
-        converted = convert.convert_spec(parser.specification)
+        converted = convert.convert_spec(parser.specification, backend="flex")
 
     # However, with the lazy flag it should work.
     converted = convert.convert_spec(parser.specification, lazy=True)
@@ -110,7 +113,6 @@ def test_convert_spec():
 
 
 @pytest.mark.requires_network()
-@pytest.mark.xfail()
 def test_convert_parser_lazy_swagger_backend():
     from prance import BaseParser, ResolvingParser, ValidationError
 
@@ -118,7 +120,7 @@ def test_convert_parser_lazy_swagger_backend():
 
     # Conversion should fail with the default backend.
     with pytest.raises(ValidationError):
-        converted = convert.convert_spec(parser)
+        converted = convert.convert_spec(parser, backend="flex")
 
     # However, with the lazy flag it should work.
     converted = convert.convert_spec(parser, lazy=True)

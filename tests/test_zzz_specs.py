@@ -35,7 +35,7 @@ def make_name(path, parser, backend, version, file_format, entry):
 
 import os, os.path
 
-base = os.path.join("tests", "OpenAPI-Specification", "examples")
+base = os.path.join("tests", "examples")
 
 
 def iter_entries(parser, backend, version, file_format, path):

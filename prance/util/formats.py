@@ -109,7 +109,7 @@ __EXT_TO_FORMAT = {
 
 __MIME_TO_FORMAT = {
     ("application/json", "application/javascript"): "JSON",
-    ("application/x-yaml", "text/yaml"): "YAML",
+    ("application/yaml", "text/yaml"): "YAML",
 }
 
 

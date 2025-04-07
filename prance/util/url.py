@@ -192,9 +192,9 @@ def fetch_url_text(url, cache={}, encoding=None):
         if path[0] == "/":
             path = path[1:]
 
-        import pkg_resources
+        from importlib.resources import files
 
-        path = pkg_resources.resource_filename(package, path)
+        path = files(package).joinpath(path)
 
         from .fs import read_file, from_posix
 
