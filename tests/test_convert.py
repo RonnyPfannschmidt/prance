@@ -7,9 +7,9 @@ __all__ = ()
 
 import pytest
 
-from . import none_of
-
 from prance import convert
+
+from . import none_of
 
 
 @pytest.fixture

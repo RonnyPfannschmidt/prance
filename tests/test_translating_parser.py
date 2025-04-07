@@ -3,8 +3,9 @@ from re import match
 
 import pytest
 
-from . import none_of
 from prance import _TranslatingParser
+
+from . import none_of
 
 
 @pytest.fixture

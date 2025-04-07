@@ -11,3 +11,6 @@ package = "prance"
 package_dir = "."
 filename = "CHANGES.rst"
 directory = "changelog.d"
+
+[tool.ruff.lint]
+extend-select = ["UP", "I"]

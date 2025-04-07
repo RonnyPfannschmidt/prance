@@ -78,7 +78,8 @@ def absurl(url, relative_to=None):
     # That is, we'll have to set the fragment of the reference URL to that
     # of the input URL, and return the result.
     import os.path
-    from .fs import from_posix, abspath
+
+    from .fs import abspath, from_posix
 
     result_list = None
     if not parsed.path:
@@ -102,7 +103,7 @@ def absurl(url, relative_to=None):
             )
         if reference.scheme not in (None, "", "file"):
             raise ResolutionError(
-                "Cannot build an absolute file URL with a non-file" " reference!"
+                "Cannot build an absolute file URL with a non-file reference!"
             )
 
         result_list = list(parsed)
@@ -175,7 +176,7 @@ def fetch_url_text(url, cache={}, encoding=None):
     content = None
     content_type = None
     if url.scheme in (None, "", "file"):
-        from .fs import read_file, from_posix
+        from .fs import from_posix, read_file
 
         try:
             content = read_file(from_posix(url.path), encoding)
@@ -192,7 +193,7 @@ def fetch_url_text(url, cache={}, encoding=None):
 
         path = files(package).joinpath(path)
 
-        from .fs import read_file, from_posix
+        from .fs import from_posix, read_file
 
         content = read_file(from_posix(path), encoding)
     else:

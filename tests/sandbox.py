@@ -5,8 +5,6 @@ __copyright__ = "Copyright (c) 2017-2021 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ()
 
-import pytest
-
 
 class Sandboxer:
     """
@@ -22,7 +20,8 @@ class Sandboxer:
 
     def __enter__(self):
         # Save current working directory & python path
-        import os, sys
+        import os
+        import sys
 
         self.__cwd = os.getcwd()
         self.__syspath = sys.path[:]
@@ -38,13 +37,13 @@ class Sandboxer:
 
         # Then change to the temporary directory & python path
         os.chdir(str(tmp))
-        import site
 
         sys.path.insert(0, tmp)
 
     def __exit__(self, exc_type, exc_value, traceback):
         # Restore current working directory & python path
-        import os, sys
+        import os
+        import sys
 
         os.chdir(str(self.__cwd))
         sys.path = self.__syspath

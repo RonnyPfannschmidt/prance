@@ -8,7 +8,7 @@ __all__ = ()
 
 import pytest
 
-from prance.util.path import path_set, path_get
+from prance.util.path import path_get, path_set
 
 
 def test_get_bad_path():
@@ -154,8 +154,6 @@ def test_set_bad_path():
 
 
 def test_set_value():
-    value = 42
-
     # Setting on a value type with a path should raise...
     with pytest.raises(TypeError):
         path_set(42, ("foo", "bar"), "something")

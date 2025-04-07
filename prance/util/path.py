@@ -49,9 +49,7 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
 
         if path[0] not in obj:
             raise KeyError(
-                'Object at "{}" does not contain key: {}'.format(
-                    path_of_obj_str, path[0]
-                )
+                f'Object at "{path_of_obj_str}" does not contain key: {path[0]}'
             )
 
         return path_get(
@@ -66,17 +64,13 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
             idx = int(path[0])
         except ValueError:
             raise KeyError(
-                'Sequence at "%s" needs integer indices only, but got: '
-                "%s"
-                % (
-                    path_of_obj_str,
-                    path[0],
-                )
+                f'Sequence at "{path_of_obj_str}" needs integer indices only, but got: '
+                f"{path[0]}"
             )
 
         if idx < 0 or idx >= len(obj):
             raise IndexError(
-                'Index out of bounds for sequence at "%s": %d' % (path_of_obj_str, idx)
+                f"Index out of bounds for sequence at {path_of_obj}: {idx}"
             )
 
         return path_get(
@@ -123,7 +117,7 @@ def path_set(obj, path, value, **options):
         while len(seq) < index:
             seq.append(None)
 
-        if value_index_type == int:
+        if value_index_type is int:
             seq.append([])
         elif value_index_type is None:
             seq.append(None)
@@ -146,7 +140,7 @@ def path_set(obj, path, value, **options):
     # print('path', path)
     # print('value', value)
 
-    from collections.abc import Sequence, MutableSequence, Mapping, MutableMapping
+    from collections.abc import Mapping, MutableMapping, MutableSequence, Sequence
 
     if path is not None and not isinstance(path, Sequence):
         raise TypeError(f"Path is a {type(path)}, but must be None or a Collection!")

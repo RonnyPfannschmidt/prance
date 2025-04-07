@@ -18,7 +18,7 @@ def __write_to_file(filename, specs):  # noqa: N802
 
     This takes into account file name extensions as per `fs.write_file`.
     """
-    from prance.util import fs, formats
+    from prance.util import formats, fs
 
     contents = formats.serialize_spec(specs, filename)
     fs.write_file(filename, contents)
@@ -58,8 +58,8 @@ def __parser_for_url(url, resolve, backend, strict, encoding):  # noqa: N802
 
 def __validate(parser, name):  # noqa: N802
     """Validate a spec using this parser."""
-    from prance.util.url import ResolutionError
     from prance import ValidationError
+    from prance.util.url import ResolutionError
 
     try:
         parser.parse()
@@ -120,7 +120,7 @@ class GroupWithCommandOptions(click.Group):
 @click.option(
     "--resolve/--no-resolve",
     default=True,
-    help="Resolve external references before validation. The default is to " "do so.",
+    help="Resolve external references before validation. The default is to do so.",
 )
 @click.option(
     "--backend",
@@ -191,7 +191,7 @@ def validate(ctx, output_file, urls):
         )
     if output_file and len(urls) > 1:
         raise click.UsageError(
-            "If --output-file is given, only one input URL " "is allowed!"
+            "If --output-file is given, only one input URL is allowed!"
         )
 
     # Process files
@@ -283,8 +283,9 @@ def convert(url_or_path, output_file):
     version of the specs.
     """
     # Convert call
-    from .util import url
     import os
+
+    from .util import url
 
     absurl = url.absurl(url_or_path, os.getcwd())
 

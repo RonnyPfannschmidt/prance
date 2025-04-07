@@ -6,8 +6,6 @@ __license__ = "MIT"
 __all__ = ()
 
 
-import pytest
-
 from prance import util
 
 
