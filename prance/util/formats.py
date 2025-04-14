@@ -83,6 +83,7 @@ def __parse_json(spec_str):  # noqa: N802
 # Basic serialization functions
 def __serialize_yaml(specs):  # noqa: N802
     import io
+
     from ruamel.yaml import YAML
 
     yaml = YAML()

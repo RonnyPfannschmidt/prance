@@ -5,8 +5,6 @@ __copyright__ = "Copyright (c) 2021 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ()
 
-import pytest
-
 
 class MockResponse:
     """

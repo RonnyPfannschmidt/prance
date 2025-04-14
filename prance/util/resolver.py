@@ -31,8 +31,7 @@ def default_reclimit_handler(limit, parsed_url, recursions=()):
     path = "\n".join(path)
 
     raise _url.ResolutionError(
-        "Recursion reached limit of %d trying to "
-        'resolve "%s"!\n%s' % (limit, parsed_url.geturl(), path)
+        f"Recursion reached limit of {limit} trying to resolve {parsed_url!r}!\n{path}"
     )
 
 
@@ -199,9 +198,7 @@ class RefResolver:
             from urllib.parse import urlunparse
 
             raise ValueError(
-                "Scheme {!r} is not recognized in reference URL: {}".format(
-                    ref_url.scheme, urlunparse(ref_url)
-                )
+                f"Scheme {ref_url.scheme!r} is not recognized in reference URL: {urlunparse(ref_url)}"
             )
 
     def _dereference(self, ref_url, obj_path, recursions):

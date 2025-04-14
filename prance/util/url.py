@@ -57,9 +57,7 @@ def absurl(url, relative_to=None):
         try:
             parsed = parse.urlparse(url)
         except Exception as ex:
-            from .exceptions import raise_from
-
-            raise_from(ResolutionError, ex, f"Unable to parse url: {url}")
+            raise ResolutionError(f"{ex} -- Unable to parse url: {url}") from ex
 
     # Any non-file scheme we just return immediately.
     if parsed.scheme not in (None, "", "file"):
@@ -80,7 +78,8 @@ def absurl(url, relative_to=None):
     # That is, we'll have to set the fragment of the reference URL to that
     # of the input URL, and return the result.
     import os.path
-    from .fs import from_posix, abspath
+
+    from .fs import abspath, from_posix
 
     result_list = None
     if not parsed.path:
@@ -104,7 +103,7 @@ def absurl(url, relative_to=None):
             )
         if reference.scheme not in (None, "", "file"):
             raise ResolutionError(
-                "Cannot build an absolute file URL with a non-file" " reference!"
+                "Cannot build an absolute file URL with a non-file reference!"
             )
 
         result_list = list(parsed)
@@ -177,14 +176,12 @@ def fetch_url_text(url, cache={}, encoding=None):
     content = None
     content_type = None
     if url.scheme in (None, "", "file"):
-        from .fs import read_file, from_posix
+        from .fs import from_posix, read_file
 
         try:
             content = read_file(from_posix(url.path), encoding)
         except FileNotFoundError as ex:
-            from .exceptions import raise_from
-
-            raise_from(ResolutionError, ex, f"File not found: {url.path}")
+            raise ResolutionError(f"{ex} -- File not found: {url.path}")
     elif url.scheme == "python":
         # Resolve package path
         package = url.netloc
@@ -196,7 +193,7 @@ def fetch_url_text(url, cache={}, encoding=None):
 
         path = files(package).joinpath(path)
 
-        from .fs import read_file, from_posix
+        from .fs import from_posix, read_file
 
         content = read_file(from_posix(path), encoding)
     else:
@@ -205,8 +202,8 @@ def fetch_url_text(url, cache={}, encoding=None):
         response = requests.get(url.geturl())
         if not response.ok:  # pragma: nocover
             raise ResolutionError(
-                'Cannot fetch URL "%s": %d %s'
-                % (url.geturl(), response.status_code, response.reason)
+                f"Cannot fetch URL {url.geturl()!r}: "
+                f"{response.status_code} {response.reason}"
             )
         content_type = response.headers.get("content-type", "text/plain")
         content = response.text

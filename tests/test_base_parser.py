@@ -7,9 +7,7 @@ __all__ = ()
 
 import pytest
 
-from prance import BaseParser
-from prance import ValidationError
-from prance.util.fs import FileNotFoundError
+from prance import BaseParser, ValidationError
 
 from . import none_of
 
@@ -108,7 +106,7 @@ def test_cache_specs_mixin(petstore_parser):
 
     # In fact, the objects shouldn't even change.
     assert id(yaml) == id(petstore_parser.yaml()), (
-        "YAML did not change but " "got regenerated!"
+        "YAML did not change but got regenerated!"
     )
 
     # However, when the specs change, then so must the YAML representation.
@@ -122,6 +120,6 @@ def test_cache_specs_mixin(petstore_parser):
 )
 def test_relative_urls_from_string(petstore_parser_from_string):
     # This must succeed
-    assert (
-        petstore_parser_from_string.yaml()
-    ), "Did not get YAML representation of specs!"
+    assert petstore_parser_from_string.yaml(), (
+        "Did not get YAML representation of specs!"
+    )
