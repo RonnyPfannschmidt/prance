@@ -125,6 +125,10 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         multiple files by setting its url property and then invoking this
         function.
         """
+        self._parse()
+        self._validate()
+
+    def _parse(self):
         strict = self.options.get("strict", True)
 
         # If we have a file name, we need to read that in.
@@ -144,8 +148,6 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         # the JSON. At this point, we *require* a parsed specification to exist,
         # so we might as well assert.
         assert self.specification, "No specification parsed, cannot validate!"
-
-        self._validate()
 
     def _validate(self):
         # Ensure specification is a mapping
@@ -284,7 +286,7 @@ class ResolvingParser(BaseParser):
 
         BaseParser.__init__(self, url=url, spec_string=spec_string, lazy=lazy, **kwargs)
 
-    def _validate(self):
+    def _parse(self):
         # We have a problem with the BaseParser's validate function: the
         # jsonschema implementation underlying it does not accept relative
         # path references, but the Swagger specs allow them:
@@ -312,17 +314,12 @@ class ResolvingParser(BaseParser):
         resolver.resolve_references()
         self.specification = resolver.specs
 
-        # Now validate - the BaseParser knows the specifics
-        BaseParser._validate(self)
-
 
 # Underscored to allow some time for the public API to be stabilized.
 class _TranslatingParser(BaseParser):
-    def _validate(self):
+    def _parse(self):
         from .util.translator import _RefTranslator
 
         translator = _RefTranslator(self.specification, self.url)
         translator.translate_references()
         self.specification = translator.specs
-
-        BaseParser._validate(self)
