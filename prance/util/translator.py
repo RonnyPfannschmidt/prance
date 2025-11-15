@@ -155,7 +155,7 @@ class _RefTranslator:
         from prance.util.path import path_set
 
         for path in paths:
-            value = changes[path]
+            value: JsonValue = changes[path]  # type: ignore[assignment]
             if len(path) == 0:
                 partial = value
             else:

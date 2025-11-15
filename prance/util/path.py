@@ -17,7 +17,7 @@ __all__ = ()
 # Type aliases
 PathElement = Union[str, int]
 JsonValue = Union[
-    Mapping[str, "JsonValue"],
+    Mapping[Union[str, int], "JsonValue"],  # Mappings can have str or int keys
     Sequence["JsonValue"],
     str,
     int,
@@ -79,10 +79,7 @@ def path_get(
             )
 
         return path_get(
-            obj[str(path[0])],
-            path[1:],
-            defaultvalue,
-            path_of_obj=path_of_obj + (path[0],),
+            obj[path[0]], path[1:], defaultvalue, path_of_obj=path_of_obj + (path[0],)
         )
 
     elif isinstance(obj, AbcSequence):

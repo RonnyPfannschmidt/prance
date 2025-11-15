@@ -23,7 +23,7 @@ __license__ = "MIT"
 __all__ = ("util", "mixins", "cli", "convert")
 
 try:
-    from prance._version import version as __version__  # type: ignore[import-not-found]
+    from prance._version import version as __version__
 except ImportError:
     # todo: better gussing
     __version__ = "0.20.0+unknown"

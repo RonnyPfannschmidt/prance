@@ -12,7 +12,7 @@ __all__ = ()
 
 # Type alias for JSON-like values (recursive structure)
 JsonValue = Union[
-    Mapping[str, "JsonValue"],
+    Mapping[Union[str, int], "JsonValue"],  # Mappings can have str or int keys
     Sequence["JsonValue"],
     str,
     int,
