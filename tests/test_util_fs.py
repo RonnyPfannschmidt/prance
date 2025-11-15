@@ -209,5 +209,5 @@ def test_valid_pathname():
     assert True == is_pathname_valid("foo")
     assert False == is_pathname_valid(123)
 
-    # Can't accept too long components
-    assert False == is_pathname_valid("a" * 256)
+    # Can't accept too long components (use 300 to ensure it fails on all platforms)
+    assert False == is_pathname_valid("a" * 300)

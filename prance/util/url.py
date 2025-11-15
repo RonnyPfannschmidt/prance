@@ -135,7 +135,7 @@ def absurl(
 
 
 def split_url_reference(
-    base_url: ParseResult, reference: str
+    base_url: ParseResult | None, reference: str
 ) -> tuple[ParseResult, list[PathElement]]:
     """
     Return a normalized, parsed URL and object path.

@@ -173,10 +173,6 @@ class RefResolver:
             if not isinstance(refstring, str):
                 continue
 
-            # base_url must be a ParseResult for split_url_reference
-            if base_url is None:
-                continue
-
             # Split the reference string into parsed URL and object path
             ref_url, obj_path = _url.split_url_reference(base_url, refstring)
 
@@ -231,13 +227,13 @@ class RefResolver:
         self.__soft_dereference_objs[dref_url] = value
         return dref_url
 
-    def _skip_reference(self, base_url: ParseResult, ref_url: ParseResult) -> bool:
+    def _skip_reference(self, base_url: ParseResult | None, ref_url: ParseResult) -> bool:
         """Return whether the URL should not be dereferenced."""
         if ref_url.scheme.startswith("http"):
             return (self.__resolve_types & RESOLVE_HTTP) == 0
         elif ref_url.scheme == "file" or ref_url.scheme == "python":
             # Internal references
-            if base_url.path == ref_url.path:
+            if base_url is not None and base_url.path == ref_url.path:
                 return (self.__resolve_types & RESOLVE_INTERNAL) == 0
             # Local files
             return (self.__resolve_types & RESOLVE_FILES) == 0
