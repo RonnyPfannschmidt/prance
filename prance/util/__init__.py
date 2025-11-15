@@ -1,12 +1,17 @@
 """This submodule contains utility code for Prance."""
 
+from collections.abc import Mapping, MutableMapping
+from typing import List, Tuple, TypeVar
+
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2021 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ("iterators", "fs", "formats", "resolver", "url", "path", "exceptions")
 
+MappingT = TypeVar("MappingT", bound=MutableMapping)
 
-def stringify_keys(data):
+
+def stringify_keys(data: MappingT) -> MappingT:
     """
     Recursively stringify keys in a dict-like object.
 
@@ -22,32 +27,32 @@ def stringify_keys(data):
     for key, value in data.items():
         if not isinstance(key, str):
             key = str(key)
-        if isinstance(value, Mapping):
+        if isinstance(value, MutableMapping):
             value = stringify_keys(value)
         ret[key] = value
     return ret
 
 
-def validation_backends():
+def validation_backends() -> Tuple[str, ...]:
     """Return a list of validation backends supported by the environment."""
-    ret = []
+    ret: List[str] = []
 
     try:
-        import flex  # noqa: F401
+        import flex  # type: ignore[import-not-found]  # noqa: F401
 
         ret.append("flex")  # pragma: nocover
     except (ImportError, SyntaxError):  # pragma: nocover
         pass
 
     try:
-        import openapi_spec_validator  # noqa: F401
+        import openapi_spec_validator  # type: ignore[import-not-found]  # noqa: F401
 
         ret.append("openapi-spec-validator")  # pragma: nocover
     except (ImportError, SyntaxError):  # pragma: nocover
         pass
 
     try:
-        import swagger_spec_validator  # noqa: F401
+        import swagger_spec_validator  # type: ignore[import-not-found]  # noqa: F401
 
         ret.append("swagger-spec-validator")  # pragma: nocover
     except (ImportError, SyntaxError):  # pragma: nocover
@@ -56,7 +61,7 @@ def validation_backends():
     return tuple(ret)
 
 
-def default_validation_backend():
+def default_validation_backend() -> str:
     """Return the default validation backend, or raise an error."""
     backends = validation_backends()
     if len(backends) <= 0:  # pragma: nocover

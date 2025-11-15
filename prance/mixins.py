@@ -4,6 +4,8 @@ Defines Mixins for parsers.
 The Mixins are here mostly for separation of concerns.
 """
 
+from typing import Any, Optional, cast
+
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2018 Jens Finkhaeuser"
 __license__ = "MIT"
@@ -17,9 +19,12 @@ class CacheSpecsMixin:
     It does so by caching a shallow copy on-demand.
     """
 
+    # This attribute is expected to be provided by the class using this mixin
+    specification: Any
+
     __CACHED_SPECS = "__cached_specs"
 
-    def specs_updated(self):
+    def specs_updated(self) -> bool:
         """
         Test if self.specficiation changed.
 
@@ -51,7 +56,7 @@ class YAMLMixin(CacheSpecsMixin):
 
     __YAML = "__yaml"
 
-    def yaml(self):
+    def yaml(self) -> str:
         """
         Return a YAML representation of the specifications.
 
@@ -60,10 +65,10 @@ class YAMLMixin(CacheSpecsMixin):
         """
         # Query specs_updated first to start caching
         if self.specs_updated() or not getattr(self, self.__YAML, None):
-            import yaml
+            import yaml  # type: ignore[import-untyped]
 
             setattr(self, self.__YAML, yaml.dump(self.specification))
-        return getattr(self, self.__YAML)
+        return cast(str, getattr(self, self.__YAML))
 
 
 class JSONMixin(CacheSpecsMixin):
@@ -75,7 +80,7 @@ class JSONMixin(CacheSpecsMixin):
 
     __JSON = "__json"
 
-    def json(self):
+    def json(self) -> str:
         """
         Return a JSON representation of the specifications.
 
@@ -87,4 +92,4 @@ class JSONMixin(CacheSpecsMixin):
             import json
 
             setattr(self, self.__JSON, json.dumps(self.specification))
-        return getattr(self, self.__JSON)
+        return cast(str, getattr(self, self.__JSON))

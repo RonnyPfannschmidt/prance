@@ -7,16 +7,21 @@ Included is a BaseParser that reads and validates swagger specs, and a
 ResolvingParser that additionally resolves any $ref references.
 """
 
+import sys
+from typing import Any, Dict, Optional, Union
+from urllib.parse import ParseResult
+
+from packaging.version import Version  # type: ignore[import-not-found]
+
+from prance.util.path import JsonValue
+
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2021 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ("util", "mixins", "cli", "convert")
-import sys
-
-from packaging.version import Version
 
 try:
-    from prance._version import version as __version__
+    from prance._version import version as __version__  # type: ignore[import-not-found]
 except ImportError:
     # todo: better gussing
     __version__ = "0.20.0+unknown"
@@ -55,7 +60,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
     SPEC_VERSION_2_PREFIX = "Swagger/OpenAPI"
     SPEC_VERSION_3_PREFIX = "OpenAPI"
 
-    def __init__(self, url=None, spec_string=None, lazy=False, **kwargs):
+    def __init__(self, url: Optional[str] = None, spec_string: Optional[str] = None, lazy: bool = False, **kwargs: Any) -> None:
         """
         Load, parse and validate specs.
 
@@ -82,7 +87,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         )
 
         # Keep the parameters around for later use
-        self.url = None
+        self.url: ParseResult
         if url:
             from .util.url import absurl
             from .util.fs import abspath
@@ -90,24 +95,25 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
             self.url = absurl(url, abspath(os.getcwd()))
         else:
-            self.url = _PLACEHOLDER_URL
+            from urllib.parse import urlparse
+            self.url = urlparse(_PLACEHOLDER_URL)
 
-        self._spec_string = spec_string
+        self._spec_string: Optional[str] = spec_string
 
         # Initialize variables we're filling later
-        self.specification = None
-        self.version = None
-        self.version_name = None
-        self.version_parsed = ()
-        self.valid = False
+        self.specification: Optional[JsonValue] = None
+        self.version: Optional[str] = None
+        self.version_name: Optional[str] = None
+        self.version_parsed: tuple = ()
+        self.valid: bool = False
 
         # Add kw args as options
-        self.options = kwargs
+        self.options: Dict[str, Any] = kwargs
 
         # Verify backend
         from .util import default_validation_backend
 
-        self.backend = self.options.get("backend", default_validation_backend())
+        self.backend: str = self.options.get("backend", default_validation_backend())
         if self.backend not in BaseParser.BACKENDS.keys():
             raise ValueError(
                 f"Backend may only be one of {BaseParser.BACKENDS.keys()}!"
@@ -117,7 +123,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         if not lazy:
             self.parse()
 
-    def parse(self):  # noqa: F811
+    def parse(self) -> None:  # noqa: F811
         """
         When the BaseParser was lazily created, load and parse now.
 
@@ -128,7 +134,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         strict = self.options.get("strict", True)
 
         # If we have a file name, we need to read that in.
-        if self.url and self.url != _PLACEHOLDER_URL:
+        if self.url and self.url.geturl() != _PLACEHOLDER_URL:
             from .util.url import fetch_url
 
             encoding = self.options.get("encoding", None)
@@ -138,7 +144,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         if self._spec_string:
             from .util.formats import parse_spec
 
-            self.specification = parse_spec(self._spec_string, self.url)
+            self.specification = parse_spec(self._spec_string, self.url.path)
 
         # If we have a parsed spec, convert it to JSON. Then we can validate
         # the JSON. At this point, we *require* a parsed specification to exist,
@@ -147,7 +153,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
         self._validate()
 
-    def _validate(self):
+    def _validate(self) -> None:
         # Ensure specification is a mapping
         from collections.abc import Mapping
 
@@ -159,18 +165,22 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
         # Fetch the spec version. Note that this is the spec version the spec
         # *claims* to be; we later set the one we actually could validate as.
-        spec_version = None
+        spec_version: Optional[str] = None
         if spec_version is None:
-            spec_version = self.specification.get("openapi", None)
+            version_val = self.specification.get("openapi", None)
+            if isinstance(version_val, str):
+                spec_version = version_val
         if spec_version is None:
-            spec_version = self.specification.get("swagger", None)
+            version_val = self.specification.get("swagger", None)
+            if isinstance(version_val, str):
+                spec_version = version_val
         if spec_version is None:
             raise ValidationError(
                 "Could not determine specification schema " "version!"
             )
 
         # Try parsing the spec version, examine the first component.
-        import packaging.version
+        import packaging.version  # type: ignore[import-not-found]
 
         parsed = packaging.version.parse(spec_version)
         if parsed.major not in versions:
@@ -187,7 +197,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         validator(parsed)
         self.valid = True
 
-    def __set_version(self, prefix, version: Version):
+    def __set_version(self, prefix: str, version: Version) -> None:
         self.version_name = prefix
         self.version_parsed = version.release
 
@@ -196,12 +206,12 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
             stringified = "%d.%d" % (version.major, version.minor)
         self.version = f"{self.version_name} {stringified}"
 
-    def _validate_flex(self, spec_version: Version):  # pragma: nocover
+    def _validate_flex(self, spec_version: Version) -> None:  # pragma: nocover
         # Set the version independently of whether validation succeeds
         self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
-        from flex.exceptions import ValidationError as JSEValidationError
-        from flex.core import parse as validate
+        from flex.exceptions import ValidationError as JSEValidationError  # type: ignore[import-not-found]
+        from flex.core import parse as validate  # type: ignore[import-not-found]
 
         try:
             validate(self.specification)
@@ -212,12 +222,12 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
     def _validate_swagger_spec_validator(
         self, spec_version: Version
-    ):  # pragma: nocover
+    ) -> None:  # pragma: nocover
         # Set the version independently of whether validation succeeds
         self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, spec_version)
 
-        from swagger_spec_validator.common import SwaggerValidationError as SSVErr
-        from swagger_spec_validator.validator20 import validate_spec
+        from swagger_spec_validator.common import SwaggerValidationError as SSVErr  # type: ignore[import-not-found]
+        from swagger_spec_validator.validator20 import validate_spec  # type: ignore[import-not-found]
 
         try:
             validate_spec(self.specification)
@@ -228,10 +238,10 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
     def _validate_openapi_spec_validator(
         self, spec_version: Version
-    ):  # pragma: nocover
-        from openapi_spec_validator import validate
-        from jsonschema.exceptions import ValidationError as JSEValidationError
-        from referencing.exceptions import Unresolvable
+    ) -> None:  # pragma: nocover
+        from openapi_spec_validator import validate  # type: ignore[import-not-found]
+        from jsonschema.exceptions import ValidationError as JSEValidationError  # type: ignore[import-untyped]
+        from referencing.exceptions import Unresolvable  # type: ignore[import-not-found]
 
         # Validate according to detected version. Unsupported versions are
         # already caught outside of this function.
@@ -253,7 +263,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         except Unresolvable as ref_unres:
             raise_from(ValidationError, ref_unres)
 
-    def _strict_warning(self):
+    def _strict_warning(self) -> str:
         """Return a warning if strict mode is off."""
         if self.options.get("strict", True):
             return (
@@ -269,7 +279,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 class ResolvingParser(BaseParser):
     """The ResolvingParser extends BaseParser with resolving references by inlining."""
 
-    def __init__(self, url=None, spec_string=None, lazy=False, **kwargs):
+    def __init__(self, url: Optional[str] = None, spec_string: Optional[str] = None, lazy: bool = False, **kwargs: Any) -> None:
         """
         See :py:class:`BaseParser`.
 
@@ -280,11 +290,11 @@ class ResolvingParser(BaseParser):
         Additional parameters, see :py::class:`util.RefResolver`.
         """
         # Create a reference cache
-        self.__reference_cache = {}
+        self.__reference_cache: Dict[Union[str, tuple], JsonValue] = {}
 
         BaseParser.__init__(self, url=url, spec_string=spec_string, lazy=lazy, **kwargs)
 
-    def _validate(self):
+    def _validate(self) -> None:
         # We have a problem with the BaseParser's validate function: the
         # jsonschema implementation underlying it does not accept relative
         # path references, but the Swagger specs allow them:
@@ -300,7 +310,7 @@ class ResolvingParser(BaseParser):
             "resolve_method",
             "strict",
         )
-        forward_args = {
+        forward_args: Dict[str, Any] = {
             k: v for (k, v) in self.options.items() if k in forward_arg_names
         }
         resolver = RefResolver(
@@ -318,10 +328,10 @@ class ResolvingParser(BaseParser):
 
 # Underscored to allow some time for the public API to be stabilized.
 class _TranslatingParser(BaseParser):
-    def _validate(self):
+    def _validate(self) -> None:
         from .util.translator import _RefTranslator
 
-        translator = _RefTranslator(self.specification, self.url)
+        translator = _RefTranslator(self.specification, self.url.geturl())
         translator.translate_references()
         self.specification = translator.specs
 

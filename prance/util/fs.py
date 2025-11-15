@@ -1,5 +1,7 @@
 """This submodule contains file system utilities for Prance."""
 
+from typing import Optional
+
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2019 Jens Finkhaeuser"
 __license__ = "MIT"
@@ -35,7 +37,7 @@ Default read size for detecting file encoding.
 """
 
 
-def is_pathname_valid(pathname):
+def is_pathname_valid(pathname: str) -> bool:
     """
     Test whether a path name is valid.
 
@@ -121,7 +123,7 @@ def is_pathname_valid(pathname):
     # Did we mention this should be shipped with Python already?
 
 
-def from_posix(fname):
+def from_posix(fname: str) -> str:
     """
     Convert a path from posix-like, to the platform format.
 
@@ -138,7 +140,7 @@ def from_posix(fname):
     return fname
 
 
-def to_posix(fname):
+def to_posix(fname: str) -> str:
     """
     Convert a path to posix-like format.
 
@@ -157,7 +159,7 @@ def to_posix(fname):
     return fname
 
 
-def abspath(filename, relative_to=None):
+def abspath(filename: str, relative_to: Optional[str] = None) -> str:
     """
     Return the absolute path of a file relative to a reference file.
 
@@ -185,7 +187,7 @@ def abspath(filename, relative_to=None):
     return to_posix(fname)
 
 
-def canonical_filename(filename):
+def canonical_filename(filename: str) -> str:
     """
     Return the canonical version of a file name.
 
@@ -213,7 +215,7 @@ def canonical_filename(filename):
             return path
 
 
-def detect_encoding(filename, default_to_utf8=True, **kwargs):
+def detect_encoding(filename: str, default_to_utf8: bool = True, **kwargs: bool) -> str:
     """
     Detect the named file's character encoding.
 
@@ -254,13 +256,13 @@ def detect_encoding(filename, default_to_utf8=True, **kwargs):
         try:
             # First try ICU. ICU will report ASCII in the first 32 Bytes as
             # ISO-8859-1, which isn't exactly wrong, but maybe optimistic.
-            import icu
+            import icu  # type: ignore[import-not-found]
 
             encoding = icu.CharsetDetector(raw).detect().getName().lower()
         except ImportError:  # pragma: nocover
             # If that doesn't work, try chardet - it's not got native components,
             # which is a bonus in some environments, but it's not as precise.
-            import chardet
+            import chardet  # type: ignore[import-not-found]
 
             encoding = chardet.detect(raw)["encoding"].lower()
 
@@ -287,7 +289,7 @@ def detect_encoding(filename, default_to_utf8=True, **kwargs):
     return encoding
 
 
-def read_file(filename, encoding=None):
+def read_file(filename: str, encoding: Optional[str] = None) -> str:
     """
     Read and decode a file, taking BOMs into account.
 
@@ -307,7 +309,7 @@ def read_file(filename, encoding=None):
         return handle.read()
 
 
-def write_file(filename, contents, encoding=None):
+def write_file(filename: str, contents: str, encoding: Optional[str] = None) -> None:
     """
     Write a file with the given encoding.
 
