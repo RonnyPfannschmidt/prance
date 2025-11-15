@@ -1,6 +1,6 @@
 """This submodule contains helpers for exception handling."""
-
-from typing import Optional, Type
+from typing import Optional
+from typing import Type
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2018,2019 Jens Finkhaeuser"
@@ -10,7 +10,11 @@ __all__ = ()
 
 # Raise the given exception class from the caught exception, preserving
 # stack trace and message as much as possible.
-def raise_from(klass: Type[BaseException], from_value: Optional[BaseException], extra_message: Optional[str] = None) -> None:
+def raise_from(
+    klass: type[BaseException],
+    from_value: BaseException | None,
+    extra_message: str | None = None,
+) -> None:
     try:
         if from_value is None:
             if extra_message is not None:

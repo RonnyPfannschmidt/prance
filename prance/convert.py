@@ -3,8 +3,13 @@ Functionality for converting from Swagger/OpenAPI 2.0 to OpenAPI 3.0.0.
 
 The functions use https://converter.swagger.io/ APIs for conversion.
 """
-
-from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Type, Union
+from typing import Any
+from typing import Dict
+from typing import Optional
+from typing import Tuple
+from typing import Type
+from typing import TYPE_CHECKING
+from typing import Union
 from urllib.parse import ParseResult
 
 from prance.util.path import JsonValue
@@ -22,7 +27,9 @@ class ConversionError(ValueError):
     pass  # pragma: nocover
 
 
-def convert_str(spec_str: str, filename: Optional[str] = None, **kwargs: Optional[str]) -> Tuple[str, str]:
+def convert_str(
+    spec_str: str, filename: str | None = None, **kwargs: str | None
+) -> tuple[str, str]:
     """
     Convert the serialized spec.
 
@@ -62,7 +69,9 @@ def convert_str(spec_str: str, filename: Optional[str] = None, **kwargs: Optiona
     return r.text, "{}; {}".format(r.headers["content-type"], r.apparent_encoding)
 
 
-def convert_url(url: Union[str, ParseResult], cache: Optional[Dict[str, Tuple[str, Optional[str]]]] = None) -> Tuple[str, str]:
+def convert_url(
+    url: str | ParseResult, cache: dict[str, tuple[str, str | None]] | None = None
+) -> tuple[str, str]:
     """
     Fetch a URL, and try to convert it to OpenAPI 3.x.y.
 
@@ -88,7 +97,12 @@ def convert_url(url: Union[str, ParseResult], cache: Optional[Dict[str, Tuple[st
     return convert_str(content, None, content_type=content_type)
 
 
-def convert_spec(parser_or_spec: Union[JsonValue, "BaseParser"], parser_klass: Optional[Type["BaseParser"]] = None, *args: Any, **kwargs: Any) -> "BaseParser":
+def convert_spec(
+    parser_or_spec: Union[JsonValue, "BaseParser"],
+    parser_klass: type["BaseParser"] | None = None,
+    *args: Any,
+    **kwargs: Any,
+) -> "BaseParser":
     """
     Convert an already parsed spec to OpenAPI 3.x.y.
 
@@ -119,8 +133,8 @@ def convert_spec(parser_or_spec: Union[JsonValue, "BaseParser"], parser_klass: O
     :rtype: BaseParser or derived.
     """
     # Figure out exact configuration to use
-    klass: Type["BaseParser"]
-    options: Dict[str, Any]
+    klass: type["BaseParser"]
+    options: dict[str, Any]
     spec: JsonValue
 
     from . import BaseParser

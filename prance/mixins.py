@@ -3,8 +3,9 @@ Defines Mixins for parsers.
 
 The Mixins are here mostly for separation of concerns.
 """
-
-from typing import Any, Optional, cast
+from typing import Any
+from typing import cast
+from typing import Optional
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2018 Jens Finkhaeuser"

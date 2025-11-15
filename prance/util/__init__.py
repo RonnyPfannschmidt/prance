@@ -1,7 +1,9 @@
 """This submodule contains utility code for Prance."""
-
-from collections.abc import Mapping, MutableMapping
-from typing import List, Tuple, TypeVar
+from collections.abc import Mapping
+from collections.abc import MutableMapping
+from typing import List
+from typing import Tuple
+from typing import TypeVar
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2021 Jens Finkhaeuser"
@@ -33,9 +35,9 @@ def stringify_keys(data: MappingT) -> MappingT:
     return ret
 
 
-def validation_backends() -> Tuple[str, ...]:
+def validation_backends() -> tuple[str, ...]:
     """Return a list of validation backends supported by the environment."""
-    ret: List[str] = []
+    ret: list[str] = []
 
     try:
         import flex  # type: ignore[import-not-found]  # noqa: F401

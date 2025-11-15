@@ -1,6 +1,7 @@
 """CLI for prance."""
-
-from typing import Any, Optional, Tuple
+from typing import Any
+from typing import Optional
+from typing import Tuple
 
 import click  # type: ignore[import-not-found]
 
@@ -26,7 +27,9 @@ def __write_to_file(filename: str, specs: JsonValue) -> None:  # noqa: N802
     fs.write_file(filename, contents)
 
 
-def __parser_for_url(url: str, resolve: bool, backend: str, strict: bool, encoding: Optional[str]) -> Tuple[prance.BaseParser, str]:  # noqa: N802
+def __parser_for_url(
+    url: str, resolve: bool, backend: str, strict: bool, encoding: str | None
+) -> tuple[prance.BaseParser, str]:  # noqa: N802
     """Return a parser instance for the URL and the given parameters."""
     # Try the URL
     formatted = click.format_filename(url)
@@ -85,7 +88,7 @@ def cli() -> None:
 class GroupWithCommandOptions(click.Group):
     """Allow application of options to group with multi command."""
 
-    def add_command(self, cmd: click.Command, name: Optional[str] = None) -> None:
+    def add_command(self, cmd: click.Command, name: str | None = None) -> None:
         click.Group.add_command(self, cmd, name=name)
 
         # add the group parameters to the command
@@ -147,7 +150,9 @@ class GroupWithCommandOptions(click.Group):
     "encoding for all files. Does not work on remote URLs.",
 )
 @click.pass_context
-def backend_options(ctx: click.Context, resolve: bool, backend: str, strict: bool, encoding: Optional[str]) -> None:
+def backend_options(
+    ctx: click.Context, resolve: bool, backend: str, strict: bool, encoding: str | None
+) -> None:
     ctx.obj["resolve"] = resolve
     ctx.obj["backend"] = backend
     ctx.obj["strict"] = strict
@@ -173,7 +178,9 @@ def backend_options(ctx: click.Context, resolve: bool, backend: str, strict: boo
     nargs=-1,
 )
 @click.pass_context
-def validate(ctx: click.Context, output_file: Optional[str], urls: Tuple[str, ...]) -> None:
+def validate(
+    ctx: click.Context, output_file: str | None, urls: tuple[str, ...]
+) -> None:
     """
     Validate the given spec or specs.
 
@@ -228,7 +235,7 @@ def validate(ctx: click.Context, output_file: Optional[str], urls: Tuple[str, ..
     required=False,
 )
 @click.pass_context
-def compile(ctx: click.Context, url_or_path: str, output_file: Optional[str]) -> None:
+def compile(ctx: click.Context, url_or_path: str, output_file: str | None) -> None:
     """
     Compile the given spec, resolving references if required.
 
@@ -275,7 +282,7 @@ def compile(ctx: click.Context, url_or_path: str, output_file: Optional[str]) ->
     nargs=1,
     required=False,
 )
-def convert(url_or_path: str, output_file: Optional[str]) -> None:
+def convert(url_or_path: str, output_file: str | None) -> None:
     """
     Convert the given spec to OpenAPI 3.x.y.
 

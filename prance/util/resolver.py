@@ -1,11 +1,19 @@
 """This submodule contains a JSON inlining reference resolver."""
-
+from collections.abc import Callable
+from collections.abc import Iterator
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union, cast
+from typing import Any
+from typing import cast
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
+from typing import Union
 from urllib.parse import ParseResult
 
 import prance.util.url as _url
-from prance.util.path import JsonValue, PathElement
+from prance.util.path import JsonValue
+from prance.util.path import PathElement
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2018 Jens Finkhaeuser"
@@ -28,9 +36,13 @@ TRANSLATE_DEFAULT = 1
 RESOLVE_ALL = RESOLVE_INTERNAL | RESOLVE_HTTP | RESOLVE_FILES
 
 
-def default_reclimit_handler(limit: int, parsed_url: ParseResult, recursions: Tuple[Tuple[str, Tuple[PathElement, ...]], ...] = ()) -> None:
+def default_reclimit_handler(
+    limit: int,
+    parsed_url: ParseResult,
+    recursions: tuple[tuple[str, tuple[PathElement, ...]], ...] = (),
+) -> None:
     """Raise prance.util.url.ResolutionError."""
-    path: List[str] = []
+    path: list[str] = []
     for rc in recursions:
         path.append("{}#/{}".format(rc[0], "/".join(str(p) for p in rc[1])))
     path_str = "\n".join(path)
@@ -44,7 +56,9 @@ def default_reclimit_handler(limit: int, parsed_url: ParseResult, recursions: Tu
 class RefResolver:
     """Resolve JSON pointers/references in a spec by inlining."""
 
-    def __init__(self, specs: JsonValue, url: Optional[Union[str, ParseResult]] = None, **options: Any) -> None:
+    def __init__(
+        self, specs: JsonValue, url: str | ParseResult | None = None, **options: Any
+    ) -> None:
         """
         Construct a JSON reference resolver.
 
@@ -86,20 +100,22 @@ class RefResolver:
         import copy
 
         self.specs: JsonValue = copy.deepcopy(specs)
-        self.url: Optional[Union[str, ParseResult]] = url
+        self.url: str | ParseResult | None = url
 
         self.__reclimit: int = options.get("recursion_limit", 1)
-        self.__reclimit_handler: Callable[[int, ParseResult, Tuple[Tuple[str, Tuple[PathElement, ...]], ...]], Any] = options.get(
-            "recursion_limit_handler", default_reclimit_handler
+        self.__reclimit_handler: Callable[
+            [int, ParseResult, tuple[tuple[str, tuple[PathElement, ...]], ...]], Any
+        ] = options.get("recursion_limit_handler", default_reclimit_handler)
+        self.__reference_cache: dict[str | tuple[str, bool], JsonValue] = options.get(
+            "reference_cache", {}
         )
-        self.__reference_cache: Dict[Union[str, Tuple[str, bool]], JsonValue] = options.get("reference_cache", {})
         self.__resolve_types: int = options.get("resolve_types", RESOLVE_ALL)
         self.__resolve_method: int = options.get("resolve_method", TRANSLATE_DEFAULT)
-        self.__encoding: Optional[str] = options.get("encoding", None)
+        self.__encoding: str | None = options.get("encoding", None)
         self.__strict: bool = options.get("strict", True)
 
-        self.parsed_url: Optional[ParseResult]
-        self._url_key: Optional[Tuple[str, bool]]
+        self.parsed_url: ParseResult | None
+        self._url_key: tuple[str, bool] | None
         if self.url:
             self.parsed_url = _url.absurl(self.url)
             self._url_key = (_url.urlresource(self.parsed_url), self.__strict)
@@ -112,7 +128,7 @@ class RefResolver:
         else:
             self.parsed_url = self._url_key = None
 
-        self.__soft_dereference_objs: Dict[str, JsonValue] = {}
+        self.__soft_dereference_objs: dict[str, JsonValue] = {}
 
     def resolve_references(self) -> None:
         """Resolve JSON pointers/references in the spec."""
@@ -133,7 +149,13 @@ class RefResolver:
                     if isinstance(schemas, MutableMapping):
                         schemas.update(self.__soft_dereference_objs)
 
-    def _dereferencing_iterator(self, base_url: Optional[ParseResult], partial: JsonValue, path: Tuple[PathElement, ...], recursions: Tuple[Tuple[str, Tuple[PathElement, ...]], ...]) -> Iterator[Tuple[Tuple[PathElement, ...], JsonValue]]:
+    def _dereferencing_iterator(
+        self,
+        base_url: ParseResult | None,
+        partial: JsonValue,
+        path: tuple[PathElement, ...],
+        recursions: tuple[tuple[str, tuple[PathElement, ...]], ...],
+    ) -> Iterator[tuple[tuple[PathElement, ...], JsonValue]]:
         """
         Iterate over a partial spec, dereferencing all references within.
 
@@ -195,13 +217,17 @@ class RefResolver:
             else:
                 yield full_path, ref_value
 
-    def _collect_soft_refs(self, ref_url: ParseResult, item_path: List[PathElement], value: JsonValue) -> str:
+    def _collect_soft_refs(
+        self, ref_url: ParseResult, item_path: list[PathElement], value: JsonValue
+    ) -> str:
         """
         Return a portion of the dereferenced url for TRANSLATE_EXTERNAL mode.
 
         format - ref-url_obj-path
         """
-        dref_url = ref_url.path.split("/")[-1] + "_" + "_".join(str(p) for p in item_path[1:])
+        dref_url = (
+            ref_url.path.split("/")[-1] + "_" + "_".join(str(p) for p in item_path[1:])
+        )
         self.__soft_dereference_objs[dref_url] = value
         return dref_url
 
@@ -224,7 +250,12 @@ class RefResolver:
                 )
             )
 
-    def _dereference(self, ref_url: ParseResult, obj_path: List[PathElement], recursions: Tuple[Tuple[str, Tuple[PathElement, ...]], ...]) -> JsonValue:
+    def _dereference(
+        self,
+        ref_url: ParseResult,
+        obj_path: list[PathElement],
+        recursions: tuple[tuple[str, tuple[PathElement, ...]], ...],
+    ) -> JsonValue:
         """
         Dereference the URL and object path.
 
@@ -266,7 +297,12 @@ class RefResolver:
         # That's it!
         return value
 
-    def _resolve_partial(self, base_url: Optional[ParseResult], partial: JsonValue, recursions: Tuple[Tuple[str, Tuple[PathElement, ...]], ...]) -> JsonValue:
+    def _resolve_partial(
+        self,
+        base_url: ParseResult | None,
+        partial: JsonValue,
+        recursions: tuple[tuple[str, tuple[PathElement, ...]], ...],
+    ) -> JsonValue:
         """
         Resolve a (partial) spec's references.
 

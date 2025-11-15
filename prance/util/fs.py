@@ -1,5 +1,4 @@
 """This submodule contains file system utilities for Prance."""
-
 from typing import Optional
 
 __author__ = "Jens Finkhaeuser"
@@ -159,7 +158,7 @@ def to_posix(fname: str) -> str:
     return fname
 
 
-def abspath(filename: str, relative_to: Optional[str] = None) -> str:
+def abspath(filename: str, relative_to: str | None = None) -> str:
     """
     Return the absolute path of a file relative to a reference file.
 
@@ -289,7 +288,7 @@ def detect_encoding(filename: str, default_to_utf8: bool = True, **kwargs: bool)
     return encoding
 
 
-def read_file(filename: str, encoding: Optional[str] = None) -> str:
+def read_file(filename: str, encoding: str | None = None) -> str:
     """
     Read and decode a file, taking BOMs into account.
 
@@ -309,7 +308,7 @@ def read_file(filename: str, encoding: Optional[str] = None) -> str:
         return handle.read()
 
 
-def write_file(filename: str, contents: str, encoding: Optional[str] = None) -> None:
+def write_file(filename: str, contents: str, encoding: str | None = None) -> None:
     """
     Write a file with the given encoding.
 

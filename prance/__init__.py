@@ -6,9 +6,11 @@ See https://openapis.org/ for details on the specification.
 Included is a BaseParser that reads and validates swagger specs, and a
 ResolvingParser that additionally resolves any $ref references.
 """
-
 import sys
-from typing import Any, Dict, Optional, Union
+from typing import Any
+from typing import Dict
+from typing import Optional
+from typing import Union
 from urllib.parse import ParseResult
 
 from packaging.version import Version  # type: ignore[import-not-found]
@@ -60,7 +62,13 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
     SPEC_VERSION_2_PREFIX = "Swagger/OpenAPI"
     SPEC_VERSION_3_PREFIX = "OpenAPI"
 
-    def __init__(self, url: Optional[str] = None, spec_string: Optional[str] = None, lazy: bool = False, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        url: str | None = None,
+        spec_string: str | None = None,
+        lazy: bool = False,
+        **kwargs: Any,
+    ) -> None:
         """
         Load, parse and validate specs.
 
@@ -96,19 +104,20 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
             self.url = absurl(url, abspath(os.getcwd()))
         else:
             from urllib.parse import urlparse
+
             self.url = urlparse(_PLACEHOLDER_URL)
 
-        self._spec_string: Optional[str] = spec_string
+        self._spec_string: str | None = spec_string
 
         # Initialize variables we're filling later
-        self.specification: Optional[JsonValue] = None
-        self.version: Optional[str] = None
-        self.version_name: Optional[str] = None
+        self.specification: JsonValue | None = None
+        self.version: str | None = None
+        self.version_name: str | None = None
         self.version_parsed: tuple = ()
         self.valid: bool = False
 
         # Add kw args as options
-        self.options: Dict[str, Any] = kwargs
+        self.options: dict[str, Any] = kwargs
 
         # Verify backend
         from .util import default_validation_backend
@@ -165,7 +174,7 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 
         # Fetch the spec version. Note that this is the spec version the spec
         # *claims* to be; we later set the one we actually could validate as.
-        spec_version: Optional[str] = None
+        spec_version: str | None = None
         if spec_version is None:
             version_val = self.specification.get("openapi", None)
             if isinstance(version_val, str):
@@ -279,7 +288,13 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
 class ResolvingParser(BaseParser):
     """The ResolvingParser extends BaseParser with resolving references by inlining."""
 
-    def __init__(self, url: Optional[str] = None, spec_string: Optional[str] = None, lazy: bool = False, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        url: str | None = None,
+        spec_string: str | None = None,
+        lazy: bool = False,
+        **kwargs: Any,
+    ) -> None:
         """
         See :py:class:`BaseParser`.
 
@@ -290,7 +305,7 @@ class ResolvingParser(BaseParser):
         Additional parameters, see :py::class:`util.RefResolver`.
         """
         # Create a reference cache
-        self.__reference_cache: Dict[Union[str, tuple], JsonValue] = {}
+        self.__reference_cache: dict[str | tuple, JsonValue] = {}
 
         BaseParser.__init__(self, url=url, spec_string=spec_string, lazy=lazy, **kwargs)
 
@@ -310,7 +325,7 @@ class ResolvingParser(BaseParser):
             "resolve_method",
             "strict",
         )
-        forward_args: Dict[str, Any] = {
+        forward_args: dict[str, Any] = {
             k: v for (k, v) in self.options.items() if k in forward_arg_names
         }
         resolver = RefResolver(

@@ -1,7 +1,9 @@
 """This submodule contains specialty iterators over specs."""
-
-from collections.abc import Mapping, Sequence
-from typing import Iterator, Tuple, Union
+from collections.abc import Iterator
+from collections.abc import Mapping
+from collections.abc import Sequence
+from typing import Tuple
+from typing import Union
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2018 Jens Finkhaeuser"
@@ -21,7 +23,9 @@ JsonValue = Union[
 PathElement = Union[str, int]
 
 
-def item_iterator(value: JsonValue, path: Tuple[PathElement, ...] = ()) -> Iterator[Tuple[Tuple[PathElement, ...], JsonValue]]:
+def item_iterator(
+    value: JsonValue, path: tuple[PathElement, ...] = ()
+) -> Iterator[tuple[tuple[PathElement, ...], JsonValue]]:
     """
     Return item iterator over the a nested dict- or list-like object.
 
@@ -69,7 +73,9 @@ def item_iterator(value: JsonValue, path: Tuple[PathElement, ...] = ()) -> Itera
             yield from item_iterator(item, path + (idx,))
 
 
-def reference_iterator(specs: JsonValue, path: Tuple[PathElement, ...] = ()) -> Iterator[Tuple[PathElement, JsonValue, Tuple[PathElement, ...]]]:
+def reference_iterator(
+    specs: JsonValue, path: tuple[PathElement, ...] = ()
+) -> Iterator[tuple[PathElement, JsonValue, tuple[PathElement, ...]]]:
     """
     Iterate through the given specs, returning only references.
 

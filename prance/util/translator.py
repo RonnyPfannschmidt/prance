@@ -1,11 +1,16 @@
 """This submodule contains a JSON reference translator."""
-
+from collections.abc import Iterator
 from collections.abc import MutableMapping
-from typing import Dict, Iterator, List, Optional, Tuple, Union
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
+from typing import Union
 from urllib.parse import ParseResult
 
 import prance.util.url as _url
-from prance.util.path import JsonValue, PathElement
+from prance.util.path import JsonValue
+from prance.util.path import PathElement
 
 __author__ = "Štěpán Tomsa"
 __copyright__ = "Copyright © 2021 Štěpán Tomsa"
@@ -13,7 +18,7 @@ __license__ = "MIT"
 __all__ = ()
 
 
-def _reference_key(ref_url: ParseResult, item_path: List[PathElement]) -> str:
+def _reference_key(ref_url: ParseResult, item_path: list[PathElement]) -> str:
     """
     Return a portion of the dereferenced URL.
 
@@ -22,7 +27,7 @@ def _reference_key(ref_url: ParseResult, item_path: List[PathElement]) -> str:
     return ref_url.path.split("/")[-1] + "_" + "_".join(str(p) for p in item_path[1:])
 
 
-def _local_ref(path: List[str]) -> Dict[str, str]:
+def _local_ref(path: list[str]) -> dict[str, str]:
     url = "#/" + "/".join(path)
     return {"$ref": url}
 
@@ -37,7 +42,7 @@ class _RefTranslator:
     object locations.
     """
 
-    def __init__(self, specs: JsonValue, url: Optional[str]) -> None:
+    def __init__(self, specs: JsonValue, url: str | None) -> None:
         """
         Construct a JSON reference translator.
 
@@ -55,13 +60,13 @@ class _RefTranslator:
         self.specs: JsonValue = copy.deepcopy(specs)
 
         self.__strict: bool = True
-        self.__reference_cache: Dict[Tuple[str, bool], JsonValue] = {}
-        self.__collected_references: Dict[str, Optional[JsonValue]] = {}
+        self.__reference_cache: dict[tuple[str, bool], JsonValue] = {}
+        self.__collected_references: dict[str, JsonValue | None] = {}
 
-        self.url: Optional[ParseResult]
+        self.url: ParseResult | None
         if url:
             self.url = _url.absurl(url)
-            url_key: Tuple[str, bool] = (_url.urlresource(self.url), self.__strict)
+            url_key: tuple[str, bool] = (_url.urlresource(self.url), self.__strict)
 
             # If we have a url, we want to add ourselves to the reference cache
             # - that creates a reference loop, but prevents child resolvers from
@@ -98,7 +103,9 @@ class _RefTranslator:
                     if isinstance(schemas, MutableMapping):
                         schemas.update(self.__collected_references)
 
-    def _dereference(self, ref_url: ParseResult, obj_path: List[PathElement]) -> JsonValue:
+    def _dereference(
+        self, ref_url: ParseResult, obj_path: list[PathElement]
+    ) -> JsonValue:
         """
         Dereference the URL and object path.
 
@@ -138,7 +145,9 @@ class _RefTranslator:
         # That's it!
         return value
 
-    def _translate_partial(self, base_url: ParseResult, partial: JsonValue) -> JsonValue:
+    def _translate_partial(
+        self, base_url: ParseResult, partial: JsonValue
+    ) -> JsonValue:
         changes = dict(tuple(self._translating_iterator(base_url, partial, ())))
 
         paths = sorted(changes.keys(), key=len)
@@ -154,7 +163,9 @@ class _RefTranslator:
 
         return partial
 
-    def _translating_iterator(self, base_url: ParseResult, partial: JsonValue, path: Tuple[PathElement, ...]) -> Iterator[Tuple[Tuple[PathElement, ...], Dict[str, str]]]:
+    def _translating_iterator(
+        self, base_url: ParseResult, partial: JsonValue, path: tuple[PathElement, ...]
+    ) -> Iterator[tuple[tuple[PathElement, ...], dict[str, str]]]:
         from prance.util.iterators import reference_iterator
 
         for _, ref_string, item_path in reference_iterator(partial):
@@ -178,6 +189,6 @@ class _RefTranslator:
                 ref_path = ["components", "schemas", ref_key]
 
             # Convert ref_path to List[str] for _local_ref
-            ref_path_str: List[str] = [str(p) for p in ref_path]
+            ref_path_str: list[str] = [str(p) for p in ref_path]
             ref_obj = _local_ref(ref_path_str)
             yield full_path, ref_obj

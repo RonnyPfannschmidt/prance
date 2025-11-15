@@ -1,7 +1,13 @@
 """This module contains code for accessing values in nested data structures."""
-
-from collections.abc import Mapping, MutableMapping, MutableSequence, Sequence as AbcSequence
-from typing import Optional, Sequence, Tuple, Type, Union
+from collections.abc import Mapping
+from collections.abc import MutableMapping
+from collections.abc import MutableSequence
+from collections.abc import Sequence
+from collections.abc import Sequence as AbcSequence
+from typing import Optional
+from typing import Tuple
+from typing import Type
+from typing import Union
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2018 Jens Finkhaeuser"
@@ -34,7 +40,12 @@ def _str_path(path: Sequence[PathElement]) -> str:
     return "/" + "/".join([_json_ref_escape(p) for p in path])
 
 
-def path_get(obj: JsonValue, path: Optional[Sequence[PathElement]], defaultvalue: JsonValue = None, path_of_obj: Tuple[PathElement, ...] = ()) -> JsonValue:
+def path_get(
+    obj: JsonValue,
+    path: Sequence[PathElement] | None,
+    defaultvalue: JsonValue = None,
+    path_of_obj: tuple[PathElement, ...] = (),
+) -> JsonValue:
     """
     Retrieve the value from obj indicated by path.
 
@@ -68,7 +79,10 @@ def path_get(obj: JsonValue, path: Optional[Sequence[PathElement]], defaultvalue
             )
 
         return path_get(
-            obj[str(path[0])], path[1:], defaultvalue, path_of_obj=path_of_obj + (path[0],)
+            obj[str(path[0])],
+            path[1:],
+            defaultvalue,
+            path_of_obj=path_of_obj + (path[0],),
         )
 
     elif isinstance(obj, AbcSequence):
@@ -103,7 +117,9 @@ def path_get(obj: JsonValue, path: Optional[Sequence[PathElement]], defaultvalue
         return obj or defaultvalue
 
 
-def path_set(obj: JsonValue, path: Sequence[PathElement], value: JsonValue, **options: bool) -> JsonValue:
+def path_set(
+    obj: JsonValue, path: Sequence[PathElement], value: JsonValue, **options: bool
+) -> JsonValue:
     """
     Set the value in obj indicated by path.
 
@@ -121,7 +137,9 @@ def path_set(obj: JsonValue, path: Sequence[PathElement], value: JsonValue, **op
     # Retrieve options
     create = options.get("create", False)
 
-    def fill_sequence(seq: MutableSequence[JsonValue], index: int, value_index_type: Optional[Type[int]]) -> None:
+    def fill_sequence(
+        seq: MutableSequence[JsonValue], index: int, value_index_type: type[int] | None
+    ) -> None:
         """
         Fill the sequence seq with elements until index can be accessed.
 
@@ -143,7 +161,7 @@ def path_set(obj: JsonValue, path: Sequence[PathElement], value: JsonValue, **op
         else:
             seq.append({})
 
-    def safe_idx(seq: Sequence[PathElement], index: int) -> Optional[Type[int]]:
+    def safe_idx(seq: Sequence[PathElement], index: int) -> type[int] | None:
         """
         Safely index a sequence.
 

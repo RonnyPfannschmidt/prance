@@ -1,10 +1,16 @@
 """This submodule contains code for fetching/parsing URLs."""
-
-from typing import Dict, List, Mapping, Optional, Tuple, Union, cast
+from collections.abc import Mapping
+from typing import cast
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
+from typing import Union
 from urllib import parse
 from urllib.parse import ParseResult
 
-from prance.util.path import JsonValue, PathElement
+from prance.util.path import JsonValue
+from prance.util.path import PathElement
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2018 Jens Finkhaeuser"
@@ -27,11 +33,15 @@ def urlresource(url: ParseResult) -> str:
     :return: The resource part of the URL
     :rtype: str
     """
-    res_list: List[Optional[str]] = list(url)[0:3] + [None, None, None]
-    return parse.ParseResult(*cast(Tuple[str, str, str, str, str, str], res_list)).geturl()
+    res_list: list[str | None] = list(url)[0:3] + [None, None, None]
+    return parse.ParseResult(
+        *cast(tuple[str, str, str, str, str, str], res_list)
+    ).geturl()
 
 
-def absurl(url: Union[str, ParseResult], relative_to: Optional[Union[str, ParseResult]] = None) -> ParseResult:
+def absurl(
+    url: str | ParseResult, relative_to: str | ParseResult | None = None
+) -> ParseResult:
     """
     Turn relative file URLs into absolute file URLs.
 
@@ -71,7 +81,7 @@ def absurl(url: Union[str, ParseResult], relative_to: Optional[Union[str, ParseR
         return parsed
 
     # Parse up the reference URL
-    reference: Optional[ParseResult] = None
+    reference: ParseResult | None = None
     if relative_to:
         if isinstance(relative_to, tuple):
             reference = relative_to
@@ -90,7 +100,7 @@ def absurl(url: Union[str, ParseResult], relative_to: Optional[Union[str, ParseR
     import os.path
     from .fs import from_posix, abspath
 
-    result_list: Optional[List[str]] = None
+    result_list: list[str] | None = None
     if not parsed.path:
         if not reference or not reference.path:
             raise ResolutionError(
@@ -124,7 +134,9 @@ def absurl(url: Union[str, ParseResult], relative_to: Optional[Union[str, ParseR
     return result
 
 
-def split_url_reference(base_url: ParseResult, reference: str) -> Tuple[ParseResult, List[PathElement]]:
+def split_url_reference(
+    base_url: ParseResult, reference: str
+) -> tuple[ParseResult, list[PathElement]]:
     """
     Return a normalized, parsed URL and object path.
 
@@ -151,12 +163,16 @@ def split_url_reference(base_url: ParseResult, reference: str) -> Tuple[ParseRes
         path = path.replace("~0", "~")
         return path
 
-    obj_path_normalized: List[PathElement] = [_normalize(p) for p in obj_path]
+    obj_path_normalized: list[PathElement] = [_normalize(p) for p in obj_path]
 
     return parsed_url, obj_path_normalized
 
 
-def fetch_url_text(url: ParseResult, cache: Optional[Dict[str, Tuple[str, Optional[str]]]] = None, encoding: Optional[str] = None) -> Tuple[str, Optional[str]]:
+def fetch_url_text(
+    url: ParseResult,
+    cache: dict[str, tuple[str, str | None]] | None = None,
+    encoding: str | None = None,
+) -> tuple[str, str | None]:
     """
     Fetch the URL.
 
@@ -186,7 +202,7 @@ def fetch_url_text(url: ParseResult, cache: Optional[Dict[str, Tuple[str, Option
     # Fetch contents according to scheme. We assume requests can handle all the
     # non-file schemes, or throw otherwise.
     content: str
-    content_type: Optional[str] = None
+    content_type: str | None = None
     if url.scheme in (None, "", "file"):
         from .fs import read_file, from_posix
 
@@ -226,7 +242,12 @@ def fetch_url_text(url: ParseResult, cache: Optional[Dict[str, Tuple[str, Option
     return content, content_type
 
 
-def fetch_url(url: ParseResult, cache: Optional[Dict[Union[str, Tuple[str, bool]], JsonValue]] = None, encoding: Optional[str] = None, strict: bool = True) -> JsonValue:
+def fetch_url(
+    url: ParseResult,
+    cache: dict[str | tuple[str, bool], JsonValue] | None = None,
+    encoding: str | None = None,
+    strict: bool = True,
+) -> JsonValue:
     """
     Fetch the URL and parse the contents.
 
@@ -245,7 +266,7 @@ def fetch_url(url: ParseResult, cache: Optional[Dict[Union[str, Tuple[str, bool]
     if cache is None:
         cache = {}
 
-    url_key_tuple: Tuple[str, bool] = (urlresource(url), strict)
+    url_key_tuple: tuple[str, bool] = (urlresource(url), strict)
     entry = cache.get(url_key_tuple, None)
     if entry is not None:
         if isinstance(entry, Mapping):
@@ -253,7 +274,7 @@ def fetch_url(url: ParseResult, cache: Optional[Dict[Union[str, Tuple[str, bool]
         return entry
 
     # Fetch URL text
-    text_cache: Dict[str, Tuple[str, Optional[str]]] = {}
+    text_cache: dict[str, tuple[str, str | None]] = {}
     for key, value in cache.items():
         if isinstance(key, str) and isinstance(value, tuple):
             text_cache[key] = value
