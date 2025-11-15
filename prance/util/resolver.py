@@ -227,7 +227,9 @@ class RefResolver:
         self.__soft_dereference_objs[dref_url] = value
         return dref_url
 
-    def _skip_reference(self, base_url: ParseResult | None, ref_url: ParseResult) -> bool:
+    def _skip_reference(
+        self, base_url: ParseResult | None, ref_url: ParseResult
+    ) -> bool:
         """Return whether the URL should not be dereferenced."""
         if ref_url.scheme.startswith("http"):
             return (self.__resolve_types & RESOLVE_HTTP) == 0
