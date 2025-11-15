@@ -3,6 +3,19 @@ Functionality for converting from Swagger/OpenAPI 2.0 to OpenAPI 3.0.0.
 
 The functions use https://converter.swagger.io/ APIs for conversion.
 """
+from typing import Any
+from typing import Dict
+from typing import Optional
+from typing import Tuple
+from typing import Type
+from typing import TYPE_CHECKING
+from typing import Union
+from urllib.parse import ParseResult
+
+from prance.util.path import JsonValue
+
+if TYPE_CHECKING:
+    from prance import BaseParser
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2018 Jens Finkhaeuser"
@@ -14,7 +27,9 @@ class ConversionError(ValueError):
     pass  # pragma: nocover
 
 
-def convert_str(spec_str, filename=None, **kwargs):
+def convert_str(
+    spec_str: str, filename: str | None = None, **kwargs: str | None
+) -> tuple[str, str]:
     """
     Convert the serialized spec.
 
@@ -41,7 +56,7 @@ def convert_str(spec_str, filename=None, **kwargs):
     headers = {"accept": content_type, "content-type": content_type}
 
     # Convert via API
-    import requests
+    import requests  # type: ignore[import-untyped]
 
     r = requests.post(
         "https://converter.swagger.io/api/convert", data=data, headers=headers
@@ -54,7 +69,9 @@ def convert_str(spec_str, filename=None, **kwargs):
     return r.text, "{}; {}".format(r.headers["content-type"], r.apparent_encoding)
 
 
-def convert_url(url, cache={}):
+def convert_url(
+    url: str | ParseResult, cache: dict[str, tuple[str, str | None]] | None = None
+) -> tuple[str, str]:
     """
     Fetch a URL, and try to convert it to OpenAPI 3.x.y.
 
@@ -65,7 +82,14 @@ def convert_url(url, cache={}):
     :raises ConversionError: when conversion fails.
     """
     # Fetch URL contents
-    from .util.url import fetch_url_text
+    from .util.url import absurl, fetch_url_text
+
+    if cache is None:
+        cache = {}
+
+    # Ensure url is a ParseResult
+    if isinstance(url, str):
+        url = absurl(url)
 
     content, content_type = fetch_url_text(url, cache)
 
@@ -73,7 +97,12 @@ def convert_url(url, cache={}):
     return convert_str(content, None, content_type=content_type)
 
 
-def convert_spec(parser_or_spec, parser_klass=None, *args, **kwargs):
+def convert_spec(
+    parser_or_spec: Union[JsonValue, "BaseParser"],
+    parser_klass: type["BaseParser"] | None = None,
+    *args: Any,
+    **kwargs: Any,
+) -> "BaseParser":
     """
     Convert an already parsed spec to OpenAPI 3.x.y.
 
@@ -104,9 +133,9 @@ def convert_spec(parser_or_spec, parser_klass=None, *args, **kwargs):
     :rtype: BaseParser or derived.
     """
     # Figure out exact configuration to use
-    klass = None
-    options = None
-    spec = None
+    klass: type["BaseParser"]
+    options: dict[str, Any]
+    spec: JsonValue
 
     from . import BaseParser
 

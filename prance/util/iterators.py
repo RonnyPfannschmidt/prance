@@ -1,12 +1,31 @@
 """This submodule contains specialty iterators over specs."""
+from collections.abc import Iterator
+from collections.abc import Mapping
+from collections.abc import Sequence
+from typing import Tuple
+from typing import Union
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2018 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ()
 
+# Type alias for JSON-like values (recursive structure)
+JsonValue = Union[
+    Mapping[Union[str, int], "JsonValue"],  # Mappings can have str or int keys
+    Sequence["JsonValue"],
+    str,
+    int,
+    float,
+    bool,
+    None,
+]
+PathElement = Union[str, int]
 
-def item_iterator(value, path=()):
+
+def item_iterator(
+    value: JsonValue, path: tuple[PathElement, ...] = ()
+) -> Iterator[tuple[tuple[PathElement, ...], JsonValue]]:
     """
     Return item iterator over the a nested dict- or list-like object.
 
@@ -44,8 +63,6 @@ def item_iterator(value, path=()):
     # Yield the top-level object, always
     yield path, value
 
-    from collections.abc import Mapping, Sequence
-
     # For dict and list like objects, we also need to yield each item
     # recursively.
     if isinstance(value, Mapping):
@@ -56,7 +73,9 @@ def item_iterator(value, path=()):
             yield from item_iterator(item, path + (idx,))
 
 
-def reference_iterator(specs, path=()):
+def reference_iterator(
+    specs: JsonValue, path: tuple[PathElement, ...] = ()
+) -> Iterator[tuple[PathElement, JsonValue, tuple[PathElement, ...]]]:
     """
     Iterate through the given specs, returning only references.
 

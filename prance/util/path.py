@@ -1,25 +1,51 @@
 """This module contains code for accessing values in nested data structures."""
+from collections.abc import Mapping
+from collections.abc import MutableMapping
+from collections.abc import MutableSequence
+from collections.abc import Sequence
+from collections.abc import Sequence as AbcSequence
+from typing import Optional
+from typing import Tuple
+from typing import Type
+from typing import Union
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2018 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ()
 
+# Type aliases
+PathElement = Union[str, int]
+JsonValue = Union[
+    Mapping[Union[str, int], "JsonValue"],  # Mappings can have str or int keys
+    Sequence["JsonValue"],
+    str,
+    int,
+    float,
+    bool,
+    None,
+]
 
-def _json_ref_escape(path):
+
+def _json_ref_escape(path: PathElement) -> str:
     """JSON-reference escape object path."""
-    path = str(path)  # Could be an int, etc.
-    path = path.replace("~", "~0")
-    path = path.replace("/", "~1")
-    return path
+    path_str = str(path)  # Could be an int, etc.
+    path_str = path_str.replace("~", "~0")
+    path_str = path_str.replace("/", "~1")
+    return path_str
 
 
-def _str_path(path):
+def _str_path(path: Sequence[PathElement]) -> str:
     """Stringify object path."""
     return "/" + "/".join([_json_ref_escape(p) for p in path])
 
 
-def path_get(obj, path, defaultvalue=None, path_of_obj=()):
+def path_get(
+    obj: JsonValue,
+    path: Sequence[PathElement] | None,
+    defaultvalue: JsonValue = None,
+    path_of_obj: tuple[PathElement, ...] = (),
+) -> JsonValue:
     """
     Retrieve the value from obj indicated by path.
 
@@ -35,12 +61,10 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
     :param mixed defaultvalue: If the value at the path does not exist and this
       parameter is not None, it is returned. Otherwise an error is raised.
     """
-    from collections.abc import Mapping, Sequence
-
     # For error reporting.
     path_of_obj_str = _str_path(path_of_obj)
 
-    if path is not None and not isinstance(path, Sequence):
+    if path is not None and not isinstance(path, AbcSequence):
         raise TypeError(f"Path is a {type(path)}, but must be None or a Collection!")
 
     if isinstance(obj, Mapping):
@@ -58,7 +82,7 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
             obj[path[0]], path[1:], defaultvalue, path_of_obj=path_of_obj + (path[0],)
         )
 
-    elif isinstance(obj, Sequence):
+    elif isinstance(obj, AbcSequence):
         if path is None or len(path) < 1:
             return obj or defaultvalue
 
@@ -90,7 +114,9 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
         return obj or defaultvalue
 
 
-def path_set(obj, path, value, **options):
+def path_set(
+    obj: JsonValue, path: Sequence[PathElement], value: JsonValue, **options: bool
+) -> JsonValue:
     """
     Set the value in obj indicated by path.
 
@@ -108,7 +134,9 @@ def path_set(obj, path, value, **options):
     # Retrieve options
     create = options.get("create", False)
 
-    def fill_sequence(seq, index, value_index_type):
+    def fill_sequence(
+        seq: MutableSequence[JsonValue], index: int, value_index_type: type[int] | None
+    ) -> None:
         """
         Fill the sequence seq with elements until index can be accessed.
 
@@ -130,7 +158,7 @@ def path_set(obj, path, value, **options):
         else:
             seq.append({})
 
-    def safe_idx(seq, index):
+    def safe_idx(seq: Sequence[PathElement], index: int) -> type[int] | None:
         """
         Safely index a sequence.
 
@@ -138,7 +166,7 @@ def path_set(obj, path, value, **options):
         raising IndexError.
         """
         try:
-            return type(seq[index])
+            return type(seq[index])  # type: ignore[return-value]
         except IndexError:
             return None
 
@@ -146,9 +174,7 @@ def path_set(obj, path, value, **options):
     # print('path', path)
     # print('value', value)
 
-    from collections.abc import Sequence, MutableSequence, Mapping, MutableMapping
-
-    if path is not None and not isinstance(path, Sequence):
+    if path is not None and not isinstance(path, AbcSequence):
         raise TypeError(f"Path is a {type(path)}, but must be None or a Collection!")
 
     if len(path) < 1:
@@ -177,7 +203,7 @@ def path_set(obj, path, value, **options):
 
         return obj
 
-    elif isinstance(obj, Sequence):
+    elif isinstance(obj, AbcSequence):
         idx = path[0]
 
         # If we don't have a mutable sequence, we should raise a TypeError

@@ -1,23 +1,33 @@
 """This submodule contains a JSON reference translator."""
+from collections.abc import Iterator
+from collections.abc import MutableMapping
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
+from typing import Union
+from urllib.parse import ParseResult
+
+import prance.util.url as _url
+from prance.util.path import JsonValue
+from prance.util.path import PathElement
 
 __author__ = "Štěpán Tomsa"
 __copyright__ = "Copyright © 2021 Štěpán Tomsa"
 __license__ = "MIT"
 __all__ = ()
 
-import prance.util.url as _url
 
-
-def _reference_key(ref_url, item_path):
+def _reference_key(ref_url: ParseResult, item_path: list[PathElement]) -> str:
     """
     Return a portion of the dereferenced URL.
 
     format - ref-url_obj-path
     """
-    return ref_url.path.split("/")[-1] + "_" + "_".join(item_path[1:])
+    return ref_url.path.split("/")[-1] + "_" + "_".join(str(p) for p in item_path[1:])
 
 
-def _local_ref(path):
+def _local_ref(path: list[str]) -> dict[str, str]:
     url = "#/" + "/".join(path)
     return {"$ref": url}
 
@@ -32,7 +42,7 @@ class _RefTranslator:
     object locations.
     """
 
-    def __init__(self, specs, url):
+    def __init__(self, specs: JsonValue, url: str | None) -> None:
         """
         Construct a JSON reference translator.
 
@@ -47,15 +57,16 @@ class _RefTranslator:
         """
         import copy
 
-        self.specs = copy.deepcopy(specs)
+        self.specs: JsonValue = copy.deepcopy(specs)
 
-        self.__strict = True
-        self.__reference_cache = {}
-        self.__collected_references = {}
+        self.__strict: bool = True
+        self.__reference_cache: dict[tuple[str, bool], JsonValue] = {}
+        self.__collected_references: dict[str, JsonValue | None] = {}
 
+        self.url: ParseResult | None
         if url:
             self.url = _url.absurl(url)
-            url_key = (_url.urlresource(self.url), self.__strict)
+            url_key: tuple[str, bool] = (_url.urlresource(self.url), self.__strict)
 
             # If we have a url, we want to add ourselves to the reference cache
             # - that creates a reference loop, but prevents child resolvers from
@@ -64,7 +75,7 @@ class _RefTranslator:
         else:
             self.url = None
 
-    def translate_references(self):
+    def translate_references(self) -> None:
         """
         Iterate over the specification document, performing the translation.
 
@@ -72,18 +83,29 @@ class _RefTranslator:
         external files to the /components/schemas object in the root document
         and translating the references to the new location.
         """
+        # url must be a ParseResult for _translate_partial
+        if self.url is None:
+            return
+
         self.specs = self._translate_partial(self.url, self.specs)
 
         # Add collected references to the root document.
         if self.__collected_references:
-            if "components" not in self.specs:
-                self.specs["components"] = {}
-            if "schemas" not in self.specs["components"]:
-                self.specs["components"].update({"schemas": {}})
+            # Type narrow specs to MutableMapping for safe indexing
+            if isinstance(self.specs, MutableMapping):
+                if "components" not in self.specs:
+                    self.specs["components"] = {}
+                components = self.specs["components"]
+                if isinstance(components, MutableMapping):
+                    if "schemas" not in components:
+                        components.update({"schemas": {}})
+                    schemas = components["schemas"]
+                    if isinstance(schemas, MutableMapping):
+                        schemas.update(self.__collected_references)
 
-            self.specs["components"]["schemas"].update(self.__collected_references)
-
-    def _dereference(self, ref_url, obj_path):
+    def _dereference(
+        self, ref_url: ParseResult, obj_path: list[PathElement]
+    ) -> JsonValue:
         """
         Dereference the URL and object path.
 
@@ -97,7 +119,7 @@ class _RefTranslator:
         """
         # In order to start dereferencing anything in the referenced URL, we have
         # to read and parse it, of course.
-        contents = _url.fetch_url(ref_url, self.__reference_cache, strict=self.__strict)
+        contents = _url.fetch_url(ref_url, self.__reference_cache, strict=self.__strict)  # type: ignore[arg-type]
 
         # In this inner parser's specification, we can now look for the referenced
         # object.
@@ -123,7 +145,9 @@ class _RefTranslator:
         # That's it!
         return value
 
-    def _translate_partial(self, base_url, partial):
+    def _translate_partial(
+        self, base_url: ParseResult, partial: JsonValue
+    ) -> JsonValue:
         changes = dict(tuple(self._translating_iterator(base_url, partial, ())))
 
         paths = sorted(changes.keys(), key=len)
@@ -131,7 +155,7 @@ class _RefTranslator:
         from prance.util.path import path_set
 
         for path in paths:
-            value = changes[path]
+            value: JsonValue = changes[path]  # type: ignore[assignment]
             if len(path) == 0:
                 partial = value
             else:
@@ -139,14 +163,20 @@ class _RefTranslator:
 
         return partial
 
-    def _translating_iterator(self, base_url, partial, path):
+    def _translating_iterator(
+        self, base_url: ParseResult, partial: JsonValue, path: tuple[PathElement, ...]
+    ) -> Iterator[tuple[tuple[PathElement, ...], dict[str, str]]]:
         from prance.util.iterators import reference_iterator
 
         for _, ref_string, item_path in reference_iterator(partial):
+            # Type narrow ref_string to str for split_url_reference
+            if not isinstance(ref_string, str):
+                continue
+
             ref_url, obj_path = _url.split_url_reference(base_url, ref_string)
             full_path = path + item_path
 
-            if ref_url.path == self.url.path:
+            if self.url is None or ref_url.path == self.url.path:
                 # Reference to the root document.
                 ref_path = obj_path
             else:
@@ -158,5 +188,7 @@ class _RefTranslator:
                     self.__collected_references[ref_key] = ref_value
                 ref_path = ["components", "schemas", ref_key]
 
-            ref_obj = _local_ref(ref_path)
+            # Convert ref_path to List[str] for _local_ref
+            ref_path_str: list[str] = [str(p) for p in ref_path]
+            ref_obj = _local_ref(ref_path_str)
             yield full_path, ref_obj

@@ -1,4 +1,16 @@
 """This submodule contains code for fetching/parsing URLs."""
+from collections.abc import Mapping
+from typing import cast
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
+from typing import Union
+from urllib import parse
+from urllib.parse import ParseResult
+
+from prance.util.path import JsonValue
+from prance.util.path import PathElement
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2018 Jens Finkhaeuser"
@@ -6,14 +18,11 @@ __license__ = "MIT"
 __all__ = ()
 
 
-from urllib import parse
-
-
 class ResolutionError(LookupError):
     pass
 
 
-def urlresource(url):
+def urlresource(url: ParseResult) -> str:
     """
     Return the resource part of a parsed URL.
 
@@ -24,11 +33,15 @@ def urlresource(url):
     :return: The resource part of the URL
     :rtype: str
     """
-    res_list = list(url)[0:3] + [None, None, None]
-    return parse.ParseResult(*res_list).geturl()
+    res_list: list[str | None] = list(url)[0:3] + [None, None, None]
+    return parse.ParseResult(
+        *cast(tuple[str, str, str, str, str, str], res_list)
+    ).geturl()
 
 
-def absurl(url, relative_to=None):
+def absurl(
+    url: str | ParseResult, relative_to: str | ParseResult | None = None
+) -> ParseResult:
     """
     Turn relative file URLs into absolute file URLs.
 
@@ -46,8 +59,10 @@ def absurl(url, relative_to=None):
     :rtype: tuple
     """
     # Parse input URL, if necessary
-    parsed = url
-    if not isinstance(parsed, tuple):
+    parsed: ParseResult
+    if isinstance(url, tuple):
+        parsed = url
+    else:
         from .fs import is_pathname_valid
 
         if is_pathname_valid(url):
@@ -66,15 +81,18 @@ def absurl(url, relative_to=None):
         return parsed
 
     # Parse up the reference URL
-    reference = relative_to
-    if reference and not isinstance(reference, tuple):
-        from .fs import is_pathname_valid
+    reference: ParseResult | None = None
+    if relative_to:
+        if isinstance(relative_to, tuple):
+            reference = relative_to
+        else:
+            from .fs import is_pathname_valid
 
-        if is_pathname_valid(reference):
-            from . import fs
+            if is_pathname_valid(relative_to):
+                from . import fs
 
-            reference = fs.to_posix(reference)
-        reference = parse.urlparse(reference)
+                relative_to = fs.to_posix(relative_to)
+            reference = parse.urlparse(relative_to)
 
     # If the input URL has no path, we assume only its fragment matters.
     # That is, we'll have to set the fragment of the reference URL to that
@@ -82,7 +100,7 @@ def absurl(url, relative_to=None):
     import os.path
     from .fs import from_posix, abspath
 
-    result_list = None
+    result_list: list[str] | None = None
     if not parsed.path:
         if not reference or not reference.path:
             raise ResolutionError(
@@ -116,7 +134,9 @@ def absurl(url, relative_to=None):
     return result
 
 
-def split_url_reference(base_url, reference):
+def split_url_reference(
+    base_url: ParseResult | None, reference: str
+) -> tuple[ParseResult, list[PathElement]]:
     """
     Return a normalized, parsed URL and object path.
 
@@ -138,17 +158,21 @@ def split_url_reference(base_url, reference):
         obj_path = obj_path[1:]
 
     # Normalize the object path by substituting ~1 and ~0 respectively.
-    def _normalize(path):
+    def _normalize(path: str) -> str:
         path = path.replace("~1", "/")
         path = path.replace("~0", "~")
         return path
 
-    obj_path = [_normalize(p) for p in obj_path]
+    obj_path_normalized: list[PathElement] = [_normalize(p) for p in obj_path]
 
-    return parsed_url, obj_path
+    return parsed_url, obj_path_normalized
 
 
-def fetch_url_text(url, cache={}, encoding=None):
+def fetch_url_text(
+    url: ParseResult,
+    cache: dict[str, tuple[str, str | None]] | None = None,
+    encoding: str | None = None,
+) -> tuple[str, str | None]:
     """
     Fetch the URL.
 
@@ -167,6 +191,9 @@ def fetch_url_text(url, cache={}, encoding=None):
     :return: The resource text of the URL, and the content type.
     :rtype: tuple
     """
+    if cache is None:
+        cache = {}
+
     url_key = "text_" + urlresource(url)
     entry = cache.get(url_key, None)
     if entry is not None:
@@ -174,8 +201,8 @@ def fetch_url_text(url, cache={}, encoding=None):
 
     # Fetch contents according to scheme. We assume requests can handle all the
     # non-file schemes, or throw otherwise.
-    content = None
-    content_type = None
+    content: str
+    content_type: str | None = None
     if url.scheme in (None, "", "file"):
         from .fs import read_file, from_posix
 
@@ -194,13 +221,13 @@ def fetch_url_text(url, cache={}, encoding=None):
 
         from importlib.resources import files
 
-        path = files(package).joinpath(path)
+        path_traversable = files(package).joinpath(path)
 
         from .fs import read_file, from_posix
 
-        content = read_file(from_posix(path), encoding)
+        content = read_file(from_posix(str(path_traversable)), encoding)
     else:
-        import requests
+        import requests  # type: ignore[import-untyped]
 
         response = requests.get(url.geturl())
         if not response.ok:  # pragma: nocover
@@ -215,7 +242,12 @@ def fetch_url_text(url, cache={}, encoding=None):
     return content, content_type
 
 
-def fetch_url(url, cache={}, encoding=None, strict=True):
+def fetch_url(
+    url: ParseResult,
+    cache: dict[str | tuple[str, bool], JsonValue] | None = None,
+    encoding: str | None = None,
+    strict: bool = True,
+) -> JsonValue:
     """
     Fetch the URL and parse the contents.
 
@@ -231,13 +263,23 @@ def fetch_url(url, cache={}, encoding=None, strict=True):
     :rtype: dict
     """
     # Return from cache, if parsed result is already present.
-    url_key = (urlresource(url), strict)
-    entry = cache.get(url_key, None)
+    if cache is None:
+        cache = {}
+
+    url_key_tuple: tuple[str, bool] = (urlresource(url), strict)
+    entry = cache.get(url_key_tuple, None)
     if entry is not None:
-        return entry.copy()
+        if isinstance(entry, Mapping):
+            return entry.copy()  # type: ignore[no-any-return, attr-defined]
+        return entry
 
     # Fetch URL text
-    content, content_type = fetch_url_text(url, cache, encoding=encoding)
+    text_cache: dict[str, tuple[str, str | None]] = {}
+    for key, value in cache.items():
+        if isinstance(key, str) and isinstance(value, tuple):
+            text_cache[key] = value
+    content, content_type = fetch_url_text(url, text_cache, encoding=encoding)
+    cache.update(text_cache)
 
     # Parse the result
     from .formats import parse_spec
@@ -246,10 +288,14 @@ def fetch_url(url, cache={}, encoding=None, strict=True):
 
     # Perform some sanitization in lenient mode.
     if not strict:
+        from collections.abc import MutableMapping
         from . import stringify_keys
 
-        result = stringify_keys(result)
+        if isinstance(result, MutableMapping):
+            result = stringify_keys(result)
 
     # Cache and return result
-    cache[url_key] = result
-    return result.copy()
+    cache[url_key_tuple] = result
+    if isinstance(result, Mapping):
+        return result.copy()  # type: ignore[no-any-return, attr-defined]
+    return result

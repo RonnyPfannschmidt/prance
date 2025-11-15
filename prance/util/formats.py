@@ -1,4 +1,10 @@
 """This submodule contains file format related utility code for Prance."""
+from collections.abc import Callable
+from typing import Dict
+from typing import Optional
+from typing import Tuple
+
+from prance.util.path import JsonValue
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2021 Jens Finkhaeuser"
@@ -10,7 +16,9 @@ class ParseError(ValueError):
     pass  # pragma: nocover
 
 
-def __format_preferences(filename, content_type):  # noqa: N802
+def __format_preferences(
+    filename: str | None, content_type: str | None
+) -> tuple[str, ...]:  # noqa: N802
     """
     Detect the format based on file name and content type.
 
@@ -26,7 +34,7 @@ def __format_preferences(filename, content_type):  # noqa: N802
     # 4) If both are present, prefer the content type.
     # 5) use a heuristic either way to catch bad content types, file names,
     #    etc. The selection process above is just the most likely match!
-    best = None
+    best: str | None = None
 
     if filename and not content_type:
         from os.path import splitext
@@ -61,27 +69,27 @@ def __format_preferences(filename, content_type):  # noqa: N802
 
 
 # Basic parse functions
-def __parse_yaml(spec_str):  # noqa: N802
-    from ruamel.yaml import YAML, parser
+def __parse_yaml(spec_str: str) -> JsonValue:  # noqa: N802
+    from ruamel.yaml import YAML, parser  # type: ignore[import-not-found]
 
     try:
         yaml = YAML(typ="safe")
-        return yaml.load(str(spec_str))
+        return yaml.load(str(spec_str))  # type: ignore[no-any-return]
     except parser.ParserError as err:
         raise ParseError(str(err))
 
 
-def __parse_json(spec_str):  # noqa: N802
+def __parse_json(spec_str: str) -> JsonValue:  # noqa: N802
     import json
 
     try:
-        return json.loads(str(spec_str))
+        return json.loads(str(spec_str))  # type: ignore[no-any-return]
     except ValueError as err:
         raise ParseError(str(err))
 
 
 # Basic serialization functions
-def __serialize_yaml(specs):  # noqa: N802
+def __serialize_yaml(specs: JsonValue) -> str:  # noqa: N802
     import io
     from ruamel.yaml import YAML
 
@@ -91,7 +99,7 @@ def __serialize_yaml(specs):  # noqa: N802
     return buf.getvalue().decode("UTF-8")
 
 
-def __serialize_json(specs):  # noqa: N802
+def __serialize_json(specs: JsonValue) -> str:  # noqa: N802
     # The default encoding is utf-8, no need to specify it. But we need to switch
     # off ensure_ascii, otherwise we do not get a unicode string back.
     import json
@@ -102,29 +110,29 @@ def __serialize_json(specs):  # noqa: N802
 
 
 # Map file name extensions to parse/serialize functions
-__EXT_TO_FORMAT = {
+__EXT_TO_FORMAT: dict[tuple[str, ...], str] = {
     (".yaml", ".yml"): "YAML",
     (".json", ".js"): "JSON",
 }
 
-__MIME_TO_FORMAT = {
+__MIME_TO_FORMAT: dict[tuple[str, ...], str] = {
     ("application/json", "application/javascript"): "JSON",
     ("application/yaml", "text/yaml"): "YAML",
 }
 
 
-__FORMAT_TO_PARSER = {
+__FORMAT_TO_PARSER: dict[str, Callable[[str], JsonValue]] = {
     "YAML": __parse_yaml,
     "JSON": __parse_json,
 }
 
-__FORMAT_TO_SERIALIZER = {
+__FORMAT_TO_SERIALIZER: dict[str, Callable[[JsonValue], str]] = {
     "YAML": __serialize_yaml,
     "JSON": __serialize_json,
 }
 
 
-def format_info(format_name):
+def format_info(format_name: str) -> tuple[str | None, str | None]:
     """
     Return content type and extension for a supported format.
 
@@ -137,12 +145,12 @@ def format_info(format_name):
     """
     format_name = format_name.upper()
 
-    content_type = None
+    content_type: str | None = None
     for content_types, name in __MIME_TO_FORMAT.items():
         if name == format_name:
             content_type = content_types[0]
 
-    extension = None
+    extension: str | None = None
     for extensions, name in __EXT_TO_FORMAT.items():
         if name == format_name:
             extension = extensions[0]
@@ -150,7 +158,9 @@ def format_info(format_name):
     return content_type, extension
 
 
-def parse_spec_details(spec_str, filename=None, **kwargs):
+def parse_spec_details(
+    spec_str: str, filename: str | None = None, **kwargs: str | None
+) -> tuple[JsonValue, str | None, str | None]:
     """
     Return a parsed dict of the given spec string.
 
@@ -169,8 +179,8 @@ def parse_spec_details(spec_str, filename=None, **kwargs):
     :raises ParseError: when parsing fails.
     """
     # Fetch optional content type & determine formats
-    content_type = kwargs.get("content_type", None)
-    formats = __format_preferences(filename, content_type)
+    content_type_str: str | None = kwargs.get("content_type", None)
+    formats = __format_preferences(filename, content_type_str)
 
     # Try parsing each format in order
     for f in formats:
@@ -186,7 +196,9 @@ def parse_spec_details(spec_str, filename=None, **kwargs):
     raise ParseError("Could not detect format of spec string!")
 
 
-def parse_spec(spec_str, filename=None, **kwargs):
+def parse_spec(
+    spec_str: str, filename: str | None = None, **kwargs: str | None
+) -> JsonValue:
     """
     Return a parsed dict of the given spec string.
 
@@ -205,7 +217,9 @@ def parse_spec(spec_str, filename=None, **kwargs):
     return result
 
 
-def serialize_spec(specs, filename=None, **kwargs):
+def serialize_spec(
+    specs: JsonValue, filename: str | None = None, **kwargs: str | None
+) -> str:
     """
     Return a serialized version of the given spec.
 
@@ -221,8 +235,8 @@ def serialize_spec(specs, filename=None, **kwargs):
     :rtype: str
     """
     # Fetch optional content type & determine formats
-    content_type = kwargs.get("content_type", None)
-    formats = __format_preferences(filename, content_type)
+    content_type_str: str | None = kwargs.get("content_type", None)
+    formats = __format_preferences(filename, content_type_str)
 
     # Instead of trying to parse various formats, we only serialize to the first
     # one in the list - nothing else makes much sense.

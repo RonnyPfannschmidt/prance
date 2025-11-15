@@ -1,4 +1,13 @@
 """CLI for prance."""
+from typing import Any
+from typing import Optional
+from typing import Tuple
+
+import click  # type: ignore[import-not-found]
+
+import prance
+from prance.util import default_validation_backend
+from prance.util.path import JsonValue
 
 __author__ = "Jens Finkhaeuser"
 __copyright__ = "Copyright (c) 2016-2021 Jens Finkhaeuser"
@@ -6,13 +15,7 @@ __license__ = "MIT"
 __all__ = ()
 
 
-import click
-
-import prance
-from prance.util import default_validation_backend
-
-
-def __write_to_file(filename, specs):  # noqa: N802
+def __write_to_file(filename: str, specs: JsonValue) -> None:  # noqa: N802
     """
     Write specs to the given filename.
 
@@ -24,7 +27,9 @@ def __write_to_file(filename, specs):  # noqa: N802
     fs.write_file(filename, contents)
 
 
-def __parser_for_url(url, resolve, backend, strict, encoding):  # noqa: N802
+def __parser_for_url(
+    url: str, resolve: bool, backend: str, strict: bool, encoding: str | None
+) -> tuple[prance.BaseParser, str]:  # noqa: N802
     """Return a parser instance for the URL and the given parameters."""
     # Try the URL
     formatted = click.format_filename(url)
@@ -39,7 +44,7 @@ def __parser_for_url(url, resolve, backend, strict, encoding):  # noqa: N802
         url = fsurl
 
     # Create parser to use
-    parser = None
+    parser: prance.BaseParser
     if resolve:
         click.echo(" -> Resolving external references.")
         parser = prance.ResolvingParser(
@@ -56,7 +61,7 @@ def __parser_for_url(url, resolve, backend, strict, encoding):  # noqa: N802
     return parser, formatted
 
 
-def __validate(parser, name):  # noqa: N802
+def __validate(parser: prance.BaseParser, name: str) -> None:  # noqa: N802
     """Validate a spec using this parser."""
     from prance.util.url import ResolutionError
     from prance import ValidationError
@@ -76,14 +81,14 @@ def __validate(parser, name):  # noqa: N802
 
 @click.group()
 @click.version_option(version=prance.__version__)
-def cli():
+def cli() -> None:
     pass  # pragma: no cover
 
 
 class GroupWithCommandOptions(click.Group):
     """Allow application of options to group with multi command."""
 
-    def add_command(self, cmd, name=None):
+    def add_command(self, cmd: click.Command, name: str | None = None) -> None:
         click.Group.add_command(self, cmd, name=name)
 
         # add the group parameters to the command
@@ -94,8 +99,8 @@ class GroupWithCommandOptions(click.Group):
         cmd.invoke = self.build_command_invoke(cmd.invoke)
         self.invoke_without_command = True
 
-    def build_command_invoke(self, original_invoke):
-        def command_invoke(ctx):
+    def build_command_invoke(self, original_invoke: Any) -> Any:
+        def command_invoke(ctx: click.Context) -> None:
             """Insert invocation of group function."""
             # separate the group parameters
             ctx.obj = dict(_params=dict())
@@ -145,7 +150,9 @@ class GroupWithCommandOptions(click.Group):
     "encoding for all files. Does not work on remote URLs.",
 )
 @click.pass_context
-def backend_options(ctx, resolve, backend, strict, encoding):
+def backend_options(
+    ctx: click.Context, resolve: bool, backend: str, strict: bool, encoding: str | None
+) -> None:
     ctx.obj["resolve"] = resolve
     ctx.obj["backend"] = backend
     ctx.obj["strict"] = strict
@@ -171,7 +178,9 @@ def backend_options(ctx, resolve, backend, strict, encoding):
     nargs=-1,
 )
 @click.pass_context
-def validate(ctx, output_file, urls):
+def validate(
+    ctx: click.Context, output_file: str | None, urls: tuple[str, ...]
+) -> None:
     """
     Validate the given spec or specs.
 
@@ -226,7 +235,7 @@ def validate(ctx, output_file, urls):
     required=False,
 )
 @click.pass_context
-def compile(ctx, url_or_path, output_file):
+def compile(ctx: click.Context, url_or_path: str, output_file: str | None) -> None:
     """
     Compile the given spec, resolving references if required.
 
@@ -273,7 +282,7 @@ def compile(ctx, url_or_path, output_file):
     nargs=1,
     required=False,
 )
-def convert(url_or_path, output_file):
+def convert(url_or_path: str, output_file: str | None) -> None:
     """
     Convert the given spec to OpenAPI 3.x.y.
 
