@@ -16,6 +16,12 @@ from prance.util.url import ResolutionError
 from . import none_of
 
 
+def test_deepcopy_specs_fallback_for_scalar():
+    assert resolver._deepcopy_specs(42) == 42
+    assert resolver._deepcopy_specs("hello") == "hello"
+    assert resolver._deepcopy_specs(None) is None
+
+
 def get_specs(fname):
     specs = fs.read_file(fname)
 

@@ -26,6 +26,14 @@ def _str_path(path):
     return "/" + "/".join([_json_ref_escape(p) for p in path])
 
 
+def _value_or_default(obj, defaultvalue):
+    if obj is not None:
+        return obj
+    if defaultvalue is not None:
+        return defaultvalue
+    return obj
+
+
 def path_get(obj, path, defaultvalue=None, path_of_obj=()):
     """
     Retrieve the value from obj indicated by path.
@@ -60,7 +68,7 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
 
     if isinstance(obj, Mapping):
         if path is None or len(path) < 1:
-            return obj or defaultvalue
+            return _value_or_default(obj, defaultvalue)
 
         if path[0] not in obj:
             raise KeyError(
@@ -75,7 +83,7 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
 
     elif isinstance(obj, Sequence):
         if path is None or len(path) < 1:
-            return obj or defaultvalue
+            return _value_or_default(obj, defaultvalue)
 
         try:
             idx = int(path[0])
@@ -102,7 +110,7 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
         # Path must be empty.
         if path is not None and len(path) > 0:
             raise TypeError(f"Cannot get anything from type {type(obj)}!")
-        return obj or defaultvalue
+        return _value_or_default(obj, defaultvalue)
 
 
 def path_set(obj, path, value, **options):

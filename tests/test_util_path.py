@@ -142,6 +142,16 @@ def test_get_mapping_default():
     assert 321 == result
 
 
+def test_get_falsy_values_with_default():
+    assert path_get(0, ()) == 0
+    assert path_get(0, (), 123) == 0
+    assert path_get(False, (), 123) is False
+    assert path_get([], (), 123) == []
+    assert path_get({}, (), 123) == {}
+    assert path_get("", (), 123) == ""
+    assert path_get(None, (), 123) == 123
+
+
 def test_set_bad_path():
     # Raise with bad path types
     with pytest.raises(TypeError):

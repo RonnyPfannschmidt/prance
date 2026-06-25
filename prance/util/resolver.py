@@ -15,7 +15,10 @@ except ImportError:
 
 def _deepcopy_specs(value):
     if _fast_deepcopy_json is not None:
-        return _fast_deepcopy_json(value)
+        try:
+            return _fast_deepcopy_json(value)
+        except TypeError:
+            pass
     import copy
 
     return copy.deepcopy(value)

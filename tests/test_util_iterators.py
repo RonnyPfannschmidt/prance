@@ -86,3 +86,39 @@ def test_reference_iterator_dict_with_references():
     }
     for key, value, path in iterators.reference_iterator(tester):
         assert value == expectations[len(path)]
+
+
+def test_reference_iterator_tuple_container():
+    tester = (
+        {
+            "$ref": "root",
+            "items": ({"$ref": "nested"},),
+        },
+    )
+    expected = {
+        (0,): "root",
+        (0, "items", 0): "nested",
+    }
+    results = {
+        tuple(path): value for _, value, path in iterators.reference_iterator(tester)
+    }
+    assert results == expected
+
+
+def test_reference_iterator_matches_python_backend():
+    tester = {
+        "foo": 42,
+        "$ref": "root",
+        "baz": (
+            {"$ref": "branch"},
+            {"quux": {"$ref": "leaf"}},
+        ),
+    }
+    fast = tuple(iterators.reference_iterator(tester))
+    original = iterators._fast_reference_iterator
+    try:
+        iterators._fast_reference_iterator = None
+        python = tuple(iterators.reference_iterator(tester))
+    finally:
+        iterators._fast_reference_iterator = original
+    assert fast == python

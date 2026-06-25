@@ -54,20 +54,11 @@ is_mutable_sequence(PyObject *obj)
 static PyObject *
 value_or_default(PyObject *obj, PyObject *defaultvalue)
 {
-    if (obj != NULL) {
-        int truthy = PyObject_IsTrue(obj);
-        if (truthy < 0) {
-            return NULL;
-        }
-        if (truthy) {
-            return Py_NewRef(obj);
-        }
-    }
-    if (defaultvalue != NULL) {
-        return Py_NewRef(defaultvalue);
-    }
-    if (obj != NULL) {
+    if (obj != NULL && obj != Py_None) {
         return Py_NewRef(obj);
+    }
+    if (defaultvalue != NULL && defaultvalue != Py_None) {
+        return Py_NewRef(defaultvalue);
     }
     Py_RETURN_NONE;
 }
@@ -841,23 +832,34 @@ reference_iterator_next(ReferenceIteratorObject *self)
             continue;
         }
 
-        Py_ssize_t list_len = PyList_GET_SIZE(frame->container);
-        if (frame->index >= list_len) {
+        Py_ssize_t seq_len = PySequence_Size(frame->container);
+        if (seq_len < 0) {
+            Py_DECREF(dollar_ref);
+            return NULL;
+        }
+        if (frame->index >= seq_len) {
             PyList_SetSlice(self->stack, top, top + 1, NULL);
             continue;
         }
 
         PyObject *idx = PyLong_FromSsize_t(frame->index);
-        PyObject *value = PyList_GET_ITEM(frame->container, frame->index++);
         if (idx == NULL) {
             Py_DECREF(dollar_ref);
             return NULL;
         }
-        if (push_child(self->stack, frame->path, idx, value) < 0) {
+        PyObject *value = PySequence_GetItem(frame->container, frame->index++);
+        if (value == NULL) {
             Py_DECREF(idx);
             Py_DECREF(dollar_ref);
             return NULL;
         }
+        if (push_child(self->stack, frame->path, idx, value) < 0) {
+            Py_DECREF(value);
+            Py_DECREF(idx);
+            Py_DECREF(dollar_ref);
+            return NULL;
+        }
+        Py_DECREF(value);
         Py_DECREF(idx);
     }
 

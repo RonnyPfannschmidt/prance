@@ -119,11 +119,6 @@ def main():
         ("tier_b", resolve_tier_b),
     ]
 
-    backend_cases = {
-        "python": cases,
-        "tier_b": cases,
-    }
-
     print(f"{'case':<20}", end="")
     for name, _ in backends:
         print(f" {name + '_ms':>12}", end="")
@@ -132,10 +127,7 @@ def main():
 
     for case_name, spec, url in cases:
         print(f"{case_name:<20}", end="")
-        for backend_name, resolver in backends:
-            if case_name not in {c[0] for c in backend_cases[backend_name]}:
-                print(f" {'n/a':>12}", end="")
-                continue
+        for _, resolver in backends:
             mean_ms = bench(
                 lambda s=spec, u=url, r=resolver: r(s, u),
                 rounds=args.rounds,
