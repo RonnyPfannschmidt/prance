@@ -15,12 +15,14 @@ if ROOT not in sys.path:
 
 
 def load_spec(path):
+    """Load and parse an OpenAPI spec from a file path."""
     from prance.util import fs, formats
 
     return formats.parse_spec(fs.read_file(path), path)
 
 
 def make_large_spec():
+    """Build a synthetic OpenAPI spec with many shared internal refs."""
     schemas = {}
     for i in range(200):
         schemas[f"Model{i}"] = {
@@ -65,6 +67,7 @@ def make_large_spec():
 
 
 def bench(func, rounds=5, warmup=1):
+    """Run *func* for *rounds* timed iterations and return mean time in ms."""
     for _ in range(warmup):
         func()
     timings = []
@@ -76,6 +79,7 @@ def bench(func, rounds=5, warmup=1):
 
 
 def resolve_python(spec, url=None):
+    """Resolve references using the pure-Python resolver (fast paths disabled)."""
     import prance.util.iterators as iterators
     import prance.util.path as path_mod
     import prance.util.resolver as resolver_mod
@@ -89,20 +93,20 @@ def resolve_python(spec, url=None):
 
 
 def resolve_tier_b(spec, url=None):
+    """Resolve references using the C extension-backed resolver."""
     res_mod = importlib.reload(importlib.import_module("prance.util.resolver"))
     res = res_mod.RefResolver(spec, url=url)
     res.resolve_references()
 
 
 def main():
+    """Parse CLI args and print a comparison table across resolver backends."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--rounds", type=int, default=5)
     args = parser.parse_args()
 
     petstore = load_spec("tests/specs/petstore.yaml")
-    externals = load_spec("tests/specs/with_externals.yaml")
     large = make_large_spec()
-    externals_url = os.path.abspath("tests/specs/with_externals.yaml")
 
     placeholder_url = f"file://{os.path.abspath('tests/specs/petstore.yaml')}"
     cases = [

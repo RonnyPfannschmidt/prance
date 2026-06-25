@@ -16,10 +16,12 @@ from prance.util import fs, formats, resolver  # noqa: E402
 
 
 def load_spec(path):
+    """Load and parse an OpenAPI spec from a file path."""
     return formats.parse_spec(fs.read_file(path), path)
 
 
 def make_large_spec():
+    """Build a synthetic OpenAPI spec with many shared internal refs."""
     schemas = {}
     for i in range(200):
         schemas[f"Model{i}"] = {
@@ -64,6 +66,7 @@ def make_large_spec():
 
 
 def bench_case(name, func, rounds=5, warmup=1):
+    """Run *func* for *rounds* timed iterations and return timing stats in ms."""
     for _ in range(warmup):
         func()
     timings = []
@@ -80,16 +83,15 @@ def bench_case(name, func, rounds=5, warmup=1):
 
 
 def main():
+    """Parse CLI args and print resolver benchmark results."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument("--warmup", type=int, default=1)
     args = parser.parse_args()
 
     petstore = load_spec("tests/specs/petstore.yaml")
-    externals = load_spec("tests/specs/with_externals.yaml")
     large = make_large_spec()
     petstore_url = os.path.abspath("tests/specs/petstore.yaml")
-    externals_url = os.path.abspath("tests/specs/with_externals.yaml")
 
     cases = [
         (
