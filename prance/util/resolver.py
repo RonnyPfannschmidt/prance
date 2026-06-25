@@ -20,6 +20,7 @@ def _deepcopy_specs(value):
 
     return copy.deepcopy(value)
 
+
 #: Resolve internal references
 RESOLVE_INTERNAL = 2**1
 #: Resolve references to HTTP external files.

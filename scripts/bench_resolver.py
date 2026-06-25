@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Run resolver benchmarks and print a summary table."""
-
 from __future__ import annotations
 
 import argparse
@@ -32,7 +31,9 @@ def make_large_spec():
         }
     schemas["BaseModel"] = {
         "type": "object",
-        "properties": {"tags": {"type": "array", "items": {"$ref": "#/components/schemas/Tag"}}},
+        "properties": {
+            "tags": {"type": "array", "items": {"$ref": "#/components/schemas/Tag"}}
+        },
     }
     schemas["Tag"] = {"type": "object", "properties": {"label": {"type": "string"}}}
     paths = {
@@ -43,7 +44,9 @@ def make_large_spec():
                         "description": "ok",
                         "content": {
                             "application/json": {
-                                "schema": {"$ref": f"#/components/schemas/Model{i % 200}"}
+                                "schema": {
+                                    "$ref": f"#/components/schemas/Model{i % 200}"
+                                }
                             }
                         },
                     }

@@ -1,5 +1,4 @@
 """Benchmarks for RefResolver / ResolvingParser hot paths."""
-
 import os
 
 import pytest

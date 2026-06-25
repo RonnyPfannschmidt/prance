@@ -1,9 +1,8 @@
 """Shared fixtures for resolver benchmarks."""
-
 import pytest
 
-from prance.util import fs
 from prance.util import formats
+from prance.util import fs
 
 
 def load_spec(path):
@@ -52,7 +51,9 @@ def make_large_shared_refs_spec():
                         "description": "ok",
                         "content": {
                             "application/json": {
-                                "schema": {"$ref": f"#/components/schemas/Model{i % 200}"}
+                                "schema": {
+                                    "$ref": f"#/components/schemas/Model{i % 200}"
+                                }
                             }
                         },
                     }
