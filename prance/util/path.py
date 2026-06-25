@@ -5,6 +5,13 @@ __copyright__ = "Copyright (c) 2018 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ()
 
+try:
+    from _prance_fast import path_get as _fast_path_get
+    from _prance_fast import path_set as _fast_path_set
+except ImportError:
+    _fast_path_get = None
+    _fast_path_set = None
+
 
 def _json_ref_escape(path):
     """JSON-reference escape object path."""
@@ -35,6 +42,14 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
     :param mixed defaultvalue: If the value at the path does not exist and this
       parameter is not None, it is returned. Otherwise an error is raised.
     """
+    if _fast_path_get is not None:
+        return _fast_path_get(
+            obj,
+            path,
+            defaultvalue=defaultvalue,
+            path_of_obj=path_of_obj,
+        )
+
     from collections.abc import Mapping, Sequence
 
     # For error reporting.
@@ -105,8 +120,10 @@ def path_set(obj, path, value, **options):
     :param bool create: [optional] Flag indicating whether to create
       intermediate values or not. Defaults to False.
     """
-    # Retrieve options
     create = options.get("create", False)
+
+    if _fast_path_set is not None:
+        return _fast_path_set(obj, path, value, create=create)
 
     def fill_sequence(seq, index, value_index_type):
         """

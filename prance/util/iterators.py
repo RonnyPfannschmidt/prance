@@ -5,6 +5,11 @@ __copyright__ = "Copyright (c) 2016-2018 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ()
 
+try:
+    from _prance_fast import reference_iterator as _fast_reference_iterator
+except ImportError:
+    _fast_reference_iterator = None
+
 
 def item_iterator(value, path=()):
     """
@@ -72,6 +77,10 @@ def reference_iterator(specs, path=()):
     :return: An iterator over all references in the specs.
     :rtype: iterator
     """
+    if _fast_reference_iterator is not None:
+        yield from _fast_reference_iterator(specs, path)
+        return
+
     # We need to iterate through the nested specification dict, so let's
     # start with an appropriate iterator. We can immediately optimize it by
     # only returning '$ref' items.

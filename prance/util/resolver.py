@@ -7,6 +7,19 @@ __all__ = ()
 
 import prance.util.url as _url
 
+try:
+    from _prance_fast import fast_deepcopy_json as _fast_deepcopy_json
+except ImportError:
+    _fast_deepcopy_json = None
+
+
+def _deepcopy_specs(value):
+    if _fast_deepcopy_json is not None:
+        return _fast_deepcopy_json(value)
+    import copy
+
+    return copy.deepcopy(value)
+
 #: Resolve internal references
 RESOLVE_INTERNAL = 2**1
 #: Resolve references to HTTP external files.
@@ -78,9 +91,7 @@ class RefResolver:
         :param bool strict: [optional] Whether to use strict mode or not; in
             lenient mode, malformed keys will be silently rewritten.
         """
-        import copy
-
-        self.specs = copy.deepcopy(specs)
+        self.specs = _deepcopy_specs(specs)
         self.url = url
 
         self.__reclimit = options.get("recursion_limit", 1)
@@ -236,9 +247,7 @@ class RefResolver:
                 )
 
         # Deep copy value; we don't want to create recursive structures
-        import copy
-
-        value = copy.deepcopy(value)
+        value = _deepcopy_specs(value)
 
         # Now resolve partial specs
         value = self._resolve_partial(ref_url, value, recursions)
