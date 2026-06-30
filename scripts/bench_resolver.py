@@ -131,15 +131,11 @@ def main():
         ),
         (
             "large_shared_refs",
-            lambda: resolve_only(
-                large, f"file://{petstore_url}", **common
-            ),
+            lambda: resolve_only(large, f"file://{petstore_url}", **common),
         ),
         (
             "large_no_frag_copy",
-            lambda: resolve_only(
-                large, f"file://{petstore_url}", **fast_shared
-            ),
+            lambda: resolve_only(large, f"file://{petstore_url}", **fast_shared),
         ),
         (
             "issue_78_translate",

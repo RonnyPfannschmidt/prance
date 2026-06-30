@@ -1,10 +1,10 @@
 """Parity tests for compiled path_set vs pure-Python implementation."""
-
 import copy
 
 import pytest
 
-from prance.util.path import _python_path_set, path_set
+from prance.util.path import _python_path_set
+from prance.util.path import path_set
 
 
 def _set_with_python(obj, path, value, create=False):
