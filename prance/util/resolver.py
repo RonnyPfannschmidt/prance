@@ -12,6 +12,11 @@ try:
 except ImportError:
     _fast_deepcopy_json = None
 
+try:
+    from _prance_fast import RefResolver as _FastRefResolver
+except ImportError:
+    _FastRefResolver = None
+
 
 def _deepcopy_specs(value):
     if _fast_deepcopy_json is not None:
@@ -53,51 +58,10 @@ def default_reclimit_handler(limit, parsed_url, recursions=()):
     )
 
 
-class RefResolver:
-    """Resolve JSON pointers/references in a spec by inlining."""
+class _PythonRefResolver:
+    """Pure-Python reference resolver used when the Cython extension is absent."""
 
     def __init__(self, specs, url=None, **options):
-        """
-        Construct a JSON reference resolver.
-
-        The resolved specs are in the `specs` member after a call to
-        `resolve_references` has been made.
-
-        If a URL is given, it is used as a base for calculating the absolute
-        URL of relative file references.
-
-        :param dict specs: The parsed specs in which to resolve any references.
-        :param str url: [optional] The URL to base relative references on.
-        :param dict reference_cache: [optional] Reference cache to use. When
-            encountering references, nested RefResolvers are created, and this
-            parameter is used by the RefResolver hierarchy to create only one
-            resolver per unique URL.
-            If you wish to use this optimization across distinct RefResolver
-            instances, pass a dict here for the RefResolvers you create
-            yourself. It's safe to ignore this parameter in other cases.
-        :param int recursion_limit: [optional] set the limit on recursive
-            references. The default is 1, indicating that an element may be
-            referred to exactly once when resolving references. When the limit
-            is reached, the recursion_limit_handler is invoked.
-        :param callable recursion_limit_handler: [optional] A callable that
-            gets invoked when the recursion_limit is reached. Defaults to
-            raising ResolutionError. Receives the recursion_limit as the
-            first parameter, and the parsed reference URL as the second. As
-            the last parameter, it receives a tuple of references that have
-            been detected as recursions.
-        :param str encoding: [optional] The encoding to use. If not given,
-            detect_encoding is used to determine the encoding.
-        :param int resolve_types: [optional] Specify which types of references to
-            resolve. Defaults to RESOLVE_ALL.
-        :param int resolve_method: [optional] Specify whether to translate external
-            references in components/schemas or dereference in place. Defaults
-            to TRANSLATE_DEFAULT.
-        :param bool strict: [optional] Whether to use strict mode or not; in
-            lenient mode, malformed keys will be silently rewritten.
-        :param bool copy_input: [optional] Deep-copy *specs* on construction.
-            Defaults to True. Set False when the caller owns the input and will
-            not reuse it (e.g. :class:`ResolvingParser`).
-        """
         if options.get("copy_input", True):
             self.specs = _deepcopy_specs(specs)
         else:
@@ -118,9 +82,6 @@ class RefResolver:
             self.parsed_url = _url.absurl(self.url)
             self._url_key = (_url.urlresource(self.parsed_url), self.__strict)
 
-            # If we have a url, we want to add ourselves to the reference cache
-            # - that creates a reference loop, but prevents child resolvers from
-            # creating a new resolver for this url.
             if self.specs:
                 self.__reference_cache[self._url_key] = self.specs
         else:
@@ -134,8 +95,6 @@ class RefResolver:
         self.__fragment_cache.clear()
         self.specs = self._resolve_partial(self.parsed_url, self.specs, (), {})
 
-        # If there are any objects collected when using TRANSLATE_EXTERNAL, add
-        # them to components/schemas
         if self.__soft_dereference_objs:
             if "components" not in self.specs:
                 self.specs["components"] = {}
@@ -145,7 +104,6 @@ class RefResolver:
             self.specs["components"]["schemas"].update(self.__soft_dereference_objs)
 
     def _split_reference(self, base_url, refstring):
-        """Return ``(ref_url, obj_path)`` for a JSON reference string."""
         fragment_ref = _url.split_fragment_reference(base_url, refstring)
         if fragment_ref is not None:
             return fragment_ref
@@ -154,17 +112,6 @@ class RefResolver:
     def _dereferencing_iterator(
         self, base_url, partial, path, recursions, recursion_counts
     ):
-        """
-        Iterate over a partial spec, dereferencing all references within.
-
-        Yields the resolved path and value of all items that need substituting.
-
-        :param mixed base_url: URL that the partial specs is located at.
-        :param dict partial: The partial specs to work on.
-        :param tuple path: The parent path of the partial specs.
-        :param tuple recursions: A recursion stack for resolving references.
-        :param dict recursion_counts: Count of each ref_path on the stack.
-        """
         from .iterators import reference_iterator
 
         for _, refstring, item_path in reference_iterator(partial):
@@ -199,24 +146,16 @@ class RefResolver:
                 yield full_path, ref_value
 
     def _collect_soft_refs(self, ref_url, item_path, value):
-        """
-        Return a portion of the dereferenced url for TRANSLATE_EXTERNAL mode.
-
-        format - ref-url_obj-path
-        """
         dref_url = ref_url.path.split("/")[-1] + "_" + "_".join(item_path[1:])
         self.__soft_dereference_objs[dref_url] = value
         return dref_url
 
     def _skip_reference(self, base_url, ref_url):
-        """Return whether the URL should not be dereferenced."""
         if ref_url.scheme.startswith("http"):
             return (self.__resolve_types & RESOLVE_HTTP) == 0
         elif ref_url.scheme == "file" or ref_url.scheme == "python":
-            # Internal references
             if base_url.path == ref_url.path:
                 return (self.__resolve_types & RESOLVE_INTERNAL) == 0
-            # Local files
             return (self.__resolve_types & RESOLVE_FILES) == 0
         else:
             from urllib.parse import urlunparse
@@ -228,7 +167,6 @@ class RefResolver:
             )
 
     def _fetch_cached_contents(self, ref_url):
-        """Return parsed document for *ref_url*, avoiding redundant copies."""
         url_key = (_url.urlresource(ref_url), self.__strict)
         entry = self.__reference_cache.get(url_key)
         if entry is not None:
@@ -242,19 +180,6 @@ class RefResolver:
         )
 
     def _dereference(self, ref_url, obj_path, recursions, ref_path, depth):
-        """
-        Dereference the URL and object path.
-
-        Returns the dereferenced object.
-
-        :param mixed ref_url: The URL at which the reference is located.
-        :param list obj_path: The object path within the URL resource.
-        :param tuple recursions: A recursion stack for resolving references.
-        :param tuple ref_path: Canonical ``(url_resource, obj_path)`` key.
-        :param int depth: How many times *ref_path* was already on the stack.
-        :return: A copy of the dereferenced value, with all internal references
-            resolved.
-        """
         cache_key = (ref_path, depth)
         cached = self.__fragment_cache.get(cache_key)
         if cached is not None:
@@ -282,15 +207,6 @@ class RefResolver:
         return value
 
     def _resolve_partial(self, base_url, partial, recursions, recursion_counts):
-        """
-        Resolve a (partial) spec's references.
-
-        :param mixed base_url: URL that the partial specs is located at.
-        :param dict partial: The partial specs to work on.
-        :param tuple recursions: A recursion stack for resolving references.
-        :param dict recursion_counts: Count of each ref_path on the stack.
-        :return: The partial with all references resolved.
-        """
         changes = dict(
             tuple(
                 self._dereferencing_iterator(
@@ -319,3 +235,9 @@ def recursions_count_from_stack(recursions):
     for ref_path in recursions:
         counts[ref_path] = counts.get(ref_path, 0) + 1
     return counts
+
+
+if _FastRefResolver is not None:
+    RefResolver = _FastRefResolver
+else:
+    RefResolver = _PythonRefResolver

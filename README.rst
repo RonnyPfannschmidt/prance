@@ -27,9 +27,10 @@ Prance is available from PyPI, and can be installed via pip:
 
     $ pip install prance
 
-The base package includes a native C extension (``_prance_fast``) that
-accelerates reference resolution. It is built automatically when you install
-from source and a C compiler is available; release wheels include the
+The base package includes a native Cython extension (``_prance_fast``) that
+accelerates reference resolution (deep-copy, path access, reference iteration,
+URL helpers, and the resolver entry point). It is built automatically when you
+install from source and a C compiler is available; release wheels include the
 extension when built for your platform.
 
 Note that this will install the code, but additional subpackages must be specified

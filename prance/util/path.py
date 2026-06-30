@@ -58,9 +58,11 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
             path_of_obj=path_of_obj,
         )
 
-    from collections.abc import Mapping, Sequence
+    return _python_path_get(obj, path, defaultvalue, path_of_obj)
 
-    # For error reporting.
+
+def _python_path_get(obj, path, defaultvalue=None, path_of_obj=()):
+    from collections.abc import Mapping, Sequence
     path_of_obj_str = _str_path(path_of_obj)
 
     if path is not None and not isinstance(path, Sequence):
@@ -77,11 +79,11 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
                 )
             )
 
-        return path_get(
+        return _python_path_get(
             obj[path[0]], path[1:], defaultvalue, path_of_obj=path_of_obj + (path[0],)
         )
 
-    elif isinstance(obj, Sequence):
+    if isinstance(obj, Sequence):
         if path is None or len(path) < 1:
             return _value_or_default(obj, defaultvalue)
 
@@ -102,7 +104,7 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
                 'Index out of bounds for sequence at "%s": %d' % (path_of_obj_str, idx)
             )
 
-        return path_get(
+        return _python_path_get(
             obj[idx], path[1:], defaultvalue, path_of_obj=path_of_obj + (path[0],)
         )
 
@@ -133,15 +135,11 @@ def path_set(obj, path, value, **options):
     if _fast_path_set is not None:
         return _fast_path_set(obj, path, value, create=create)
 
-    def fill_sequence(seq, index, value_index_type):
-        """
-        Fill the sequence seq with elements until index can be accessed.
+    return _python_path_set(obj, path, value, create=create)
 
-        Fills with None except for the indexed element. That is either a dict or
-        a list, depending on the value_index_type. If the latter is an int, a
-        list is added. If the latter is None (unknown), None is added. Otherwise
-        a dict is added.
-        """
+
+def _python_path_set(obj, path, value, create=False):
+    def fill_sequence(seq, index, value_index_type):
         if len(seq) > index:
             return
 
@@ -198,7 +196,7 @@ def path_set(obj, path, value, **options):
                     obj[path[0]] = []
                 else:
                     obj[path[0]] = {}
-            path_set(obj[path[0]], path[1:], value, create=create)
+            _python_path_set(obj[path[0]], path[1:], value, create=create)
 
         return obj
 
@@ -226,7 +224,7 @@ def path_set(obj, path, value, **options):
         if len(path) == 1:
             obj[idx] = value
         else:
-            path_set(obj[idx], path[1:], value, create=create)
+            _python_path_set(obj[idx], path[1:], value, create=create)
 
         return obj
     else:

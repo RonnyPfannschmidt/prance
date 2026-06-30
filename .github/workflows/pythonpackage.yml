@@ -25,7 +25,7 @@ jobs:
         pip install --group dev -e ".[ssv,osv,cli]"
     - name: Verify native extension
       run: |
-        python -c "import _prance_fast; from prance.util.resolver import _fast_deepcopy_json; assert _fast_deepcopy_json is not None"
+        python -c "import _prance_fast; from prance.util.resolver import RefResolver, _FastRefResolver; assert _FastRefResolver is not None; assert RefResolver is _FastRefResolver"
     - name: Test with pytest
       run: |
         pytest -m "not requires_network and not benchmark"

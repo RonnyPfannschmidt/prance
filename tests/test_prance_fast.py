@@ -1,4 +1,4 @@
-"""Tests for the bundled ``_prance_fast`` C extension."""
+"""Tests for the bundled ``_prance_fast`` Cython extension."""
 import pytest
 
 
@@ -9,12 +9,15 @@ def test_prance_fast_extension_importable():
     assert hasattr(_prance_fast, "path_get")
     assert hasattr(_prance_fast, "path_set")
     assert hasattr(_prance_fast, "reference_iterator")
+    assert hasattr(_prance_fast, "RefResolver")
 
 
 def test_prance_fast_wired_into_resolver():
     from prance.util import resolver
 
     assert resolver._fast_deepcopy_json is not None
+    assert resolver._FastRefResolver is not None
+    assert resolver.RefResolver is resolver._FastRefResolver
 
 
 def test_prance_fast_wired_into_path():

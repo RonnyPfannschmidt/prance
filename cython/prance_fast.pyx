@@ -1,0 +1,357 @@
+# cython: language_level=3, boundscheck=False, wraparound=False
+"""Fast Cython helpers and RefResolver for prance reference resolution."""
+
+from urllib import parse
+
+import os.path
+
+# Resolve-type flags (mirrors prance.util.resolver)
+RESOLVE_INTERNAL = 2**1
+RESOLVE_HTTP = 2**2
+RESOLVE_FILES = 2**3
+RESOLVE_ALL = RESOLVE_INTERNAL | RESOLVE_HTTP | RESOLVE_FILES
+
+TRANSLATE_EXTERNAL = 0
+TRANSLATE_DEFAULT = 1
+
+
+cdef bint _is_mapping(object obj):
+    return isinstance(obj, dict)
+
+
+cdef bint _is_sequence_not_str(object obj):
+    return isinstance(obj, (list, tuple))
+
+
+cdef object _json_ref_escape(object part):
+    if not isinstance(part, str):
+        part = str(part)
+    return part.replace("~", "~0").replace("/", "~1")
+
+
+cdef str _str_path(tuple path_of_obj):
+    if not path_of_obj:
+        return "/"
+    return "/" + "/".join(_json_ref_escape(p) for p in path_of_obj)
+
+
+cdef object _path_append(tuple path, object part):
+    return path + (part,)
+
+
+# --- fast_deepcopy_json ---------------------------------------------------
+
+def fast_deepcopy_json(obj):
+    """Deep-copy JSON-compatible Python objects."""
+    if obj is None or isinstance(obj, (bool, int, float, str)):
+        return obj
+    if isinstance(obj, dict):
+        return {k: fast_deepcopy_json(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [fast_deepcopy_json(v) for v in obj]
+    raise TypeError(
+        f"fast_deepcopy_json does not support type {type(obj).__name__}"
+    )
+
+
+cdef object _fast_deepcopy_json_impl(object obj):
+    return fast_deepcopy_json(obj)
+
+
+# --- path_get -------------------------------------------------------------
+
+cdef object _path_get_impl(object obj, object path, object defaultvalue, tuple path_of_obj):
+    cdef object key, idx_obj
+    cdef int idx
+
+    if path is not None and not isinstance(path, (list, tuple)):
+        raise TypeError(
+            f"Path is a {type(path)}, but must be None or a Collection!"
+        )
+
+    if path is None:
+        path = ()
+
+    if isinstance(obj, dict):
+        if len(path) < 1:
+            return obj if obj is not None else defaultvalue
+        key = path[0]
+        if key not in obj:
+            raise KeyError(
+                'Object at "{}" does not contain key: {}'.format(
+                    _str_path(path_of_obj), key
+                )
+            )
+        return _path_get_impl(
+            obj[key], path[1:], defaultvalue, _path_append(path_of_obj, key)
+        )
+
+    if isinstance(obj, (list, tuple)):
+        if len(path) < 1:
+            return obj if obj is not None else defaultvalue
+        idx_obj = path[0]
+        try:
+            idx = int(idx_obj)
+        except ValueError:
+            raise KeyError(
+                'Sequence at "%s" needs integer indices only, but got: %s'
+                % (_str_path(path_of_obj), idx_obj)
+            )
+        if idx < 0 or idx >= len(obj):
+            raise IndexError(
+                'Index out of bounds for sequence at "%s": %d'
+                % (_str_path(path_of_obj), idx)
+            )
+        return _path_get_impl(
+            obj[idx], path[1:], defaultvalue, _path_append(path_of_obj, idx_obj)
+        )
+
+    if len(path) > 0:
+        raise TypeError(f"Cannot get anything from type {type(obj)}!")
+    return obj if obj is not None else defaultvalue
+
+
+def path_get(obj, path, defaultvalue=None, path_of_obj=()):
+    """Get a nested value by path tuple."""
+    if path_of_obj is None:
+        path_of_obj = ()
+    return _path_get_impl(obj, path, defaultvalue, path_of_obj)
+
+
+# --- path_set -------------------------------------------------------------
+
+def path_set(obj, path, value, create=False):
+    """Set a nested value by path tuple."""
+    from prance.util.path import _python_path_set
+    return _python_path_set(obj, path, value, create=create)
+
+
+# --- reference_iterator ---------------------------------------------------
+
+def reference_iterator(specs, path=()):
+    """Iterate $ref entries in a spec."""
+    if path is None:
+        path = ()
+    stack = []
+    if isinstance(specs, (dict, list, tuple)):
+        stack.append((path, specs))
+
+    while stack:
+        current_path, container = stack.pop()
+        if isinstance(container, dict):
+            for key in reversed(list(container.keys())):
+                value = container[key]
+                if key == "$ref":
+                    yield "$ref", value, current_path
+                elif isinstance(value, (dict, list, tuple)):
+                    stack.append((current_path + (key,), value))
+        elif isinstance(container, (list, tuple)):
+            for idx in reversed(range(len(container))):
+                value = container[idx]
+                if isinstance(value, (dict, list, tuple)):
+                    stack.append((current_path + (idx,), value))
+
+
+# --- URL helpers ----------------------------------------------------------
+
+def _resolution_error():
+    from prance.util.url import ResolutionError
+    return ResolutionError
+
+
+def urlresource(url):
+    """Return the resource part of a parsed URL."""
+    res_list = list(url)[0:3] + [None, None, None]
+    return parse.ParseResult(*res_list).geturl()
+
+
+def _normalize_fragment_path(obj_path):
+    def _normalize(path):
+        path = path.replace("~1", "/")
+        path = path.replace("~0", "~")
+        return path
+
+    return [_normalize(p) for p in obj_path]
+
+
+def absurl(url, relative_to=None):
+    """Turn relative file URLs into absolute file URLs."""
+    from prance.util.fs import is_pathname_valid, from_posix, abspath
+    from prance.util import fs
+    from prance.util.exceptions import raise_from
+
+    ResolutionError = _resolution_error()
+    parsed = url
+    if not isinstance(parsed, tuple):
+        if is_pathname_valid(url):
+            url = fs.to_posix(url)
+        try:
+            parsed = parse.urlparse(url)
+        except Exception as ex:
+            raise_from(_resolution_error(), ex, f"Unable to parse url: {url}")
+
+    if parsed.scheme not in (None, "", "file"):
+        return parsed
+
+    reference = relative_to
+    if reference and not isinstance(reference, tuple):
+        if is_pathname_valid(reference):
+            reference = fs.to_posix(reference)
+        reference = parse.urlparse(reference)
+
+    result_list = None
+    if not parsed.path:
+        if not reference or not reference.path:
+            raise ResolutionError(
+                "Cannot build an absolute file URL from a fragment"
+                " without a reference with path!"
+            )
+        result_list = list(reference)
+        result_list[5] = parsed.fragment
+    elif os.path.isabs(from_posix(parsed.path)):
+        result_list = list(parsed)
+        result_list[0] = "file"
+    else:
+        if not reference:
+            raise ResolutionError(
+                "Cannot build an absolute file URL from a relative"
+                " path without a reference!"
+            )
+        if reference.scheme not in (None, "", "file"):
+            raise ResolutionError(
+                "Cannot build an absolute file URL with a non-file reference!"
+            )
+        result_list = list(parsed)
+        result_list[0] = "file"
+        result_list[2] = abspath(from_posix(parsed.path), from_posix(reference.path))
+
+    return parse.ParseResult(*result_list)
+
+
+def split_fragment_reference(base_url, reference):
+    """Fast path for fragment-only JSON references."""
+    if not reference.startswith("#"):
+        return None
+    if base_url is None:
+        return None
+
+    fragment = reference[1:]
+    obj_path = fragment.split("/")
+    while len(obj_path) and not obj_path[0]:
+        obj_path = obj_path[1:]
+    obj_path = _normalize_fragment_path(obj_path)
+
+    result_list = list(base_url)
+    result_list[5] = fragment
+    parsed_url = parse.ParseResult(*result_list)
+    return parsed_url, obj_path
+
+
+def split_url_reference(base_url, reference):
+    """Return a normalized, parsed URL and object path."""
+    parsed_url = absurl(reference, base_url)
+    obj_path = parsed_url.fragment.split("/")
+    while len(obj_path) and not obj_path[0]:
+        obj_path = obj_path[1:]
+    obj_path = _normalize_fragment_path(obj_path)
+    return parsed_url, obj_path
+
+
+def fetch_url_text(url, cache=None, encoding=None):
+    """Fetch URL text content."""
+    ResolutionError = _resolution_error()
+    if cache is None:
+        cache = {}
+
+    url_key = "text_" + urlresource(url)
+    entry = cache.get(url_key)
+    if entry is not None:
+        return entry
+
+    content = None
+    content_type = None
+    if url.scheme in (None, "", "file"):
+        from prance.util.fs import read_file, from_posix
+        from prance.util.exceptions import raise_from
+
+        try:
+            content = read_file(from_posix(url.path), encoding)
+        except FileNotFoundError as ex:
+            raise_from(ResolutionError, ex, f"File not found: {url.path}")
+    elif url.scheme == "python":
+        package = url.netloc
+        path = url.path
+        if path and path[0] == "/":
+            path = path[1:]
+
+        from importlib.resources import files
+        from prance.util.fs import read_file, from_posix
+
+        path = files(package).joinpath(path)
+        content = read_file(from_posix(path), encoding)
+    else:
+        import requests
+
+        response = requests.get(url.geturl())
+        if not response.ok:
+            raise ResolutionError(
+                'Cannot fetch URL "%s": %d %s'
+                % (url.geturl(), response.status_code, response.reason)
+            )
+        content_type = response.headers.get("content-type", "text/plain")
+        content = response.text
+
+    cache[url_key] = (content, content_type)
+    return content, content_type
+
+
+def fetch_url(url, cache=None, encoding=None, strict=True, copy=True):
+    """Fetch the URL and parse the contents."""
+    if cache is None:
+        cache = {}
+
+    url_key = (urlresource(url), strict)
+    entry = cache.get(url_key)
+    if entry is not None:
+        if copy:
+            return entry.copy()
+        return entry
+
+    content, content_type = fetch_url_text(url, cache, encoding=encoding)
+
+    from prance.util.formats import parse_spec
+
+    result = parse_spec(content, url.path, content_type=content_type)
+
+    if not strict:
+        from prance.util import stringify_keys
+
+        result = stringify_keys(result)
+
+    cache[url_key] = result
+    if copy:
+        return result.copy()
+    return result
+
+
+# --- RefResolver ----------------------------------------------------------
+
+class RefResolver:
+    """Resolve JSON pointers/references in a spec by inlining."""
+
+    def __init__(self, specs, url=None, **options):
+        from prance.util.resolver import _PythonRefResolver
+
+        self._impl = _PythonRefResolver(specs, url=url, **options)
+        self._sync_state()
+
+    def _sync_state(self):
+        self.specs = self._impl.specs
+        self.url = self._impl.url
+        self.parsed_url = self._impl.parsed_url
+        self._url_key = self._impl._url_key
+
+    def resolve_references(self):
+        """Resolve JSON pointers/references in the spec."""
+        self._impl.resolve_references()
+        self._sync_state()
