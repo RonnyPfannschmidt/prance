@@ -151,7 +151,9 @@ class RefResolver:
             return fragment_ref
         return _url.split_url_reference(base_url, refstring)
 
-    def _dereferencing_iterator(self, base_url, partial, path, recursions, recursion_counts):
+    def _dereferencing_iterator(
+        self, base_url, partial, path, recursions, recursion_counts
+    ):
         """
         Iterate over a partial spec, dereferencing all references within.
 

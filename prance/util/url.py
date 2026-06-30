@@ -118,6 +118,7 @@ def absurl(url, relative_to=None):
 
 def _normalize_fragment_path(obj_path):
     """Normalize JSON pointer path segments (~0, ~1)."""
+
     def _normalize(path):
         path = path.replace("~1", "/")
         path = path.replace("~0", "~")

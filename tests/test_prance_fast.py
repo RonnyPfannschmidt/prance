@@ -1,5 +1,4 @@
 """Tests for the bundled ``_prance_fast`` C extension."""
-
 import pytest
 
 
