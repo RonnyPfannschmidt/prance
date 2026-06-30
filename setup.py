@@ -2,8 +2,10 @@
 import os
 
 from Cython.Build import cythonize
-from setuptools import Extension, setup
-from setuptools_rust import Binding, RustExtension
+from setuptools import Extension
+from setuptools import setup
+from setuptools_rust import Binding
+from setuptools_rust import RustExtension
 
 os.environ.setdefault("PYO3_USE_ABI3_FORWARD_COMPATIBILITY", "1")
 

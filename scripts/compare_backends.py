@@ -137,7 +137,10 @@ def main():
             resolver_mod = importlib.reload(
                 importlib.import_module("prance.util.resolver")
             )
-            if name == "python" or resolver_mod.RefResolver is not resolver_mod._PythonRefResolver:
+            if (
+                name == "python"
+                or resolver_mod.RefResolver is not resolver_mod._PythonRefResolver
+            ):
                 available.append(name)
 
     print(f"{'case':<20}", end="")
@@ -149,6 +152,7 @@ def main():
     for case_name, spec, url, options in cases:
         print(f"{case_name:<20}", end="")
         for backend in available:
+
             def run(s=spec, u=url, b=backend, o=options):
                 if case_name == "externals":
                     with patch("requests.get", side_effect=mock_get_petstore):
