@@ -180,11 +180,6 @@ class RefResolver:
             ref_path = (_url.urlresource(ref_url), tuple(obj_path))
             depth = recursion_counts.get(ref_path, 0)
             next_recursions = recursions + (ref_path,)
-            next_counts = recursion_counts
-            if depth:
-                next_counts = {**recursion_counts, ref_path: depth + 1}
-            else:
-                next_counts = {**recursion_counts, ref_path: 1}
 
             if depth >= self.__reclimit:
                 ref_value = self.__reclimit_handler(
