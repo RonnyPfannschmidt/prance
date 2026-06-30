@@ -17,7 +17,10 @@ def test_prance_fast_wired_into_resolver():
 
     assert resolver._fast_deepcopy_json is not None
     assert resolver._FastRefResolver is not None
-    assert resolver.RefResolver is resolver._FastRefResolver
+    if resolver._RustRefResolver is not None:
+        assert resolver.RefResolver is resolver._RustRefResolver
+    else:
+        assert resolver.RefResolver is resolver._FastRefResolver
 
 
 def test_prance_fast_wired_into_path():

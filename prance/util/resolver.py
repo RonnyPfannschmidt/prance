@@ -5,6 +5,8 @@ __copyright__ = "Copyright (c) 2016-2018 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ()
 
+import os
+
 import prance.util.url as _url
 from prance.util.path import path_get, path_set
 from .iterators import reference_iterator
@@ -18,6 +20,13 @@ try:
     from _prance_fast import RefResolver as _FastRefResolver
 except ImportError:
     _FastRefResolver = None
+
+try:
+    from _prance_rs import RefResolver as _RustRefResolver
+    from _prance_rs import resolve_spec as rust_resolve_spec
+except ImportError:
+    _RustRefResolver = None
+    rust_resolve_spec = None
 
 
 def _deepcopy_specs(value):
@@ -239,7 +248,33 @@ def recursions_count_from_stack(recursions):
     return counts
 
 
-if _FastRefResolver is not None:
-    RefResolver = _FastRefResolver
-else:
-    RefResolver = _PythonRefResolver
+def _backend_override():
+    return os.environ.get("PRANCE_BACKEND", "").strip().lower()
+
+
+def _select_ref_resolver():
+    override = _backend_override()
+    if override == "python":
+        return _PythonRefResolver
+    if override == "cython":
+        return _FastRefResolver or _PythonRefResolver
+    if override == "rust":
+        return _RustRefResolver or _FastRefResolver or _PythonRefResolver
+    if _RustRefResolver is not None:
+        return _RustRefResolver
+    if _FastRefResolver is not None:
+        return _FastRefResolver
+    return _PythonRefResolver
+
+
+def use_rust_pipeline():
+    """Return True when the full Rust parse+resolve pipeline should be used."""
+    override = _backend_override()
+    if override in ("python", "cython"):
+        return False
+    if rust_resolve_spec is None:
+        return False
+    return True
+
+
+RefResolver = _select_ref_resolver()

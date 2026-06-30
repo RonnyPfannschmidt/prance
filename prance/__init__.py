@@ -284,14 +284,7 @@ class ResolvingParser(BaseParser):
 
         BaseParser.__init__(self, url=url, spec_string=spec_string, lazy=lazy, **kwargs)
 
-    def _validate(self):
-        # We have a problem with the BaseParser's validate function: the
-        # jsonschema implementation underlying it does not accept relative
-        # path references, but the Swagger specs allow them:
-        # http://swagger.io/specification/#referenceObject
-        # We therefore use our own resolver first, and validate later.
-        from .util.resolver import RefResolver
-
+    def _resolver_forward_args(self):
         forward_arg_names = (
             "encoding",
             "recursion_limit",
@@ -306,6 +299,62 @@ class ResolvingParser(BaseParser):
             k: v for (k, v) in self.options.items() if k in forward_arg_names
         }
         forward_args.setdefault("copy_input", False)
+        return forward_args
+
+    def _rust_url(self):
+        if self.url is None or self.url == _PLACEHOLDER_URL:
+            return None
+        return self.url.geturl()
+
+    def parse(self):
+        """Load, resolve references, and validate the specification."""
+        from .util.resolver import use_rust_pipeline, rust_resolve_spec
+
+        if use_rust_pipeline() and self.options.get("encoding") is None:
+            forward_args = self._resolver_forward_args()
+            rust_url = self._rust_url()
+            if rust_url is not None:
+                if self._spec_string:
+                    self.specification = rust_resolve_spec(
+                        spec_string=self._spec_string,
+                        url=rust_url,
+                        **forward_args,
+                    )
+                else:
+                    self.specification = rust_resolve_spec(
+                        url=rust_url,
+                        **forward_args,
+                    )
+
+                assert self.specification, "No specification parsed, cannot validate!"
+                BaseParser._validate(self)
+                return
+
+        strict = self.options.get("strict", True)
+
+        if self.url and self.url != _PLACEHOLDER_URL:
+            from .util.url import fetch_url
+
+            encoding = self.options.get("encoding", None)
+            self.specification = fetch_url(self.url, encoding=encoding, strict=strict)
+
+        if self._spec_string:
+            from .util.formats import parse_spec
+
+            self.specification = parse_spec(self._spec_string, self.url)
+
+        assert self.specification, "No specification parsed, cannot validate!"
+        self._validate()
+
+    def _validate(self):
+        # We have a problem with the BaseParser's validate function: the
+        # jsonschema implementation underlying it does not accept relative
+        # path references, but the Swagger specs allow them:
+        # http://swagger.io/specification/#referenceObject
+        # We therefore use our own resolver first, and validate later.
+        from .util.resolver import RefResolver
+
+        forward_args = self._resolver_forward_args()
         resolver = RefResolver(
             self.specification,
             self.url,

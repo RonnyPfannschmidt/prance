@@ -7,6 +7,8 @@ include tox.ini
 include setup.py
 recursive-include cython *.pyx
 recursive-include cython *.pxd
+recursive-include rust Cargo.toml
+recursive-include rust/src *.rs
 
 recursive-include tests *
 recursive-include docs *

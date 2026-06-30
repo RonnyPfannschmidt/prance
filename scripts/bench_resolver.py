@@ -158,11 +158,16 @@ def main():
     ]
 
     try:
-        import _prance_fast  # noqa: F401
+        import _prance_rs  # noqa: F401
 
-        backend = "tier_b (_prance_fast)"
+        backend = "tier_a (_prance_rs)"
     except ImportError:
-        backend = "baseline (pure Python)"
+        try:
+            import _prance_fast  # noqa: F401
+
+            backend = "tier_b (_prance_fast)"
+        except ImportError:
+            backend = "baseline (pure Python)"
 
     print(f"Backend: {backend}")
     print(f"{'case':<24} {'mean_ms':>10} {'min_ms':>10} {'max_ms':>10}")

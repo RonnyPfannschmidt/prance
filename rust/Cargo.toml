@@ -1,0 +1,21 @@
+[package]
+name = "prance_rs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "prance_rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.24", features = ["extension-module"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_yaml = "0.9"
+ureq = { version = "2", default-features = true }
+rayon = "1"
+dashmap = "6"
+encoding_rs = "0.8"
+chardetng = "0.1"
+url = "2"
+indexmap = { version = "2", features = ["serde"] }

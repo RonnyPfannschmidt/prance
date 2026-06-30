@@ -63,13 +63,35 @@ def test_resolver_fragment_copy_parity_on_large_spec():
     assert py_result == cy_result
 
 
-def test_resolver_uses_compiled_when_available():
-    import _prance_fast
+def test_rust_full_pipeline_parity_petstore():
+    """Raw spec string -> resolved output matches Python parse+resolve path."""
+    from prance.util.resolver import rust_resolve_spec, use_rust_pipeline
 
-    assert resolver.RefResolver is _prance_fast.RefResolver
+    if not use_rust_pipeline():
+        pytest.skip("Rust pipeline not available")
+
+    spec_path = "tests/specs/petstore.yaml"
+    url = os.path.abspath(spec_path)
+    raw = fs.read_file(spec_path)
+    py_specs = formats.parse_spec(raw, spec_path)
+    py_result = _resolve_with_python(py_specs, url, copy_input=False)
+    rust_result = rust_resolve_spec(spec_string=raw, url=url, copy_input=False)
+    assert py_result == rust_result
+
+
+def test_resolver_uses_compiled_when_available():
+    if resolver._RustRefResolver is not None:
+        import _prance_rs
+
+        assert resolver.RefResolver is _prance_rs.RefResolver
+    else:
+        import _prance_fast
+
+        assert resolver.RefResolver is _prance_fast.RefResolver
 
 
 def test_resolver_python_fallback_when_compiled_missing(monkeypatch):
+    monkeypatch.setattr(resolver, "_RustRefResolver", None)
     monkeypatch.setattr(resolver, "_FastRefResolver", None)
     monkeypatch.setattr(resolver, "RefResolver", resolver._PythonRefResolver)
     specs = formats.parse_spec(

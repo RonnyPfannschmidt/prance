@@ -15,15 +15,16 @@ Use [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/)
 to create a virtual environment and change to it or not, as you see fit.
 
 Then install the package in editable mode with validation backends, CLI, and dev
-dependencies. The native ``_prance_fast`` C extension is built automatically as
-part of the base package (requires a C compiler when installing from source):
+dependencies. Native extensions are built automatically when installing from
+source (requires a C compiler for ``_prance_fast`` and a Rust toolchain for
+``_prance_rs``):
 
 ```bash
 $ pip install --group dev -e ".[ssv,osv,icu,cli]"
 ```
 
-Alternatively, use the minimal set of runtime dependencies (the C extension is
-still built when a compiler is available):
+Alternatively, use the minimal set of runtime dependencies (extensions are still
+built when the required compilers are available):
 
 ```bash
 $ pip install --group dev -e .
@@ -86,6 +87,19 @@ $ tox -e py314  # Python 3.14
 ```
 
 A simple test coverage report is automatically generated.
+
+### Resolver backends
+
+The preferred resolver tier is ``_prance_rs`` (Rust), then ``_prance_fast``
+(Cython), then the pure-Python fallback. Force a tier with the
+``PRANCE_BACKEND`` environment variable (``rust``, ``cython``, or ``python``).
+
+Compare backends locally:
+
+```bash
+$ python scripts/compare_backends.py
+$ python scripts/bench_resolver.py
+```
 
 ### Changelog
 

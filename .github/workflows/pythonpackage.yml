@@ -19,13 +19,24 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install --group dev -e ".[ssv,osv,cli]"
     - name: Verify native extension
       run: |
-        python -c "import _prance_fast; from prance.util.resolver import RefResolver, _FastRefResolver; assert _FastRefResolver is not None; assert RefResolver is _FastRefResolver"
+        python -c "
+        import _prance_fast
+        from prance.util.resolver import RefResolver, _FastRefResolver, _RustRefResolver
+        assert _FastRefResolver is not None
+        if _RustRefResolver is not None:
+            import _prance_rs
+            assert RefResolver is _prance_rs.RefResolver
+        else:
+            assert RefResolver is _FastRefResolver
+        "
     - name: Test with pytest
       run: |
         pytest -m "not requires_network and not benchmark"

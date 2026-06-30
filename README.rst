@@ -27,11 +27,18 @@ Prance is available from PyPI, and can be installed via pip:
 
     $ pip install prance
 
-The base package includes a native Cython extension (``_prance_fast``) that
-accelerates reference resolution (deep-copy, path access, reference iteration,
-URL helpers, and the resolver entry point). It is built automatically when you
-install from source and a C compiler is available; release wheels include the
-extension when built for your platform.
+The base package includes native extensions that accelerate reference
+resolution:
+
+* ``_prance_rs`` — a Rust/PyO3 resolver and full parse+resolve pipeline
+  (preferred when built; requires a Rust compiler when installing from source)
+* ``_prance_fast`` — a Cython extension for deep-copy, path access, reference
+  iteration, URL helpers, and a fallback resolver tier
+
+The preferred backend chain is ``Rust -> Cython -> pure Python``. Set
+``PRANCE_BACKEND=rust``, ``cython``, or ``python`` to force a specific tier.
+Extensions are built automatically when you install from source; release wheels
+include them when built for your platform.
 
 Note that this will install the code, but additional subpackages must be specified
 to unlock various pieces of functionality. At minimum, a parsing backend must be
