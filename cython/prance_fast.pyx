@@ -3,6 +3,7 @@
 
 from urllib import parse
 
+import cython
 import os.path
 
 # Resolve-type flags (mirrors prance.util.resolver)
@@ -128,36 +129,133 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
 
 # --- path_set -------------------------------------------------------------
 
+_EXIT_PATH = object()
+
+
+@cython.boundscheck(True)
+@cython.wraparound(True)
+cdef void _fill_sequence(object seq, int index, object value_index_type):
+    if len(seq) > index:
+        return
+    while len(seq) < index:
+        seq.append(None)
+    if value_index_type == int:
+        seq.append([])
+    elif value_index_type is None:
+        seq.append(None)
+    else:
+        seq.append({})
+
+
+@cython.boundscheck(True)
+@cython.wraparound(True)
+cdef object _safe_path_component_type(object path, int index):
+    try:
+        return type(path[index])
+    except IndexError:
+        return None
+
+
+@cython.boundscheck(True)
+@cython.wraparound(True)
+cdef object _path_set_impl(object obj, object path, object value, bint create):
+    cdef object idx_obj
+    cdef int idx
+
+    if path is not None and not isinstance(path, (list, tuple)):
+        raise TypeError(
+            f"Path is a {type(path)}, but must be None or a Collection!"
+        )
+
+    if len(path) < 1:
+        raise KeyError("Cannot set with an empty path!")
+
+    if isinstance(obj, dict):
+        if len(path) == 1:
+            if not create and path[0] not in obj:
+                raise KeyError(f'Key "{path[0]}" not in Mapping!')
+            obj[path[0]] = value
+        else:
+            if create and path[0] not in obj:
+                if type(path[1]) == int:
+                    obj[path[0]] = []
+                else:
+                    obj[path[0]] = {}
+            _path_set_impl(obj[path[0]], path[1:], value, create)
+        return obj
+
+    if isinstance(obj, list):
+        idx_obj = path[0]
+        try:
+            idx = int(idx_obj)
+        except ValueError:
+            raise KeyError("Sequences need integer indices only.")
+
+        if create:
+            _fill_sequence(obj, idx, _safe_path_component_type(path, 1))
+
+        if len(path) == 1:
+            obj[idx] = value
+        else:
+            _path_set_impl(obj[idx], path[1:], value, create)
+        return obj
+
+    if isinstance(obj, tuple):
+        raise TypeError(f"Sequence is not mutable: {type(obj)}")
+
+    raise TypeError(f"Cannot set anything on type {type(obj)}!")
+
+
 def path_set(obj, path, value, create=False):
     """Set a nested value by path tuple."""
-    from prance.util.path import _python_path_set
-    return _python_path_set(obj, path, value, create=create)
+    return _path_set_impl(obj, path, value, create)
 
 
 # --- reference_iterator ---------------------------------------------------
 
 def reference_iterator(specs, path=()):
     """Iterate $ref entries in a spec."""
+    cdef list path_stack
+    cdef list stack
+    cdef object container, item, key, value
+    cdef int idx, length
+
     if path is None:
-        path = ()
+        path_stack = []
+    else:
+        path_stack = list(path)
+
     stack = []
     if isinstance(specs, (dict, list, tuple)):
-        stack.append((path, specs))
+        stack.append(specs)
 
     while stack:
-        current_path, container = stack.pop()
+        item = stack.pop()
+        if item is _EXIT_PATH:
+            path_stack.pop()
+            continue
+        if isinstance(item, (str, int)):
+            path_stack.append(item)
+            continue
+
+        container = item
         if isinstance(container, dict):
-            for key in reversed(list(container.keys())):
+            for key in reversed(container):
                 value = container[key]
                 if key == "$ref":
-                    yield "$ref", value, current_path
+                    yield "$ref", value, tuple(path_stack)
                 elif isinstance(value, (dict, list, tuple)):
-                    stack.append((current_path + (key,), value))
+                    stack.append(_EXIT_PATH)
+                    stack.append(value)
+                    stack.append(key)
         elif isinstance(container, (list, tuple)):
-            for idx in reversed(range(len(container))):
+            length = len(container)
+            for idx in range(length - 1, -1, -1):
                 value = container[idx]
                 if isinstance(value, (dict, list, tuple)):
-                    stack.append((current_path + (idx,), value))
+                    stack.append(_EXIT_PATH)
+                    stack.append(value)
+                    stack.append(idx)
 
 
 # --- URL helpers ----------------------------------------------------------
@@ -261,10 +359,7 @@ def split_fragment_reference(base_url, reference):
         obj_path = obj_path[1:]
     obj_path = _normalize_fragment_path(obj_path)
 
-    result_list = list(base_url)
-    result_list[5] = fragment
-    parsed_url = parse.ParseResult(*result_list)
-    return parsed_url, obj_path
+    return base_url, obj_path
 
 
 def split_url_reference(base_url, reference):
@@ -360,7 +455,8 @@ class RefResolver:
     """Resolve JSON pointers/references in a spec by inlining."""
 
     def __init__(self, specs, url=None, **options):
-        if options.get("copy_input", True):
+        self.__copy_input = options.get("copy_input", True)
+        if self.__copy_input:
             self.specs = _deepcopy_specs(specs)
         else:
             self.specs = specs
@@ -377,6 +473,7 @@ class RefResolver:
         self.__resolve_method = options.get("resolve_method", TRANSLATE_DEFAULT)
         self.__encoding = options.get("encoding", None)
         self.__strict = options.get("strict", True)
+        self.__fragment_copy = options.get("fragment_copy", True)
 
         if self.url:
             self.parsed_url = absurl(self.url)
@@ -494,6 +591,8 @@ class RefResolver:
         cache_key = (ref_path, depth)
         cached = self.__fragment_cache.get(cache_key)
         if cached is not None:
+            if not self.__fragment_copy and not self.__copy_input:
+                return cached
             return _deepcopy_specs(cached)
 
         contents = self._fetch_cached_contents(ref_url)
@@ -526,6 +625,6 @@ class RefResolver:
             if len(path) == 0:
                 partial = value
             else:
-                path_set(partial, path, value, create=True)
+                _path_set_impl(partial, path, value, True)
 
         return partial

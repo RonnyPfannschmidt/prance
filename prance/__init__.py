@@ -300,6 +300,7 @@ class ResolvingParser(BaseParser):
             "resolve_method",
             "strict",
             "copy_input",
+            "fragment_copy",
         )
         forward_args = {
             k: v for (k, v) in self.options.items() if k in forward_arg_names

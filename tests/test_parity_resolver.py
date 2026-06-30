@@ -52,6 +52,17 @@ def test_resolver_parity_compiled_vs_python(spec_path, url, options):
     assert py_result == cy_result
 
 
+def test_resolver_fragment_copy_parity_on_large_spec():
+    from tests.benchmark.conftest import make_large_shared_refs_spec
+
+    specs = make_large_shared_refs_spec()
+    url = f"file://{os.path.abspath('tests/specs/petstore.yaml')}"
+    options = {"copy_input": False, "fragment_copy": False}
+    py_result = _resolve_with_python(copy.deepcopy(specs), url, **options)
+    cy_result = _resolve_with_compiled(copy.deepcopy(specs), url, **options)
+    assert py_result == cy_result
+
+
 def test_resolver_uses_compiled_when_available():
     import _prance_fast
 

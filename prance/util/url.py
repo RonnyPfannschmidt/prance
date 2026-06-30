@@ -169,10 +169,7 @@ def split_fragment_reference(base_url, reference):
         obj_path = obj_path[1:]
     obj_path = _normalize_fragment_path(obj_path)
 
-    result_list = list(base_url)
-    result_list[5] = fragment
-    parsed_url = parse.ParseResult(*result_list)
-    return parsed_url, obj_path
+    return base_url, obj_path
 
 
 def split_url_reference(base_url, reference):

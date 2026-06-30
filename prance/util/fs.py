@@ -297,12 +297,19 @@ def read_file(filename, encoding=None):
     :return: The file contents.
     :rtype: unicode string
     """
+    import os.path
+
     filename = from_posix(filename)
     if not encoding:
-        # Detect encoding
+        _, ext = os.path.splitext(filename)
+        if ext.lower() in (".json", ".yaml", ".yml", ".js"):
+            try:
+                with open(filename, encoding="utf-8") as handle:
+                    return handle.read()
+            except UnicodeDecodeError:
+                pass
         encoding = detect_encoding(filename)
 
-    # Finally, read the file in the detected encoding
     with open(filename, encoding=encoding) as handle:
         return handle.read()
 

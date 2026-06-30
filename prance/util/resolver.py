@@ -64,7 +64,8 @@ class _PythonRefResolver:
     """Pure-Python reference resolver used when the Cython extension is absent."""
 
     def __init__(self, specs, url=None, **options):
-        if options.get("copy_input", True):
+        self.__copy_input = options.get("copy_input", True)
+        if self.__copy_input:
             self.specs = _deepcopy_specs(specs)
         else:
             self.specs = specs
@@ -79,6 +80,7 @@ class _PythonRefResolver:
         self.__resolve_method = options.get("resolve_method", TRANSLATE_DEFAULT)
         self.__encoding = options.get("encoding", None)
         self.__strict = options.get("strict", True)
+        self.__fragment_copy = options.get("fragment_copy", True)
 
         if self.url:
             self.parsed_url = _url.absurl(self.url)
@@ -127,6 +129,8 @@ class _PythonRefResolver:
             ref_path = (_url.urlresource(ref_url), tuple(obj_path))
             depth = recursion_counts.get(ref_path, 0)
             next_recursions = recursions + (ref_path,)
+            next_counts = dict(recursion_counts)
+            next_counts[ref_path] = depth + 1
 
             if depth >= self.__reclimit:
                 ref_value = self.__reclimit_handler(
@@ -134,7 +138,7 @@ class _PythonRefResolver:
                 )
             else:
                 ref_value = self._dereference(
-                    ref_url, obj_path, next_recursions, ref_path, depth
+                    ref_url, obj_path, next_recursions, ref_path, depth, next_counts
                 )
 
             full_path = path + item_path
@@ -179,10 +183,14 @@ class _PythonRefResolver:
             copy=False,
         )
 
-    def _dereference(self, ref_url, obj_path, recursions, ref_path, depth):
+    def _dereference(
+        self, ref_url, obj_path, recursions, ref_path, depth, recursion_counts
+    ):
         cache_key = (ref_path, depth)
         cached = self.__fragment_cache.get(cache_key)
         if cached is not None:
+            if not self.__fragment_copy and not self.__copy_input:
+                return cached
             return _deepcopy_specs(cached)
 
         contents = self._fetch_cached_contents(ref_url)
@@ -197,9 +205,7 @@ class _PythonRefResolver:
                 )
 
         value = _deepcopy_specs(value)
-        value = self._resolve_partial(
-            ref_url, value, recursions, recursions_count_from_stack(recursions)
-        )
+        value = self._resolve_partial(ref_url, value, recursions, recursion_counts)
 
         self.__fragment_cache[cache_key] = value
         return value

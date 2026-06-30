@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import os
 import statistics
 import sys
 import time
+from unittest.mock import patch
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT not in sys.path:
@@ -65,6 +67,12 @@ def make_large_spec():
     }
 
 
+def mock_get_petstore(*args, **kwargs):
+    from tests.mock_response import MockResponse, PETSTORE_YAML
+
+    return MockResponse(text=PETSTORE_YAML)
+
+
 def bench_case(name, func, rounds=5, warmup=1):
     """Run *func* for *rounds* timed iterations and return timing stats in ms."""
     for _ in range(warmup):
@@ -82,6 +90,22 @@ def bench_case(name, func, rounds=5, warmup=1):
     }
 
 
+def resolve_only(specs, url, **options):
+    resolver.RefResolver(copy.deepcopy(specs), url=url, **options).resolve_references()
+
+
+def resolve_externals(specs, url, **options):
+    with patch("requests.get", side_effect=mock_get_petstore):
+        resolve_only(specs, url, **options)
+
+
+def resolve_and_validate(url, **options):
+    from prance import ResolvingParser
+
+    with patch("requests.get", side_effect=mock_get_petstore):
+        ResolvingParser(url, backend="openapi-spec-validator", **options)
+
+
 def main():
     """Parse CLI args and print resolver benchmark results."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -90,21 +114,50 @@ def main():
     args = parser.parse_args()
 
     petstore = load_spec("tests/specs/petstore.yaml")
+    externals = load_spec("tests/specs/with_externals.yaml")
+    issue_78 = load_spec("tests/specs/issue_78/openapi.json")
     large = make_large_spec()
     petstore_url = os.path.abspath("tests/specs/petstore.yaml")
+    externals_url = os.path.abspath("tests/specs/with_externals.yaml")
+    issue_78_url = fs.abspath("openapi.json")
+
+    common = {"copy_input": False}
+    fast_shared = {**common, "fragment_copy": False}
 
     cases = [
         (
             "petstore",
-            lambda: resolver.RefResolver(
-                petstore, url=petstore_url, copy_input=False
-            ).resolve_references(),
+            lambda: resolve_only(petstore, petstore_url, **common),
         ),
         (
             "large_shared_refs",
-            lambda: resolver.RefResolver(
-                large, url=f"file://{petstore_url}", copy_input=False
-            ).resolve_references(),
+            lambda: resolve_only(
+                large, f"file://{petstore_url}", **common
+            ),
+        ),
+        (
+            "large_no_frag_copy",
+            lambda: resolve_only(
+                large, f"file://{petstore_url}", **fast_shared
+            ),
+        ),
+        (
+            "issue_78_translate",
+            lambda: resolve_only(
+                issue_78,
+                issue_78_url,
+                resolve_types=resolver.RESOLVE_FILES,
+                resolve_method=resolver.TRANSLATE_EXTERNAL,
+                **common,
+            ),
+        ),
+        (
+            "externals",
+            lambda: resolve_externals(externals, externals_url, **common),
+        ),
+        (
+            "externals+validate",
+            lambda: resolve_and_validate(externals_url, **common),
         ),
     ]
 
@@ -116,12 +169,12 @@ def main():
         backend = "baseline (pure Python)"
 
     print(f"Backend: {backend}")
-    print(f"{'case':<22} {'mean_ms':>10} {'min_ms':>10} {'max_ms':>10}")
-    print("-" * 56)
+    print(f"{'case':<24} {'mean_ms':>10} {'min_ms':>10} {'max_ms':>10}")
+    print("-" * 58)
     for name, func in cases:
         result = bench_case(name, func, rounds=args.rounds, warmup=args.warmup)
         print(
-            f"{result['name']:<22} "
+            f"{result['name']:<24} "
             f"{result['mean_ms']:10.2f} "
             f"{result['min_ms']:10.2f} "
             f"{result['max_ms']:10.2f}"

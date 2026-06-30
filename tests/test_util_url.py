@@ -158,7 +158,7 @@ def test_split_fragment_reference_matches_split_url_reference():
         fast = url.split_fragment_reference(base, ref)
         assert fast is not None
         slow = url.split_url_reference(base, ref)
-        assert fast[0].geturl() == slow[0].geturl()
+        assert url.urlresource(fast[0]) == url.urlresource(slow[0])
         assert fast[1] == slow[1]
 
     assert url.split_fragment_reference(base, "other.yaml#/foo") is None
