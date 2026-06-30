@@ -94,8 +94,14 @@ class RefResolver:
             to TRANSLATE_DEFAULT.
         :param bool strict: [optional] Whether to use strict mode or not; in
             lenient mode, malformed keys will be silently rewritten.
+        :param bool copy_input: [optional] Deep-copy *specs* on construction.
+            Defaults to True. Set False when the caller owns the input and will
+            not reuse it (e.g. :class:`ResolvingParser`).
         """
-        self.specs = _deepcopy_specs(specs)
+        if options.get("copy_input", True):
+            self.specs = _deepcopy_specs(specs)
+        else:
+            self.specs = specs
         self.url = url
 
         self.__reclimit = options.get("recursion_limit", 1)
@@ -121,10 +127,12 @@ class RefResolver:
             self.parsed_url = self._url_key = None
 
         self.__soft_dereference_objs = {}
+        self.__fragment_cache = {}
 
     def resolve_references(self):
         """Resolve JSON pointers/references in the spec."""
-        self.specs = self._resolve_partial(self.parsed_url, self.specs, ())
+        self.__fragment_cache.clear()
+        self.specs = self._resolve_partial(self.parsed_url, self.specs, (), {})
 
         # If there are any objects collected when using TRANSLATE_EXTERNAL, add
         # them to components/schemas
@@ -136,7 +144,14 @@ class RefResolver:
 
             self.specs["components"]["schemas"].update(self.__soft_dereference_objs)
 
-    def _dereferencing_iterator(self, base_url, partial, path, recursions):
+    def _split_reference(self, base_url, refstring):
+        """Return ``(ref_url, obj_path)`` for a JSON reference string."""
+        fragment_ref = _url.split_fragment_reference(base_url, refstring)
+        if fragment_ref is not None:
+            return fragment_ref
+        return _url.split_url_reference(base_url, refstring)
+
+    def _dereferencing_iterator(self, base_url, partial, path, recursions, recursion_counts):
         """
         Iterate over a partial spec, dereferencing all references within.
 
@@ -146,12 +161,12 @@ class RefResolver:
         :param dict partial: The partial specs to work on.
         :param tuple path: The parent path of the partial specs.
         :param tuple recursions: A recursion stack for resolving references.
+        :param dict recursion_counts: Count of each ref_path on the stack.
         """
         from .iterators import reference_iterator
 
         for _, refstring, item_path in reference_iterator(partial):
-            # Split the reference string into parsed URL and object path
-            ref_url, obj_path = _url.split_url_reference(base_url, refstring)
+            ref_url, obj_path = self._split_reference(base_url, refstring)
 
             translate = (self.__resolve_method == TRANSLATE_EXTERNAL) and (
                 self.parsed_url.path != ref_url.path
@@ -160,30 +175,26 @@ class RefResolver:
             if self._skip_reference(base_url, ref_url):
                 continue
 
-            # The reference path is the url resource and object path
             ref_path = (_url.urlresource(ref_url), tuple(obj_path))
-
-            # Count how often the reference path has been recursed into.
-            from collections import Counter
-
-            rec_counter = Counter(recursions)
+            depth = recursion_counts.get(ref_path, 0)
             next_recursions = recursions + (ref_path,)
+            next_counts = recursion_counts
+            if depth:
+                next_counts = {**recursion_counts, ref_path: depth + 1}
+            else:
+                next_counts = {**recursion_counts, ref_path: 1}
 
-            if rec_counter[ref_path] >= self.__reclimit:
-                # The referenced value may be produced by the handler, or the handler
-                # may raise, etc.
+            if depth >= self.__reclimit:
                 ref_value = self.__reclimit_handler(
                     self.__reclimit, ref_url, next_recursions
                 )
             else:
-                # The referenced value is to be used, but let's copy it to avoid
-                # building recursive structures.
-                ref_value = self._dereference(ref_url, obj_path, next_recursions)
+                ref_value = self._dereference(
+                    ref_url, obj_path, next_recursions, ref_path, depth
+                )
 
-            # Full item path
             full_path = path + item_path
 
-            # First yield parent
             if translate:
                 url = self._collect_soft_refs(ref_url, obj_path, ref_value)
                 yield full_path, {"$ref": "#/components/schemas/" + url}
@@ -219,7 +230,21 @@ class RefResolver:
                 )
             )
 
-    def _dereference(self, ref_url, obj_path, recursions):
+    def _fetch_cached_contents(self, ref_url):
+        """Return parsed document for *ref_url*, avoiding redundant copies."""
+        url_key = (_url.urlresource(ref_url), self.__strict)
+        entry = self.__reference_cache.get(url_key)
+        if entry is not None:
+            return entry
+        return _url.fetch_url(
+            ref_url,
+            self.__reference_cache,
+            self.__encoding,
+            self.__strict,
+            copy=False,
+        )
+
+    def _dereference(self, ref_url, obj_path, recursions, ref_path, depth):
         """
         Dereference the URL and object path.
 
@@ -228,17 +253,18 @@ class RefResolver:
         :param mixed ref_url: The URL at which the reference is located.
         :param list obj_path: The object path within the URL resource.
         :param tuple recursions: A recursion stack for resolving references.
+        :param tuple ref_path: Canonical ``(url_resource, obj_path)`` key.
+        :param int depth: How many times *ref_path* was already on the stack.
         :return: A copy of the dereferenced value, with all internal references
             resolved.
         """
-        # In order to start dereferencing anything in the referenced URL, we have
-        # to read and parse it, of course.
-        contents = _url.fetch_url(
-            ref_url, self.__reference_cache, self.__encoding, self.__strict
-        )
+        cache_key = (ref_path, depth)
+        cached = self.__fragment_cache.get(cache_key)
+        if cached is not None:
+            return _deepcopy_specs(cached)
 
-        # In this inner parser's specification, we can now look for the referenced
-        # object.
+        contents = self._fetch_cached_contents(ref_url)
+
         value = contents
         if len(obj_path) != 0:
             from prance.util.path import path_get
@@ -250,34 +276,34 @@ class RefResolver:
                     f'Cannot resolve reference "{ref_url.geturl()}": {str(ex)}'
                 )
 
-        # Deep copy value; we don't want to create recursive structures
         value = _deepcopy_specs(value)
+        value = self._resolve_partial(
+            ref_url, value, recursions, recursions_count_from_stack(recursions)
+        )
 
-        # Now resolve partial specs
-        value = self._resolve_partial(ref_url, value, recursions)
-
-        # That's it!
+        self.__fragment_cache[cache_key] = value
         return value
 
-    def _resolve_partial(self, base_url, partial, recursions):
+    def _resolve_partial(self, base_url, partial, recursions, recursion_counts):
         """
         Resolve a (partial) spec's references.
 
         :param mixed base_url: URL that the partial specs is located at.
         :param dict partial: The partial specs to work on.
         :param tuple recursions: A recursion stack for resolving references.
+        :param dict recursion_counts: Count of each ref_path on the stack.
         :return: The partial with all references resolved.
         """
-        # Gather changes from the dereferencing iterator - we need to set new
-        # values from the outside in, so we have to post-process this a little,
-        # sorting paths by path length.
         changes = dict(
-            tuple(self._dereferencing_iterator(base_url, partial, (), recursions))
+            tuple(
+                self._dereferencing_iterator(
+                    base_url, partial, (), recursions, recursion_counts
+                )
+            )
         )
 
         paths = sorted(changes.keys(), key=len)
 
-        # With the paths sorted, set them to the resolved values.
         from prance.util.path import path_set
 
         for path in paths:
@@ -285,6 +311,14 @@ class RefResolver:
             if len(path) == 0:
                 partial = value
             else:
-                path_set(partial, list(path), value, create=True)
+                path_set(partial, path, value, create=True)
 
         return partial
+
+
+def recursions_count_from_stack(recursions):
+    """Build a ref_path count dict from a recursion stack tuple."""
+    counts = {}
+    for ref_path in recursions:
+        counts[ref_path] = counts.get(ref_path, 0) + 1
+    return counts

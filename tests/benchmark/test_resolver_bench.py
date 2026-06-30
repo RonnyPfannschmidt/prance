@@ -7,7 +7,7 @@ from prance.util import resolver
 
 
 def _resolve(spec, url=None):
-    res = resolver.RefResolver(spec, url=url)
+    res = resolver.RefResolver(spec, url=url, copy_input=False)
     res.resolve_references()
     return res.specs
 

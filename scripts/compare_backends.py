@@ -95,7 +95,7 @@ def resolve_python(spec, url=None):
 def resolve_tier_b(spec, url=None):
     """Resolve references using the C extension-backed resolver."""
     res_mod = importlib.reload(importlib.import_module("prance.util.resolver"))
-    res = res_mod.RefResolver(spec, url=url)
+    res = res_mod.RefResolver(spec, url=url, copy_input=False)
     res.resolve_references()
 
 

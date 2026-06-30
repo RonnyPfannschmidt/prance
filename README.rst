@@ -27,6 +27,11 @@ Prance is available from PyPI, and can be installed via pip:
 
     $ pip install prance
 
+The base package includes a native C extension (``_prance_fast``) that
+accelerates reference resolution. It is built automatically when you install
+from source and a C compiler is available; release wheels include the
+extension when built for your platform.
+
 Note that this will install the code, but additional subpackages must be specified
 to unlock various pieces of functionality. At minimum, a parsing backend must be
 installed. For the CLI functionality, you need further dependencies.

@@ -47,7 +47,6 @@ ssv = ["swagger-spec-validator~=3.0.4"]
 osv = ["openapi-spec-validator~=0.7.1"]
 flex = ["flex~=6.14.1"]
 cli = ["click>=8.3.0"]
-fast = []
 
 [project.scripts]
 prance = "prance.cli:cli"

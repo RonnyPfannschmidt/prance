@@ -97,13 +97,13 @@ def main():
         (
             "petstore",
             lambda: resolver.RefResolver(
-                petstore, url=petstore_url
+                petstore, url=petstore_url, copy_input=False
             ).resolve_references(),
         ),
         (
             "large_shared_refs",
             lambda: resolver.RefResolver(
-                large, url=f"file://{petstore_url}"
+                large, url=f"file://{petstore_url}", copy_input=False
             ).resolve_references(),
         ),
     ]

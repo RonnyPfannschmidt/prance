@@ -299,10 +299,12 @@ class ResolvingParser(BaseParser):
             "resolve_types",
             "resolve_method",
             "strict",
+            "copy_input",
         )
         forward_args = {
             k: v for (k, v) in self.options.items() if k in forward_arg_names
         }
+        forward_args.setdefault("copy_input", False)
         resolver = RefResolver(
             self.specification,
             self.url,

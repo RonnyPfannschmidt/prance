@@ -116,6 +116,38 @@ def absurl(url, relative_to=None):
     return result
 
 
+def _normalize_fragment_path(obj_path):
+    """Normalize JSON pointer path segments (~0, ~1)."""
+    def _normalize(path):
+        path = path.replace("~1", "/")
+        path = path.replace("~0", "~")
+        return path
+
+    return [_normalize(p) for p in obj_path]
+
+
+def split_fragment_reference(base_url, reference):
+    """
+    Fast path for fragment-only JSON references (``#/...``).
+
+    Returns ``(parsed_url, obj_path)`` matching :func:`split_url_reference`,
+    or ``None`` if *reference* is not fragment-only.
+    """
+    if not reference.startswith("#"):
+        return None
+
+    fragment = reference[1:]
+    obj_path = fragment.split("/")
+    while len(obj_path) and not obj_path[0]:
+        obj_path = obj_path[1:]
+    obj_path = _normalize_fragment_path(obj_path)
+
+    result_list = list(base_url)
+    result_list[5] = fragment
+    parsed_url = parse.ParseResult(*result_list)
+    return parsed_url, obj_path
+
+
 def split_url_reference(base_url, reference):
     """
     Return a normalized, parsed URL and object path.
@@ -138,12 +170,7 @@ def split_url_reference(base_url, reference):
         obj_path = obj_path[1:]
 
     # Normalize the object path by substituting ~1 and ~0 respectively.
-    def _normalize(path):
-        path = path.replace("~1", "/")
-        path = path.replace("~0", "~")
-        return path
-
-    obj_path = [_normalize(p) for p in obj_path]
+    obj_path = _normalize_fragment_path(obj_path)
 
     return parsed_url, obj_path
 
@@ -215,7 +242,7 @@ def fetch_url_text(url, cache={}, encoding=None):
     return content, content_type
 
 
-def fetch_url(url, cache={}, encoding=None, strict=True):
+def fetch_url(url, cache={}, encoding=None, strict=True, copy=True):
     """
     Fetch the URL and parse the contents.
 
@@ -227,6 +254,8 @@ def fetch_url(url, cache={}, encoding=None, strict=True):
       cache, return the cache contents.
     :param str encoding: Provide an encoding for local URLs to override
       encoding detection, if desired. Defaults to None.
+    :param bool copy: If False, return the cached object directly on cache hit
+      instead of a shallow copy. Defaults to True.
     :return: The parsed file.
     :rtype: dict
     """
@@ -234,7 +263,9 @@ def fetch_url(url, cache={}, encoding=None, strict=True):
     url_key = (urlresource(url), strict)
     entry = cache.get(url_key, None)
     if entry is not None:
-        return entry.copy()
+        if copy:
+            return entry.copy()
+        return entry
 
     # Fetch URL text
     content, content_type = fetch_url_text(url, cache, encoding=encoding)
@@ -252,4 +283,6 @@ def fetch_url(url, cache={}, encoding=None, strict=True):
 
     # Cache and return result
     cache[url_key] = result
-    return result.copy()
+    if copy:
+        return result.copy()
+    return result

@@ -14,13 +14,16 @@ Fork, then clone the repo:
 Use [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/)
 to create a virtual environment and change to it or not, as you see fit.
 
-Then install the package in editable mode with all extras and dev dependencies:
+Then install the package in editable mode with validation backends, CLI, and dev
+dependencies. The native ``_prance_fast`` C extension is built automatically as
+part of the base package (requires a C compiler when installing from source):
 
 ```bash
-$ pip install --group dev -e .[ssv,osv,icu,cli]
+$ pip install --group dev -e ".[ssv,osv,icu,cli]"
 ```
 
-Alternatively, use the minimal set of dependencies:
+Alternatively, use the minimal set of runtime dependencies (the C extension is
+still built when a compiler is available):
 
 ```bash
 $ pip install --group dev -e .

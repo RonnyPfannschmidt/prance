@@ -147,6 +147,33 @@ def test_split_url_reference():
     assert path[1] == "bar/baz/quux~foo"
 
 
+def test_split_fragment_reference_matches_split_url_reference():
+    base = url.absurl("http://foo.bar/spec.yaml")
+    refs = [
+        "#/foo/bar",
+        "#///foo/bar",
+        "#/foo/bar~1baz~1quux~0foo",
+    ]
+    for ref in refs:
+        fast = url.split_fragment_reference(base, ref)
+        assert fast is not None
+        slow = url.split_url_reference(base, ref)
+        assert fast[0].geturl() == slow[0].geturl()
+        assert fast[1] == slow[1]
+
+    assert url.split_fragment_reference(base, "other.yaml#/foo") is None
+
+
+def test_fetch_url_no_copy():
+    from prance.util import fs
+
+    cache = {}
+    parsed = url.absurl(fs.abspath("tests/specs/with_externals.yaml"))
+    content1 = url.fetch_url(parsed, cache, copy=False)
+    content2 = url.fetch_url(parsed, cache, copy=False)
+    assert content1 is content2
+
+
 def test_fetch_url_file():
     from prance.util import fs
 

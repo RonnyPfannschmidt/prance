@@ -22,6 +22,12 @@ def test_deepcopy_specs_fallback_for_scalar():
     assert resolver._deepcopy_specs(None) is None
 
 
+def test_copy_input_false_reuses_spec_object():
+    specs = {"openapi": "3.0.0", "info": {"title": "t", "version": "1"}, "paths": {}}
+    res = resolver.RefResolver(specs, copy_input=False)
+    assert res.specs is specs
+
+
 def get_specs(fname):
     specs = fs.read_file(fname)
 

@@ -6,6 +6,7 @@ __license__ = "MIT"
 __all__ = ()
 
 import prance.util.url as _url
+from prance.util.resolver import _deepcopy_specs
 
 
 def _reference_key(ref_url, item_path):
@@ -45,9 +46,7 @@ class _RefTranslator:
         :param dict specs: The parsed specs in which to translate any references.
         :param str url: [optional] The URL to base relative references on.
         """
-        import copy
-
-        self.specs = copy.deepcopy(specs)
+        self.specs = _deepcopy_specs(specs)
 
         self.__strict = True
         self.__reference_cache = {}
@@ -112,10 +111,7 @@ class _RefTranslator:
                     f'Cannot resolve reference "{ref_url.geturl()}": {str(ex)}'
                 )
 
-        # Deep copy value; we don't want to create recursive structures
-        import copy
-
-        value = copy.deepcopy(value)
+        value = _deepcopy_specs(value)
 
         # Now resolve partial specs
         value = self._translate_partial(ref_url, value)
