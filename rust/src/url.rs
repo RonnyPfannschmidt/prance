@@ -152,11 +152,52 @@ pub fn to_posix(fname: &str) -> String {
     }
 }
 
+fn lexical_normalize(path: PathBuf) -> PathBuf {
+    let mut out = PathBuf::new();
+    for component in path.components() {
+        match component {
+            Component::Prefix(prefix) => out.push(prefix.as_os_str()),
+            Component::RootDir => out.push(component.as_os_str()),
+            Component::CurDir => {}
+            Component::ParentDir => {
+                let mut poppable = false;
+                for existing in out.components().rev() {
+                    match existing {
+                        Component::Normal(_) => {
+                            poppable = true;
+                            break;
+                        }
+                        Component::RootDir | Component::Prefix(_) => break,
+                        Component::CurDir | Component::ParentDir => {}
+                    }
+                }
+                if poppable {
+                    out.pop();
+                }
+            }
+            Component::Normal(part) => out.push(part),
+            _ => {}
+        }
+    }
+    out
+}
+
+fn strip_trailing_separator(path: PathBuf) -> PathBuf {
+    let mut s = path.to_string_lossy().into_owned();
+    while s.len() > 1 && (s.ends_with('/') || (cfg!(windows) && s.ends_with('\\'))) {
+        s.pop();
+    }
+    PathBuf::from(s)
+}
+
 pub fn canonical_filename(filename: &str) -> String {
     let path = from_posix(filename);
-    let mut p = PathBuf::from(&path);
+    let mut p = strip_trailing_separator(lexical_normalize(PathBuf::from(&path)));
     loop {
-        p = p.canonicalize().unwrap_or_else(|_| p.clone());
+        match p.canonicalize() {
+            Ok(canonical) => p = canonical,
+            Err(_) => break,
+        }
         match std::fs::read_link(&p) {
             Ok(link) => {
                 if let Some(parent) = p.parent() {

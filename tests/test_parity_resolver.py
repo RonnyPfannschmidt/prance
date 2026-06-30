@@ -63,6 +63,35 @@ def test_resolver_fragment_copy_parity_on_large_spec():
     assert py_result == cy_result
 
 
+def test_rust_relative_ref_path_normalization(tmp_path):
+    """Relative $ref paths must be lexically normalized before fetch."""
+    if resolver._RustRefResolver is None:
+        pytest.skip("Rust resolver not available")
+
+    base_dir = tmp_path / "schema" / "paths" / "api" / "v3" / "contractors"
+    base_dir.mkdir(parents=True)
+    base_file = base_dir / "main.yaml"
+    base_file.write_text(
+        'openapi: "3.0.0"\npaths:\n  /x:\n    $ref: "../../../../schemas/shared/invoice.yml"\n'
+    )
+
+    shared_dir = tmp_path / "schema" / "schemas" / "shared"
+    shared_dir.mkdir(parents=True)
+    (shared_dir / "invoice.yml").write_text(
+        'get:\n  responses:\n    "200":\n      description: ok\n'
+    )
+
+    specs = {
+        "openapi": "3.0.0",
+        "paths": {
+            "/x": {"$ref": "../../../../schemas/shared/invoice.yml/"},
+        },
+    }
+    res = resolver.RefResolver(specs, str(base_file), copy_input=False)
+    res.resolve_references()
+    assert res.specs["paths"]["/x"]["get"]["responses"]["200"]["description"] == "ok"
+
+
 def test_rust_full_pipeline_parity_petstore():
     """Raw spec string -> resolved output matches Python parse+resolve path."""
     from prance.util.resolver import rust_resolve_spec, use_rust_pipeline
