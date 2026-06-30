@@ -63,6 +63,7 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
 
 def _python_path_get(obj, path, defaultvalue=None, path_of_obj=()):
     from collections.abc import Mapping, Sequence
+
     path_of_obj_str = _str_path(path_of_obj)
 
     if path is not None and not isinstance(path, Sequence):

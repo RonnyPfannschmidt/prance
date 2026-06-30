@@ -1,12 +1,15 @@
 """Parity tests between compiled and pure-Python resolver paths."""
-
 import copy
 import os
 
 import pytest
 
-from prance.util import fs, formats, resolver
-from prance.util import iterators, path as path_mod, url as url_mod
+from prance.util import formats
+from prance.util import fs
+from prance.util import iterators
+from prance.util import path as path_mod
+from prance.util import resolver
+from prance.util import url as url_mod
 
 
 def _resolve_with_python(specs, url, **options):
@@ -94,7 +97,9 @@ def test_url_python_fallback_paths(monkeypatch, tmp_path):
     assert obj_path
 
     spec_file = tmp_path / "spec.yaml"
-    spec_file.write_text("openapi: 3.0.0\ninfo:\n  title: t\n  version: '1'\npaths: {}\n")
+    spec_file.write_text(
+        "openapi: 3.0.0\ninfo:\n  title: t\n  version: '1'\npaths: {}\n"
+    )
     file_url = url_mod.absurl(str(spec_file))
     text, _ = url_mod.fetch_url_text(file_url)
     assert "openapi" in text
