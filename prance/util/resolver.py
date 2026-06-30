@@ -6,6 +6,8 @@ __license__ = "MIT"
 __all__ = ()
 
 import prance.util.url as _url
+from prance.util.path import path_get, path_set
+from .iterators import reference_iterator
 
 try:
     from _prance_fast import fast_deepcopy_json as _fast_deepcopy_json
@@ -112,8 +114,6 @@ class _PythonRefResolver:
     def _dereferencing_iterator(
         self, base_url, partial, path, recursions, recursion_counts
     ):
-        from .iterators import reference_iterator
-
         for _, refstring, item_path in reference_iterator(partial):
             ref_url, obj_path = self._split_reference(base_url, refstring)
 
@@ -189,8 +189,6 @@ class _PythonRefResolver:
 
         value = contents
         if len(obj_path) != 0:
-            from prance.util.path import path_get
-
             try:
                 value = path_get(value, obj_path)
             except (KeyError, IndexError, TypeError) as ex:
@@ -216,8 +214,6 @@ class _PythonRefResolver:
         )
 
         paths = sorted(changes.keys(), key=len)
-
-        from prance.util.path import path_set
 
         for path in paths:
             value = changes[path]

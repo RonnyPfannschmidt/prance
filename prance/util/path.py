@@ -5,6 +5,8 @@ __copyright__ = "Copyright (c) 2018 Jens Finkhaeuser"
 __license__ = "MIT"
 __all__ = ()
 
+from collections.abc import Mapping, MutableMapping, Sequence, MutableSequence
+
 try:
     from _prance_fast import path_get as _fast_path_get
     from _prance_fast import path_set as _fast_path_set
@@ -62,8 +64,6 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
 
 
 def _python_path_get(obj, path, defaultvalue=None, path_of_obj=()):
-    from collections.abc import Mapping, Sequence
-
     path_of_obj_str = _str_path(path_of_obj)
 
     if path is not None and not isinstance(path, Sequence):
@@ -165,12 +165,6 @@ def _python_path_set(obj, path, value, create=False):
             return type(seq[index])
         except IndexError:
             return None
-
-    # print('obj', obj, type(obj))
-    # print('path', path)
-    # print('value', value)
-
-    from collections.abc import Sequence, MutableSequence, Mapping, MutableMapping
 
     if path is not None and not isinstance(path, Sequence):
         raise TypeError(f"Path is a {type(path)}, but must be None or a Collection!")
