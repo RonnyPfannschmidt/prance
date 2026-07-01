@@ -14,7 +14,9 @@ def _rebind_rust_bindings():
     resolver._rust_deepcopy_json = _prance_rs.fast_deepcopy_json
     resolver._RustRefResolver = getattr(_prance_rs, "RefResolver", None)
     resolver.rust_resolve_spec = getattr(_prance_rs, "resolve_spec", None)
-    resolver.rust_validate_openapi_spec = getattr(_prance_rs, "validate_openapi_spec", None)
+    resolver.rust_validate_openapi_spec = getattr(
+        _prance_rs, "validate_openapi_spec", None
+    )
     resolver.rust_load_openapi_spec = getattr(_prance_rs, "load_openapi_spec_py", None)
     resolver.rust_parse_and_validate_spec = getattr(
         _prance_rs, "parse_and_validate_spec", None
