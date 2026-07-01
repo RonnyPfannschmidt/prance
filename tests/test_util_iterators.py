@@ -115,10 +115,10 @@ def test_reference_iterator_matches_python_backend():
         ),
     }
     fast = tuple(iterators.reference_iterator(tester))
-    original = iterators._fast_reference_iterator
+    original = iterators._rust_reference_iterator
     try:
-        iterators._fast_reference_iterator = None
+        iterators._rust_reference_iterator = None
         python = tuple(iterators.reference_iterator(tester))
     finally:
-        iterators._fast_reference_iterator = original
+        iterators._rust_reference_iterator = original
     assert fast == python

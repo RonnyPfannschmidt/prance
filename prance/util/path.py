@@ -8,11 +8,11 @@ __all__ = ()
 from collections.abc import Mapping, MutableMapping, Sequence, MutableSequence
 
 try:
-    from _prance_fast import path_get as _fast_path_get
-    from _prance_fast import path_set as _fast_path_set
+    from _prance_rs import path_get as _rust_path_get
+    from _prance_rs import path_set as _rust_path_set
 except ImportError:
-    _fast_path_get = None
-    _fast_path_set = None
+    _rust_path_get = None
+    _rust_path_set = None
 
 
 def _json_ref_escape(path):
@@ -52,8 +52,8 @@ def path_get(obj, path, defaultvalue=None, path_of_obj=()):
     :param mixed defaultvalue: If the value at the path does not exist and this
       parameter is not None, it is returned. Otherwise an error is raised.
     """
-    if _fast_path_get is not None:
-        return _fast_path_get(
+    if _rust_path_get is not None:
+        return _rust_path_get(
             obj,
             path,
             defaultvalue=defaultvalue,
@@ -133,8 +133,8 @@ def path_set(obj, path, value, **options):
     """
     create = options.get("create", False)
 
-    if _fast_path_set is not None:
-        return _fast_path_set(obj, path, value, create=create)
+    if _rust_path_set is not None:
+        return _rust_path_set(obj, path, value, create=create)
 
     return _python_path_set(obj, path, value, create=create)
 

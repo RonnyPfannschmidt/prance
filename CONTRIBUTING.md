@@ -16,8 +16,7 @@ to create a virtual environment and change to it or not, as you see fit.
 
 Then install the package in editable mode with validation backends, CLI, and dev
 dependencies. Native extensions are built automatically when installing from
-source (requires a C compiler for ``_prance_fast`` and a Rust toolchain for
-``_prance_rs``):
+source (requires a Rust toolchain for ``_prance_rs``):
 
 ```bash
 $ pip install --group dev -e ".[ssv,osv,icu,cli]"
@@ -90,15 +89,23 @@ A simple test coverage report is automatically generated.
 
 ### Resolver backends
 
-The preferred resolver tier is ``_prance_rs`` (Rust), then ``_prance_fast``
-(Cython), then the pure-Python fallback. Force a tier with the
-``PRANCE_BACKEND`` environment variable (``rust``, ``cython``, or ``python``).
+The preferred resolver tier is ``_prance_rs`` (Rust), then the pure-Python
+fallback. Force a tier with the ``PRANCE_BACKEND`` environment variable
+(``rust`` or ``python``).
+
+When the Rust extension is built, ``BaseParser`` with the
+``openapi-spec-validator`` backend uses a native two-pass validator (structural
+meta-schema validation, then semantic keyword walk with lazy ``$ref``
+dereferencing). Load + validate can run entirely in Rust via
+``load_openapi_spec_py`` / ``parse_and_validate_spec``; ``BaseParser.parse()``
+uses this path automatically when no explicit ``encoding`` is set.
 
 Compare backends locally:
 
 ```bash
 $ python scripts/compare_backends.py
 $ python scripts/bench_resolver.py
+$ python scripts/bench_validator.py
 ```
 
 ### Changelog

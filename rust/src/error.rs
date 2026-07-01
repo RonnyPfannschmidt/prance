@@ -7,6 +7,7 @@ pub enum PranceError {
     Parse(String),
     Value(String),
     Io(String),
+    Validation(String),
 }
 
 impl std::fmt::Display for PranceError {
@@ -16,6 +17,7 @@ impl std::fmt::Display for PranceError {
             PranceError::Parse(s) => write!(f, "{s}"),
             PranceError::Value(s) => write!(f, "{s}"),
             PranceError::Io(s) => write!(f, "{s}"),
+            PranceError::Validation(s) => write!(f, "{s}"),
         }
     }
 }
@@ -66,5 +68,18 @@ pub fn into_py_err(err: PranceError) -> PyErr {
         PranceError::Parse(msg) => PyErr::new::<PyValueError, _>(msg),
         PranceError::Value(msg) => PyErr::new::<PyValueError, _>(msg),
         PranceError::Io(msg) => PyErr::new::<pyo3::exceptions::PyOSError, _>(msg),
+        PranceError::Validation(msg) => Python::with_gil(|py| {
+            let cls = match py.import("prance") {
+                Ok(m) => m.getattr("ValidationError"),
+                Err(e) => return e,
+            };
+            match cls {
+                Ok(cls) => match cls.call1((msg,)) {
+                    Ok(exc) => PyErr::from_value(exc),
+                    Err(e) => e,
+                },
+                Err(e) => PyErr::new::<PyValueError, _>(msg),
+            }
+        }),
     }
 }

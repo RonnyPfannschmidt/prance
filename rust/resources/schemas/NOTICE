@@ -1,0 +1,8 @@
+OpenAPI/Swagger meta-schemas in this directory are vendored from the
+openapi-spec-validator project (Apache License 2.0):
+https://github.com/python-openapi/openapi-spec-validator
+
+Files:
+  v2.0/schema.json  - Swagger 2.0 meta-schema (JSON Schema Draft 4)
+  v3.0/schema.json  - OpenAPI 3.0 meta-schema (JSON Schema Draft 4)
+  v3.1/schema.json  - OpenAPI 3.1 meta-schema (JSON Schema Draft 2020-12)

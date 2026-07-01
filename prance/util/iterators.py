@@ -6,9 +6,9 @@ __license__ = "MIT"
 __all__ = ()
 
 try:
-    from _prance_fast import reference_iterator as _fast_reference_iterator
+    from _prance_rs import reference_iterator as _rust_reference_iterator
 except ImportError:
-    _fast_reference_iterator = None
+    _rust_reference_iterator = None
 
 
 def item_iterator(value, path=()):
@@ -77,8 +77,8 @@ def reference_iterator(specs, path=()):
     :return: An iterator over all references in the specs.
     :rtype: iterator
     """
-    if _fast_reference_iterator is not None:
-        yield from _fast_reference_iterator(specs, path)
+    if _rust_reference_iterator is not None:
+        yield from _rust_reference_iterator(specs, path)
         return
 
     # We need to iterate through the nested specification dict, so let's

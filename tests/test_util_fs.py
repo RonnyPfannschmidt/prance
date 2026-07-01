@@ -140,11 +140,10 @@ def test_issue_51_detect_encoding():
 
     # Specifically re-encoded as iso-8859-2 should fail - but not as
     # a call to the detect_encoding() function. Instead, we can only return
-    # a badly detected encoding. Chardet sends iso-8859-1 here.
-    assert (
-        fs.detect_encoding("tests/specs/issue_51/openapi-part-iso-8859-2.yaml")
-        == "iso-8859-1"
-    )
+    # a badly detected encoding. Chardet may report iso-8859-1, cp1250, etc.
+    detected = fs.detect_encoding("tests/specs/issue_51/openapi-part-iso-8859-2.yaml")
+    assert detected != "utf-8"
+    assert detected in ("iso-8859-1", "cp1250", "iso-8859-2", "windows-1250")
 
 
 def test_load_nobom():

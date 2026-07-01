@@ -5,10 +5,9 @@ include COMPATIBILITY.rst
 include requirements.txt
 include tox.ini
 include setup.py
-recursive-include cython *.pyx
-recursive-include cython *.pxd
 recursive-include rust Cargo.toml
 recursive-include rust/src *.rs
+recursive-include rust/resources *
 
 recursive-include tests *
 recursive-include docs *

@@ -15,6 +15,7 @@ pub enum Value {
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Key {
     Str(String),
+    Int(i64),
     Opaque(u32),
 }
 
@@ -22,13 +23,14 @@ impl Key {
     pub fn as_str(&self) -> Option<&str> {
         match self {
             Key::Str(s) => Some(s),
-            Key::Opaque(_) => None,
+            Key::Int(_) | Key::Opaque(_) => None,
         }
     }
 
     pub fn to_display(&self) -> String {
         match self {
             Key::Str(s) => s.clone(),
+            Key::Int(i) => i.to_string(),
             Key::Opaque(id) => format!("<opaque:{id}>"),
         }
     }

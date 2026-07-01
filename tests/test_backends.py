@@ -105,7 +105,13 @@ def test_openapi_spec_validator_issue_5_integer_keys():
     reason="Missing dependencies: openapi-spec-validator",
 )
 def test_openapi_spec_validator_issue_36_error_reporting():
-    with pytest.raises(ValidationError, match=r"Strict mode enabled"):
+    from prance.util.resolver import use_rust_validator
+
+    if use_rust_validator():
+        match = r"Object property names must be strings"
+    else:
+        match = r"Strict mode enabled"
+    with pytest.raises(ValidationError, match=match):
         BaseParser("tests/specs/issue_36.yaml", backend="openapi-spec-validator")
 
 

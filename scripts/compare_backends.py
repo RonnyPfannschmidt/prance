@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare resolver performance across Python, Cython, and Rust backends."""
+"""Compare resolver performance across Python and Rust backends."""
 from __future__ import annotations
 
 import argparse
@@ -130,7 +130,7 @@ def main():
         ),
     ]
 
-    backends = ["python", "cython", "rust"]
+    backends = ["python", "rust"]
     available = []
     for name in backends:
         with backend_env(name):

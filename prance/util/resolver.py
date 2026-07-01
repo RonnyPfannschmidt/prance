@@ -12,27 +12,28 @@ from prance.util.path import path_get, path_set
 from .iterators import reference_iterator
 
 try:
-    from _prance_fast import fast_deepcopy_json as _fast_deepcopy_json
+    from _prance_rs import fast_deepcopy_json as _rust_deepcopy_json
 except ImportError:
-    _fast_deepcopy_json = None
-
-try:
-    from _prance_fast import RefResolver as _FastRefResolver
-except ImportError:
-    _FastRefResolver = None
+    _rust_deepcopy_json = None
 
 try:
     from _prance_rs import RefResolver as _RustRefResolver
     from _prance_rs import resolve_spec as rust_resolve_spec
+    from _prance_rs import validate_openapi_spec as rust_validate_openapi_spec
+    from _prance_rs import load_openapi_spec_py as rust_load_openapi_spec
+    from _prance_rs import parse_and_validate_spec as rust_parse_and_validate_spec
 except ImportError:
     _RustRefResolver = None
     rust_resolve_spec = None
+    rust_validate_openapi_spec = None
+    rust_load_openapi_spec = None
+    rust_parse_and_validate_spec = None
 
 
 def _deepcopy_specs(value):
-    if _fast_deepcopy_json is not None:
+    if _rust_deepcopy_json is not None:
         try:
-            return _fast_deepcopy_json(value)
+            return _rust_deepcopy_json(value)
         except TypeError:
             pass
     import copy
@@ -70,7 +71,7 @@ def default_reclimit_handler(limit, parsed_url, recursions=()):
 
 
 class _PythonRefResolver:
-    """Pure-Python reference resolver used when the Cython extension is absent."""
+    """Pure-Python reference resolver used when the Rust extension is absent."""
 
     def __init__(self, specs, url=None, **options):
         self.__copy_input = options.get("copy_input", True)
@@ -256,23 +257,29 @@ def _select_ref_resolver():
     override = _backend_override()
     if override == "python":
         return _PythonRefResolver
-    if override == "cython":
-        return _FastRefResolver or _PythonRefResolver
     if override == "rust":
-        return _RustRefResolver or _FastRefResolver or _PythonRefResolver
+        return _RustRefResolver or _PythonRefResolver
     if _RustRefResolver is not None:
         return _RustRefResolver
-    if _FastRefResolver is not None:
-        return _FastRefResolver
     return _PythonRefResolver
 
 
 def use_rust_pipeline():
     """Return True when the full Rust parse+resolve pipeline should be used."""
     override = _backend_override()
-    if override in ("python", "cython"):
+    if override == "python":
         return False
     if rust_resolve_spec is None:
+        return False
+    return True
+
+
+def use_rust_validator():
+    """Return True when the Rust OpenAPI validator should be preferred."""
+    override = _backend_override()
+    if override == "python":
+        return False
+    if rust_validate_openapi_spec is None:
         return False
     return True
 

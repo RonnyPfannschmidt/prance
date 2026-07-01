@@ -117,6 +117,30 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         if not lazy:
             self.parse()
 
+    def _rust_url(self):
+        if self.url is None or self.url == _PLACEHOLDER_URL:
+            return None
+        return self.url.geturl()
+
+    def _apply_spec_version_from_specification(self):
+        """Set version fields from the loaded specification."""
+        from collections.abc import Mapping
+
+        import packaging.version
+
+        if not isinstance(self.specification, Mapping):
+            return
+        spec_version = self.specification.get("openapi") or self.specification.get(
+            "swagger"
+        )
+        if not spec_version:
+            return
+        parsed = packaging.version.parse(spec_version)
+        if parsed.major == 3:
+            self.__set_version(BaseParser.SPEC_VERSION_3_PREFIX, parsed)
+        elif parsed.major == 2:
+            self.__set_version(BaseParser.SPEC_VERSION_2_PREFIX, parsed)
+
     def parse(self):  # noqa: F811
         """
         When the BaseParser was lazily created, load and parse now.
@@ -125,7 +149,55 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
         multiple files by setting its url property and then invoking this
         function.
         """
+        from .util.resolver import (
+            rust_load_openapi_spec,
+            rust_parse_and_validate_spec,
+            use_rust_validator,
+        )
+
         strict = self.options.get("strict", True)
+
+        if (
+            use_rust_validator()
+            and type(self) is BaseParser
+            and self.backend == "openapi-spec-validator"
+            and self.options.get("encoding") is None
+            and rust_parse_and_validate_spec is not None
+            and rust_load_openapi_spec is not None
+        ):
+            rust_url = self._rust_url()
+            if self._spec_string or rust_url is not None:
+                try:
+                    if self._spec_string:
+                        self.specification = rust_parse_and_validate_spec(
+                            spec_string=self._spec_string,
+                            url=rust_url,
+                            strict=strict,
+                        )
+                    else:
+                        self.specification = rust_parse_and_validate_spec(
+                            url=rust_url,
+                            strict=strict,
+                        )
+                except ValidationError:
+                    if self.specification is None:
+                        if self._spec_string:
+                            self.specification = rust_load_openapi_spec(
+                                spec_string=self._spec_string,
+                                url=rust_url,
+                                strict=strict,
+                            )
+                        else:
+                            self.specification = rust_load_openapi_spec(
+                                url=rust_url,
+                                strict=strict,
+                            )
+                        self._apply_spec_version_from_specification()
+                    self.valid = False
+                    raise
+                self._apply_spec_version_from_specification()
+                self.valid = True
+                return
 
         # If we have a file name, we need to read that in.
         if self.url and self.url != _PLACEHOLDER_URL:
@@ -229,6 +301,18 @@ class BaseParser(mixins.YAMLMixin, mixins.JSONMixin):
     def _validate_openapi_spec_validator(
         self, spec_version: Version
     ):  # pragma: nocover
+        from .util.resolver import rust_validate_openapi_spec, use_rust_validator
+
+        if use_rust_validator():
+            self._apply_spec_version_from_specification()
+
+            url = None
+            if self.url and self.url != _PLACEHOLDER_URL:
+                url = self.url.geturl()
+            strict = self.options.get("strict", True)
+            rust_validate_openapi_spec(self.specification, url=url, strict=strict)
+            return
+
         from openapi_spec_validator import validate
         from jsonschema.exceptions import ValidationError as JSEValidationError
         from referencing.exceptions import Unresolvable
@@ -300,11 +384,6 @@ class ResolvingParser(BaseParser):
         }
         forward_args.setdefault("copy_input", False)
         return forward_args
-
-    def _rust_url(self):
-        if self.url is None or self.url == _PLACEHOLDER_URL:
-            return None
-        return self.url.geturl()
 
     def parse(self):
         """Load, resolve references, and validate the specification."""

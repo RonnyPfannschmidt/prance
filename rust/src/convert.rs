@@ -78,6 +78,9 @@ fn py_to_key(obj: &Bound<'_, PyAny>, pool: &mut OpaquePool) -> PyResult<Key> {
     if let Ok(s) = obj.downcast::<PyString>() {
         return Ok(Key::Str(s.to_string_lossy().into()));
     }
+    if let Ok(i) = obj.downcast::<PyInt>() {
+        return Ok(Key::Int(i.extract()?));
+    }
     let id = pool.push(obj.clone());
     Ok(Key::Opaque(id))
 }
@@ -118,6 +121,7 @@ pub fn value_to_py(py: Python<'_>, value: &Value, pool: &OpaquePool) -> PyResult
 fn key_to_py(py: Python<'_>, key: &Key, pool: &OpaquePool) -> PyResult<PyObject> {
     match key {
         Key::Str(s) => Ok(s.into_pyobject(py).unwrap().into_any().into()),
+        Key::Int(i) => Ok(i.into_pyobject(py).unwrap().into_any().into()),
         Key::Opaque(id) => {
             if let Some(obj) = pool.get(*id) {
                 Ok(obj.clone_ref(py))

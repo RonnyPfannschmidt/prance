@@ -28,14 +28,19 @@ jobs:
     - name: Verify native extension
       run: |
         python -c "
-        import _prance_fast
-        from prance.util.resolver import RefResolver, _FastRefResolver, _RustRefResolver
-        assert _FastRefResolver is not None
-        if _RustRefResolver is not None:
-            import _prance_rs
-            assert RefResolver is _prance_rs.RefResolver
-        else:
-            assert RefResolver is _FastRefResolver
+        import _prance_rs
+        from prance.util.resolver import (
+            RefResolver,
+            _RustRefResolver,
+            rust_validate_openapi_spec,
+            use_rust_validator,
+        )
+        assert _RustRefResolver is not None
+        assert RefResolver is _prance_rs.RefResolver
+        assert use_rust_validator()
+        assert rust_validate_openapi_spec is _prance_rs.validate_openapi_spec
+        assert hasattr(_prance_rs, 'load_openapi_spec_py')
+        assert hasattr(_prance_rs, 'parse_and_validate_spec')
         "
     - name: Test with pytest
       run: |

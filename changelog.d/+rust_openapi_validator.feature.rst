@@ -1,0 +1,1 @@
+Add a native Rust OpenAPI validator for the ``openapi-spec-validator`` backend, including structural meta-schema validation, semantic keyword walk with lazy ``$ref`` dereferencing, OAS format checks on defaults, and a ``BaseParser`` load+validate fast path via ``load_openapi_spec_py`` / ``parse_and_validate_spec``.

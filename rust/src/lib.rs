@@ -4,8 +4,10 @@ mod fetch;
 mod parse;
 mod path;
 mod prefetch;
+mod pyprimitives;
 mod resolver;
 mod url;
+mod validate;
 mod value;
 
 use pyo3::prelude::*;
@@ -18,6 +20,7 @@ use crate::error::into_py_err;
 use crate::prefetch::{build_cache_with_root, prefetch_external_documents};
 use crate::resolver::{ResolveOptions, resolve_value};
 use crate::url::{ParsedUrl, absurl};
+use crate::validate::{load_openapi_spec, parse_and_validate, validate_openapi};
 use crate::value::Value;
 
 pub const RESOLVE_INTERNAL: u32 = 2;
@@ -245,15 +248,60 @@ impl RefResolver {
     }
 }
 
+#[pyfunction]
+#[pyo3(signature = (spec, url=None, strict=true))]
+fn validate_openapi_spec(
+    py: Python<'_>,
+    spec: Bound<'_, PyAny>,
+    url: Option<&str>,
+    strict: bool,
+) -> PyResult<()> {
+    let mut pool = OpaquePool::new();
+    let value = py_to_value(&spec, &mut pool)?;
+    validate_openapi(py, &value, &pool, strict, url).map_err(into_py_err)
+}
+
+#[pyfunction]
+#[pyo3(signature = (spec_string=None, url=None, content_type=None, strict=true))]
+fn load_openapi_spec_py(
+    py: Python<'_>,
+    spec_string: Option<&str>,
+    url: Option<&str>,
+    content_type: Option<&str>,
+    strict: bool,
+) -> PyResult<PyObject> {
+    let (value, _) = load_openapi_spec(py, spec_string, url, content_type, strict).map_err(into_py_err)?;
+    let pool = OpaquePool::new();
+    value_to_py(py, &value, &pool)
+}
+
+#[pyfunction]
+#[pyo3(signature = (spec_string=None, url=None, content_type=None, strict=true))]
+fn parse_and_validate_spec(
+    py: Python<'_>,
+    spec_string: Option<&str>,
+    url: Option<&str>,
+    content_type: Option<&str>,
+    strict: bool,
+) -> PyResult<PyObject> {
+    let value = parse_and_validate(py, spec_string, url, content_type, strict).map_err(into_py_err)?;
+    let pool = OpaquePool::new();
+    value_to_py(py, &value, &pool)
+}
+
 #[pymodule]
 fn _prance_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<RefResolver>()?;
     m.add_function(wrap_pyfunction!(resolve_spec, m)?)?;
+    m.add_function(wrap_pyfunction!(validate_openapi_spec, m)?)?;
+    m.add_function(wrap_pyfunction!(load_openapi_spec_py, m)?)?;
+    m.add_function(wrap_pyfunction!(parse_and_validate_spec, m)?)?;
     m.add("RESOLVE_INTERNAL", RESOLVE_INTERNAL)?;
     m.add("RESOLVE_HTTP", RESOLVE_HTTP)?;
     m.add("RESOLVE_FILES", RESOLVE_FILES)?;
     m.add("RESOLVE_ALL", RESOLVE_ALL)?;
     m.add("TRANSLATE_EXTERNAL", TRANSLATE_EXTERNAL)?;
     m.add("TRANSLATE_DEFAULT", TRANSLATE_DEFAULT)?;
+    pyprimitives::register(m)?;
     Ok(())
 }

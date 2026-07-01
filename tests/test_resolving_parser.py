@@ -161,7 +161,7 @@ def test_issue_51_encoding_error():
 
     from ruamel.yaml.reader import ReaderError
 
-    with pytest.raises(ReaderError):
+    with pytest.raises((ReaderError, ValueError), match="ReaderError|unacceptable character"):
         parser.parse()
 
 

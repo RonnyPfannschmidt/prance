@@ -49,7 +49,7 @@ pub fn parse_spec_text(
                 Ok(v) => return Ok(maybe_stringify_keys(v, strict)),
                 Err(e) => last_err = e.to_string(),
             },
-            Format::Yaml => match parse_yaml(text) {
+            Format::Yaml => match parse_yaml(text, strict) {
                 Ok(v) => return Ok(maybe_stringify_keys(v, strict)),
                 Err(e) => last_err = e.to_string(),
             },
@@ -66,10 +66,10 @@ fn parse_json(text: &str) -> Result<Value, PranceError> {
     json_to_value(&j)
 }
 
-fn parse_yaml(text: &str) -> Result<Value, PranceError> {
+fn parse_yaml(text: &str, strict: bool) -> Result<Value, PranceError> {
     let y: serde_yaml::Value = serde_yaml::from_str(text)
         .map_err(|e| PranceError::Parse(e.to_string()))?;
-    yaml_to_value(&y)
+    yaml_to_value(&y, strict)
 }
 
 fn maybe_stringify_keys(value: Value, strict: bool) -> Value {
@@ -88,6 +88,7 @@ fn stringify_keys(value: Value) -> Value {
                 .map(|(k, v)| {
                     let key = match k {
                         Key::Str(s) => Key::Str(s),
+                        Key::Int(i) => Key::Str(i.to_string()),
                         Key::Opaque(id) => Key::Str(format!("<opaque:{id}>")),
                     };
                     (key, stringify_keys(v))
@@ -130,7 +131,7 @@ fn json_to_value(j: &JsonValue) -> Result<Value, PranceError> {
     }
 }
 
-fn yaml_to_value(y: &serde_yaml::Value) -> Result<Value, PranceError> {
+fn yaml_to_value(y: &serde_yaml::Value, strict: bool) -> Result<Value, PranceError> {
     match y {
         serde_yaml::Value::Null => Ok(Value::Null),
         serde_yaml::Value::Bool(b) => Ok(Value::Bool(*b)),
@@ -149,26 +150,31 @@ fn yaml_to_value(y: &serde_yaml::Value) -> Result<Value, PranceError> {
         serde_yaml::Value::Sequence(items) => {
             let mut out = Vec::with_capacity(items.len());
             for item in items {
-                out.push(yaml_to_value(item)?);
+                out.push(yaml_to_value(item, strict)?);
             }
             Ok(Value::Array(out))
         }
         serde_yaml::Value::Mapping(map) => {
             let mut out = Vec::with_capacity(map.len());
             for (k, v) in map {
-                let key = yaml_key_to_key(k)?;
-                out.push((key, yaml_to_value(v)?));
+                let key = yaml_key_to_key(k, strict)?;
+                out.push((key, yaml_to_value(v, strict)?));
             }
             Ok(Value::Object(out))
         }
-        serde_yaml::Value::Tagged(tagged) => yaml_to_value(&tagged.value),
+        serde_yaml::Value::Tagged(tagged) => yaml_to_value(&tagged.value, strict),
     }
 }
 
-fn yaml_key_to_key(k: &serde_yaml::Value) -> Result<Key, PranceError> {
+fn yaml_key_to_key(k: &serde_yaml::Value, strict: bool) -> Result<Key, PranceError> {
     match k {
         serde_yaml::Value::String(s) => Ok(Key::Str(s.clone())),
         serde_yaml::Value::Number(n) => {
+            if strict {
+                if let Some(i) = n.as_i64() {
+                    return Ok(Key::Int(i));
+                }
+            }
             if let Some(i) = n.as_i64() {
                 Ok(Key::Str(i.to_string()))
             } else {

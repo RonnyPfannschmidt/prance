@@ -1,6 +1,7 @@
 """Parity tests between compiled and pure-Python resolver paths."""
 import copy
 import os
+from unittest.mock import patch
 
 import pytest
 
@@ -113,85 +114,89 @@ def test_resolver_uses_compiled_when_available():
         import _prance_rs
 
         assert resolver.RefResolver is _prance_rs.RefResolver
-    else:
-        import _prance_fast
-
-        assert resolver.RefResolver is _prance_fast.RefResolver
 
 
-def test_resolver_python_fallback_when_compiled_missing(monkeypatch):
-    monkeypatch.setattr(resolver, "_RustRefResolver", None)
-    monkeypatch.setattr(resolver, "_FastRefResolver", None)
-    monkeypatch.setattr(resolver, "RefResolver", resolver._PythonRefResolver)
+def test_resolver_python_fallback_when_compiled_missing():
     specs = formats.parse_spec(
         fs.read_file("tests/specs/petstore.yaml"), "tests/specs/petstore.yaml"
     )
-    res = resolver.RefResolver(
-        specs,
-        url=os.path.abspath("tests/specs/petstore.yaml"),
-        copy_input=False,
+    with patch.object(resolver, "_RustRefResolver", None), patch.object(
+        resolver, "RefResolver", resolver._PythonRefResolver
+    ):
+        res = resolver.RefResolver(
+            specs,
+            url=os.path.abspath("tests/specs/petstore.yaml"),
+            copy_input=False,
+        )
+        res.resolve_references()
+        assert "$ref" not in str(res.specs)
+
+
+def test_resolver_import_fallback_without_extension():
+    with patch.object(resolver, "_rust_deepcopy_json", None):
+        assert resolver._deepcopy_specs({"a": 1}) == {"a": 1}
+
+
+def test_url_python_fallback_paths(tmp_path):
+    patches = (
+        patch.object(url_mod, "_rust_absurl", None),
+        patch.object(url_mod, "_rust_urlresource", None),
+        patch.object(url_mod, "_rust_split_fragment_reference", None),
+        patch.object(url_mod, "_rust_split_url_reference", None),
     )
-    res.resolve_references()
-    assert "$ref" not in str(res.specs)
+    for p in patches:
+        p.start()
+    try:
+        base = url_mod.absurl(os.path.abspath("tests/specs/petstore.yaml"))
+        resource = url_mod.urlresource(base)
+        assert resource.startswith("file://")
+        frag = url_mod.split_fragment_reference(base, "#/definitions/Pet")
+        assert frag is not None
+        assert url_mod.split_fragment_reference(None, "#/definitions/Pet") is None
+        parsed, obj_path = url_mod.split_url_reference(base, "#/definitions/Pet")
+        assert parsed.fragment
+        assert obj_path
+
+        spec_file = tmp_path / "spec.yaml"
+        spec_file.write_text(
+            "openapi: 3.0.0\ninfo:\n  title: t\n  version: '1'\npaths: {}\n"
+        )
+        file_url = url_mod.absurl(str(spec_file))
+        text, _ = url_mod.fetch_url_text(file_url)
+        assert "openapi" in text
+        cache = {}
+        parsed_spec = url_mod.fetch_url(file_url, cache=cache, copy=False)
+        assert parsed_spec["openapi"] == "3.0.0"
+        assert url_mod.fetch_url(file_url, cache=cache, copy=True)["openapi"] == "3.0.0"
+
+        with pytest.raises(url_mod.ResolutionError):
+            url_mod.absurl("relative.yaml")
+        with pytest.raises(url_mod.ResolutionError):
+            url_mod.absurl("#/only-fragment")
+    finally:
+        for p in patches:
+            p.stop()
 
 
-def test_resolver_import_fallback_without_extension(monkeypatch):
-    monkeypatch.setattr(resolver, "_fast_deepcopy_json", None)
-    assert resolver._deepcopy_specs({"a": 1}) == {"a": 1}
+def test_path_python_fallback_paths():
+    with patch.object(path_mod, "_rust_path_get", None), patch.object(
+        path_mod, "_rust_path_set", None
+    ):
+        obj = {"a": {"b": [1, {"c": 2}]}}
+        assert path_mod.path_get(obj, ("a", "b", 1, "c")) == 2
+        path_mod.path_set(obj, ("a", "b", 0), 9, create=True)
+        assert obj["a"]["b"][0] == 9
+        with pytest.raises(KeyError):
+            path_mod.path_get(obj, ("missing",))
+        with pytest.raises(TypeError):
+            path_mod.path_get(42, ("x",))
 
 
-def test_url_python_fallback_paths(monkeypatch, tmp_path):
-    monkeypatch.setattr(url_mod, "_fast_absurl", None)
-    monkeypatch.setattr(url_mod, "_fast_urlresource", None)
-    monkeypatch.setattr(url_mod, "_fast_split_fragment_reference", None)
-    monkeypatch.setattr(url_mod, "_fast_split_url_reference", None)
-    monkeypatch.setattr(url_mod, "_fast_fetch_url_text", None)
-    monkeypatch.setattr(url_mod, "_fast_fetch_url", None)
-
-    base = url_mod.absurl(os.path.abspath("tests/specs/petstore.yaml"))
-    resource = url_mod.urlresource(base)
-    assert resource.startswith("file://")
-    frag = url_mod.split_fragment_reference(base, "#/definitions/Pet")
-    assert frag is not None
-    assert url_mod.split_fragment_reference(None, "#/definitions/Pet") is None
-    parsed, obj_path = url_mod.split_url_reference(base, "#/definitions/Pet")
-    assert parsed.fragment
-    assert obj_path
-
-    spec_file = tmp_path / "spec.yaml"
-    spec_file.write_text(
-        "openapi: 3.0.0\ninfo:\n  title: t\n  version: '1'\npaths: {}\n"
-    )
-    file_url = url_mod.absurl(str(spec_file))
-    text, _ = url_mod.fetch_url_text(file_url)
-    assert "openapi" in text
-    cache = {}
-    parsed_spec = url_mod.fetch_url(file_url, cache=cache, copy=False)
-    assert parsed_spec["openapi"] == "3.0.0"
-    assert url_mod.fetch_url(file_url, cache=cache, copy=True)["openapi"] == "3.0.0"
-
-    with pytest.raises(url_mod.ResolutionError):
-        url_mod.absurl("relative.yaml")
-    with pytest.raises(url_mod.ResolutionError):
-        url_mod.absurl("#/only-fragment")
-
-
-def test_path_python_fallback_paths(monkeypatch):
-    monkeypatch.setattr(path_mod, "_fast_path_get", None)
-    monkeypatch.setattr(path_mod, "_fast_path_set", None)
-
-    obj = {"a": {"b": [1, {"c": 2}]}}
-    assert path_mod.path_get(obj, ("a", "b", 1, "c")) == 2
-    path_mod.path_set(obj, ("a", "b", 0), 9, create=True)
-    assert obj["a"]["b"][0] == 9
-    with pytest.raises(KeyError):
-        path_mod.path_get(obj, ("missing",))
-    with pytest.raises(TypeError):
-        path_mod.path_get(42, ("x",))
-
-
-def test_iterators_python_fallback(monkeypatch):
-    monkeypatch.setattr(iterators, "_fast_reference_iterator", None)
-    specs = {"paths": {"/x": {"$ref": "#/definitions/Y"}}, "definitions": {"Y": {}}}
-    refs = list(iterators.reference_iterator(specs))
-    assert refs == [("$ref", "#/definitions/Y", ("paths", "/x"))]
+def test_iterators_python_fallback():
+    with patch.object(iterators, "_rust_reference_iterator", None):
+        specs = {
+            "paths": {"/x": {"$ref": "#/definitions/Y"}},
+            "definitions": {"Y": {}},
+        }
+        refs = list(iterators.reference_iterator(specs))
+        assert refs == [("$ref", "#/definitions/Y", ("paths", "/x"))]

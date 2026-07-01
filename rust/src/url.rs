@@ -190,26 +190,33 @@ fn strip_trailing_separator(path: PathBuf) -> PathBuf {
     PathBuf::from(s)
 }
 
-pub fn canonical_filename(filename: &str) -> String {
-    let path = from_posix(filename);
-    let mut p = strip_trailing_separator(lexical_normalize(PathBuf::from(&path)));
-    loop {
-        match p.canonicalize() {
-            Ok(canonical) => p = canonical,
-            Err(_) => break,
+fn absolute_path(path: PathBuf) -> PathBuf {
+    if path.is_absolute() {
+        lexical_normalize(path)
+    } else {
+        match std::env::current_dir() {
+            Ok(cwd) => lexical_normalize(cwd.join(path)),
+            Err(_) => lexical_normalize(path),
         }
-        match std::fs::read_link(&p) {
+    }
+}
+
+pub fn canonical_filename(filename: &str) -> String {
+    let mut path = PathBuf::from(from_posix(filename));
+    loop {
+        path = absolute_path(path);
+        match std::fs::read_link(&path) {
             Ok(link) => {
-                if let Some(parent) = p.parent() {
-                    p = parent.join(link);
+                if let Some(parent) = path.parent() {
+                    path = parent.join(link);
                 } else {
-                    p = link;
+                    path = link;
                 }
             }
             Err(_) => break,
         }
     }
-    to_posix(p.to_string_lossy().as_ref())
+    to_posix(path.to_string_lossy().as_ref())
 }
 
 pub fn abspath(filename: &str, relative_to: Option<&str>) -> String {

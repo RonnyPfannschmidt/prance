@@ -1,25 +1,13 @@
-"""Build configuration for Cython _prance_fast and Rust _prance_rs extensions."""
+"""Build configuration for the Rust _prance_rs extension."""
 import os
 
-from Cython.Build import cythonize
-from setuptools import Extension
 from setuptools import setup
 from setuptools_rust import Binding
 from setuptools_rust import RustExtension
 
 os.environ.setdefault("PYO3_USE_ABI3_FORWARD_COMPATIBILITY", "1")
 
-CYTHON_DIRECTIVES = {
-    "language_level": "3",
-    "boundscheck": False,
-    "wraparound": False,
-}
-
 setup(
-    ext_modules=cythonize(
-        [Extension("_prance_fast", ["cython/prance_fast.pyx"])],
-        compiler_directives=CYTHON_DIRECTIVES,
-    ),
     rust_extensions=[
         RustExtension(
             "_prance_rs",

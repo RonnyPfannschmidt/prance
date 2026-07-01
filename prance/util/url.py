@@ -8,19 +8,15 @@ __all__ = ()
 from urllib import parse
 
 try:
-    from _prance_fast import absurl as _fast_absurl
-    from _prance_fast import fetch_url as _fast_fetch_url
-    from _prance_fast import fetch_url_text as _fast_fetch_url_text
-    from _prance_fast import split_fragment_reference as _fast_split_fragment_reference
-    from _prance_fast import split_url_reference as _fast_split_url_reference
-    from _prance_fast import urlresource as _fast_urlresource
+    from _prance_rs import absurl as _rust_absurl
+    from _prance_rs import split_fragment_reference as _rust_split_fragment_reference
+    from _prance_rs import split_url_reference as _rust_split_url_reference
+    from _prance_rs import urlresource as _rust_urlresource
 except ImportError:
-    _fast_absurl = None
-    _fast_fetch_url = None
-    _fast_fetch_url_text = None
-    _fast_split_fragment_reference = None
-    _fast_split_url_reference = None
-    _fast_urlresource = None
+    _rust_absurl = None
+    _rust_split_fragment_reference = None
+    _rust_split_url_reference = None
+    _rust_urlresource = None
 
 
 class ResolutionError(LookupError):
@@ -38,8 +34,8 @@ def urlresource(url):
     :return: The resource part of the URL
     :rtype: str
     """
-    if _fast_urlresource is not None:
-        return _fast_urlresource(url)
+    if _rust_urlresource is not None:
+        return _rust_urlresource(url)
     res_list = list(url)[0:3] + [None, None, None]
     return parse.ParseResult(*res_list).geturl()
 
@@ -61,8 +57,8 @@ def absurl(url, relative_to=None):
     :return: The output URL, parsed into components.
     :rtype: tuple
     """
-    if _fast_absurl is not None:
-        return _fast_absurl(url, relative_to)
+    if _rust_absurl is not None:
+        return _rust_absurl(url, relative_to)
     return _python_absurl(url, relative_to)
 
 
@@ -156,8 +152,8 @@ def split_fragment_reference(base_url, reference):
     Returns ``(parsed_url, obj_path)`` matching :func:`split_url_reference`,
     or ``None`` if *reference* is not fragment-only.
     """
-    if _fast_split_fragment_reference is not None:
-        return _fast_split_fragment_reference(base_url, reference)
+    if _rust_split_fragment_reference is not None:
+        return _rust_split_fragment_reference(base_url, reference)
     if not reference.startswith("#"):
         return None
     if base_url is None:
@@ -185,8 +181,8 @@ def split_url_reference(base_url, reference):
     :param str reference: A JSON reference string.
     :return: The parsed absolute URL of the reference and the object path.
     """
-    if _fast_split_url_reference is not None:
-        return _fast_split_url_reference(base_url, reference)
+    if _rust_split_url_reference is not None:
+        return _rust_split_url_reference(base_url, reference)
     # Parse URL
     parsed_url = absurl(reference, base_url)
 
@@ -201,7 +197,7 @@ def split_url_reference(base_url, reference):
     return parsed_url, obj_path
 
 
-def fetch_url_text(url, cache={}, encoding=None):
+def fetch_url_text(url, cache=None, encoding=None):
     """
     Fetch the URL.
 
@@ -220,12 +216,12 @@ def fetch_url_text(url, cache={}, encoding=None):
     :return: The resource text of the URL, and the content type.
     :rtype: tuple
     """
-    if _fast_fetch_url_text is not None:
-        return _fast_fetch_url_text(url, cache, encoding)
     return _python_fetch_url_text(url, cache, encoding)
 
 
-def _python_fetch_url_text(url, cache={}, encoding=None):
+def _python_fetch_url_text(url, cache=None, encoding=None):
+    if cache is None:
+        cache = {}
     url_key = "text_" + urlresource(url)
     entry = cache.get(url_key, None)
     if entry is not None:
@@ -274,7 +270,7 @@ def _python_fetch_url_text(url, cache={}, encoding=None):
     return content, content_type
 
 
-def fetch_url(url, cache={}, encoding=None, strict=True, copy=True):
+def fetch_url(url, cache=None, encoding=None, strict=True, copy=True):
     """
     Fetch the URL and parse the contents.
 
@@ -291,12 +287,12 @@ def fetch_url(url, cache={}, encoding=None, strict=True, copy=True):
     :return: The parsed file.
     :rtype: dict
     """
-    if _fast_fetch_url is not None:
-        return _fast_fetch_url(url, cache, encoding, strict, copy)
     return _python_fetch_url(url, cache, encoding, strict, copy)
 
 
-def _python_fetch_url(url, cache={}, encoding=None, strict=True, copy=True):
+def _python_fetch_url(url, cache=None, encoding=None, strict=True, copy=True):
+    if cache is None:
+        cache = {}
     # Return from cache, if parsed result is already present.
     url_key = (urlresource(url), strict)
     entry = cache.get(url_key, None)
