@@ -68,6 +68,7 @@ def make_large_spec():
 
 
 def mock_get_petstore(*args, **kwargs):
+    """Return a mocked HTTP response with the petstore Swagger YAML."""
     from tests.mock_response import MockResponse, PETSTORE_YAML
 
     return MockResponse(text=PETSTORE_YAML)
@@ -91,15 +92,18 @@ def bench_case(name, func, rounds=5, warmup=1):
 
 
 def resolve_only(specs, url, **options):
+    """Resolve references in *specs* without fetching external URLs."""
     resolver.RefResolver(copy.deepcopy(specs), url=url, **options).resolve_references()
 
 
 def resolve_externals(specs, url, **options):
+    """Resolve references, mocking external HTTP fetches with petstore YAML."""
     with patch("requests.get", side_effect=mock_get_petstore):
         resolve_only(specs, url, **options)
 
 
 def resolve_and_validate(url, **options):
+    """Parse, resolve, and validate a spec file via :class:`prance.ResolvingParser`."""
     from prance import ResolvingParser
 
     with patch("requests.get", side_effect=mock_get_petstore):

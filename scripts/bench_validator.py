@@ -16,6 +16,7 @@ if ROOT not in sys.path:
 
 
 def bench(func, rounds=5, warmup=1):
+    """Run *func* for *rounds* timed iterations and return mean time in ms."""
     for _ in range(warmup):
         func()
     timings = []
@@ -28,6 +29,7 @@ def bench(func, rounds=5, warmup=1):
 
 @contextmanager
 def backend_env(name):
+    """Set ``PRANCE_BACKEND`` for the duration of a benchmark."""
     old = os.environ.get("PRANCE_BACKEND")
     os.environ["PRANCE_BACKEND"] = name
     try:
@@ -40,6 +42,7 @@ def backend_env(name):
 
 
 def validate_with_backend(backend, path):
+    """Validate *path* using :class:`prance.BaseParser` with the given backend tier."""
     with backend_env(backend):
         import prance
 
@@ -47,12 +50,14 @@ def validate_with_backend(backend, path):
 
 
 def validate_rust_direct(path):
+    """Validate *path* via the Rust ``parse_and_validate_spec`` entry point."""
     from prance.util.resolver import rust_parse_and_validate_spec
 
     rust_parse_and_validate_spec(url=os.path.abspath(path), strict=True)
 
 
 def main():
+    """Parse CLI args and print validation benchmark results."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument(

@@ -103,6 +103,7 @@ def resolve_with_backend(backend, spec, url=None, **options):
 
 
 def mock_get_petstore(*args, **kwargs):
+    """Return a mocked HTTP response with the petstore Swagger YAML."""
     from tests.mock_response import MockResponse, PETSTORE_YAML
 
     return MockResponse(text=PETSTORE_YAML)
