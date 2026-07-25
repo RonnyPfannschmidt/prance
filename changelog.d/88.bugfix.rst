@@ -1,0 +1,2 @@
+``fetch_url`` and ``fetch_url_text`` no longer share a cache between calls when
+no ``cache`` argument is given. (#88)

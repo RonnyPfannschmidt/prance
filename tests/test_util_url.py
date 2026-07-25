@@ -190,6 +190,32 @@ def test_fetch_url_text_cached():
     assert id(content1) == id(content2)
 
 
+def test_fetch_url_not_cached_without_cache_argument(tmp_path):
+    spec = tmp_path / "spec.yaml"
+    spec.write_text("swagger: '2.0'\ninfo:\n  title: first\n")
+
+    content1 = url.fetch_url(url.absurl(str(spec)))
+    assert content1["info"]["title"] == "first"
+
+    spec.write_text("swagger: '2.0'\ninfo:\n  title: second\n")
+
+    content2 = url.fetch_url(url.absurl(str(spec)))
+    assert content2["info"]["title"] == "second"
+
+
+def test_fetch_url_text_not_cached_without_cache_argument(tmp_path):
+    spec = tmp_path / "spec.yaml"
+    spec.write_text("swagger: '2.0'\ninfo:\n  title: first\n")
+
+    content1, _ = url.fetch_url_text(url.absurl(str(spec)))
+    assert "first" in content1
+
+    spec.write_text("swagger: '2.0'\ninfo:\n  title: second\n")
+
+    content2, _ = url.fetch_url_text(url.absurl(str(spec)))
+    assert "second" in content2
+
+
 @pytest.mark.requires_network()
 def test_fetch_url_http():
     exturl = "https://petstore.swagger.io/v2/swagger.yaml" "#/definitions/Pet"

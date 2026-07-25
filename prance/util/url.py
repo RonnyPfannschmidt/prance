@@ -148,7 +148,7 @@ def split_url_reference(base_url, reference):
     return parsed_url, obj_path
 
 
-def fetch_url_text(url, cache={}, encoding=None):
+def fetch_url_text(url, cache=None, encoding=None):
     """
     Fetch the URL.
 
@@ -167,6 +167,9 @@ def fetch_url_text(url, cache={}, encoding=None):
     :return: The resource text of the URL, and the content type.
     :rtype: tuple
     """
+    if cache is None:
+        cache = {}
+
     url_key = "text_" + urlresource(url)
     entry = cache.get(url_key, None)
     if entry is not None:
@@ -215,7 +218,7 @@ def fetch_url_text(url, cache={}, encoding=None):
     return content, content_type
 
 
-def fetch_url(url, cache={}, encoding=None, strict=True):
+def fetch_url(url, cache=None, encoding=None, strict=True):
     """
     Fetch the URL and parse the contents.
 
@@ -230,6 +233,9 @@ def fetch_url(url, cache={}, encoding=None, strict=True):
     :return: The parsed file.
     :rtype: dict
     """
+    if cache is None:
+        cache = {}
+
     # Return from cache, if parsed result is already present.
     url_key = (urlresource(url), strict)
     entry = cache.get(url_key, None)
