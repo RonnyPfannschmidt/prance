@@ -37,18 +37,14 @@ def test_load_fail():
 
 def test_parse_fail():
     with pytest.raises(ValidationError):
-        BaseParser(
-            spec_string="""---
-invalid 'a'sda YAML"""
-        )
+        BaseParser(spec_string="""---
+invalid 'a'sda YAML""")
 
 
 def test_version_fail():
     with pytest.raises(ValidationError):
-        BaseParser(
-            spec_string="""---
-openapi: 4.0.0"""
-        )
+        BaseParser(spec_string="""---
+openapi: 4.0.0""")
 
 
 def test_filename_or_spec():
