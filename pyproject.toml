@@ -67,6 +67,7 @@ zip-safe = true
 include-package-data = true
 
 [tool.setuptools.packages.find]
+namespaces = false
 exclude = ["ez_setup", "examples", "tests"]
 
 [tool.setuptools_scm]
